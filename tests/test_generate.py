@@ -152,3 +152,28 @@ def test_initials_also_accept_apps_with_a_word_starting_with_those_letters() -> 
     assert q.text == "au"
     assert q.acceptable == {_app_target("AirPort Utility"), _app_target("Automator")}
     assert q.ambiguous is True
+
+
+def test_same_short_string_gets_same_acceptable_set_across_rules() -> None:
+    inventory = [
+        _app("AirPort Utility"),
+        _app("Audio MIDI Setup"),
+        _app("Automator"),
+        _app("iPhone Mirroring"),
+        _app("Image Capture"),
+        _app("Chess"),
+    ]
+    by_text: dict[str, set[frozenset[Target]]] = {}
+    for q in generate_dev(inventory) + generate_collisions(inventory):
+        if q.rule.startswith("prefix") or q.rule == "initials":
+            by_text.setdefault(q.text, set()).add(q.acceptable)
+    assert all(len(sets) == 1 for sets in by_text.values()), by_text
+    (au,) = by_text["au"]
+    assert au == {
+        _app_target("AirPort Utility"),
+        _app_target("Audio MIDI Setup"),
+        _app_target("Automator"),
+    }
+    (im,) = by_text["im"]
+    assert _app_target("iPhone Mirroring") in im
+    assert _app_target("Image Capture") in im

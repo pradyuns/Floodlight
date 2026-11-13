@@ -73,6 +73,11 @@ def _acceptable_for_initials(initials: str, inventory: Iterable[App]) -> frozens
     )
 
 
+def acceptable_for_short(text: str, inventory: Iterable[App]) -> frozenset[Target]:
+    """One rule for every short query: any app with a word starting with it, or those initials."""
+    return _acceptable_for_prefix(text, inventory) | _acceptable_for_initials(text, inventory)
+
+
 def _candidates(app: App) -> list[tuple[Rule, str]]:
     full = normalize(app.name)
     words = full.split()
@@ -89,14 +94,8 @@ def _candidates(app: App) -> list[tuple[Rule, str]]:
 
 def _query(app: App, rule: Rule, text: str, inventory: list[App], suite: str) -> Query:
     intended = Target("app", app.name)
-    if rule.startswith("prefix"):
-        acceptable = _acceptable_for_prefix(text, inventory) | {intended}
-    elif rule == "initials":
-        acceptable = (
-            _acceptable_for_initials(text, inventory)
-            | _acceptable_for_prefix(text, inventory)
-            | {intended}
-        )
+    if rule.startswith("prefix") or rule == "initials":
+        acceptable = acceptable_for_short(text, inventory) | {intended}
     else:
         acceptable = frozenset({intended})
     return Query(
@@ -192,11 +191,14 @@ def generate_typos(
 def generate_collisions(inventory: list[App]) -> list[Query]:
     strings: set[str] = set()
     for app in inventory:
-        for word in _words(app.name):
+        words = _words(app.name)
+        for word in words:
             strings.update(word[:k] for k in range(1, min(4, len(word)) + 1))
+        if len(words) > 1:
+            strings.add("".join(w[0] for w in words))
     queries: list[Query] = []
     for text in sorted(strings):
-        acceptable = _acceptable_for_prefix(text, inventory)
+        acceptable = acceptable_for_short(text, inventory)
         if len(acceptable) < 2:
             continue
         queries.append(
