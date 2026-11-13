@@ -121,5 +121,7 @@ publish.
 
 ## Logging
 - Add every decision and action to `docs/DECISIONS.local.md`: what, why, evidence, result.
+- Keep `docs/PROGRESS.local.md` current: the readable summary of steps completed, decisions with
+  their reasoning, and open items. Update it at the end of every task.
 - End each task with what changed, why, what you tested (with output), and what you're
   unsure about.
