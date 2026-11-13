@@ -1,0 +1,145 @@
+[
+  {
+    "name": "Google Chrome",
+    "bundle_id": "com.google.Chrome",
+    "version": "157.0.8103.79",
+    "source_url": "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg",
+    "installer_sha256": "890cbc357d91cc8b0de87033edee89534da385a97ec2b21e3c80b2125f45e4fd",
+    "team_id": "EQHXZ8M8AV",
+    "signer": "Developer ID Application: Google LLC (EQHXZ8M8AV)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Firefox",
+    "bundle_id": "org.mozilla.firefox",
+    "version": "160.0",
+    "source_url": "https://download-installer.cdn.mozilla.net/pub/firefox/releases/160.0/mac/en-US/Firefox%20160.0.dmg",
+    "installer_sha256": "b270ccc60eb899bd0277bd078d7bd8690f5c4fc3e44b4fa9ee78ed2a3e89f0ca",
+    "team_id": "43AQ936H96",
+    "signer": "Developer ID Application: Mozilla Corporation (43AQ936H96)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Spotify",
+    "bundle_id": "com.spotify.client",
+    "version": "1.3.9.2055",
+    "source_url": "https://download.scdn.co/Spotify.dmg",
+    "installer_sha256": "1140e60774e1d47a3c83d81bdc685dfa139698adfba51506db2dad560e2a854d",
+    "team_id": "2FNC3A47ZF",
+    "signer": "Developer ID Application: Spotify (2FNC3A47ZF)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Slack",
+    "bundle_id": "com.tinyspeck.slackmacgap",
+    "version": "4.53.287",
+    "source_url": "https://downloads.slack-edge.com/desktop-releases/mac/universal/4.53.287/Slack-4.53.287-macOS.dmg",
+    "installer_sha256": "e191f61e9c5612a3436a707ad17286a44007d62a62f9c14c0a11a53506bf038f",
+    "team_id": "BQR82RBBHL",
+    "signer": "Developer ID Application: SLACK TECHNOLOGIES L.L.C. (BQR82RBBHL)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Discord",
+    "bundle_id": "com.hnc.Discord",
+    "version": "0.0.422",
+    "source_url": "https://stable.dl2.discordapp.net/distro/app/stable/osx/universal/0.0.422/Discord.dmg",
+    "installer_sha256": "6fedd6856cbc48656704dfc718d52114e12ffae9ae904d429ae6e1ded2081fa2",
+    "team_id": "53Q6R32WPB",
+    "signer": "Developer ID Application: Discord, Inc. (53Q6R32WPB)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "WhatsApp",
+    "bundle_id": "net.whatsapp.WhatsApp",
+    "version": "26.45.23",
+    "source_url": "https://scontent.xx.fbcdn.net/v/t39.16592-6/10000000_29705355669070184_3991296509808456569_n.dmg/WhatsApp-2.26.45.23.dmg",
+    "installer_sha256": "0cb83d4ae4769098659f767d1acf1ae3d99e606b0d39ed91355bac71dbbe281a",
+    "team_id": "57T9237FN3",
+    "signer": "Developer ID Application: WhatsApp Inc. (57T9237FN3)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Visual Studio Code",
+    "bundle_id": "com.microsoft.VSCode",
+    "version": "1.146.0",
+    "source_url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/69047191fc427f2f92828279aae1d90d8eeda7ab/VSCode-darwin-universal.zip",
+    "installer_sha256": "d33abb5c7e8de3639f8c876b55eece0acc4f1c14db4a527e45651bd7d0e9a8b0",
+    "team_id": "UBF8T346G9",
+    "signer": "Developer ID Application: Microsoft Corporation (UBF8T346G9)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Obsidian",
+    "bundle_id": "md.obsidian",
+    "version": "1.15.1",
+    "source_url": "https://release-assets.githubusercontent.com/github-production-release-asset/262342594/01145fc6-d1a0-4daa-b3aa-9fb525ba3935",
+    "installer_sha256": "e05c7e3e2262b14c965bb246dcb74a30fc9098bd669e42957c4d9f788d04fdf4",
+    "team_id": "6JSW4SJWN9",
+    "signer": "Developer ID Application: Dynalist Inc. (6JSW4SJWN9)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "iTerm",
+    "bundle_id": "com.googlecode.iterm2",
+    "version": "3.7.7",
+    "source_url": "https://iterm2.com/downloads/stable/iTerm2-3_7_7.zip",
+    "installer_sha256": "549eb2b21464d7f4606165e51c36a6b1a252ac9a79958228a240152412759da2",
+    "team_id": "H7V7XYVQ7D",
+    "signer": "Developer ID Application: GEORGE NACHMAN (H7V7XYVQ7D)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Telegram",
+    "bundle_id": "ru.keepcoder.Telegram",
+    "version": "13.2.0",
+    "source_url": "https://osx.telegram.org/updates/Telegram.dmg",
+    "installer_sha256": "9aa66f00484f8b7b58606789f041a75b9ee5d03a3f1702ce558a81b63a330da3",
+    "team_id": "6N38VWS5BX",
+    "signer": "Developer ID Application: TELEGRAM MESSENGER LLP (6N38VWS5BX)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "VLC",
+    "bundle_id": "org.videolan.vlc",
+    "version": "3.0.24",
+    "source_url": "https://irltoolkit.mm.fcix.net/videolan-ftp/vlc/3.0.24/macosx/vlc-3.0.24-universal.dmg",
+    "installer_sha256": "2c8e89f7f42e53c2fb0e87b6dfa39b49f1364b25080aaa2e476ac74c0d7beb3c",
+    "team_id": "75GAHG3SZQ",
+    "signer": "Developer ID Application: VideoLAN (75GAHG3SZQ)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Rectangle",
+    "bundle_id": "com.knollsoft.Rectangle",
+    "version": "2.0.4",
+    "source_url": "https://release-assets.githubusercontent.com/github-production-release-asset/193162629/9fbbb3da-9bda-4e87-995d-e309c9e0c78e",
+    "installer_sha256": "9f820a2e56bd2c27cdda4fb4556de3cbcfcbac052d9eeb2179d49e2dae277abc",
+    "team_id": "XSYZ3E4B7D",
+    "signer": "Developer ID Application: Ryan Hanson (XSYZ3E4B7D)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  },
+  {
+    "name": "Raycast",
+    "bundle_id": "com.raycast.macos",
+    "version": "2.12.1.0",
+    "source_url": "https://x-r2.raycast-releases.com/Raycast_2.12.1.0_f0ac270893_arm64.dmg",
+    "installer_sha256": "8d306491c4c76fc0312701254996041e00f6b6587c66714c632d64dbfe9e8096",
+    "team_id": "SY64MV22J9",
+    "signer": "Developer ID Application: Raycast Technologies Inc (SY64MV22J9)",
+    "notarized": true,
+    "install_method": "copied .app into /Applications in the VM; never opened"
+  }
+]
