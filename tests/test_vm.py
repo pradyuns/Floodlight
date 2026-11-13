@@ -45,3 +45,12 @@ def test_coverage_marks_unindexed_target_false() -> None:
     coverage = vm.indexed_paths()
     assert "/System/Applications/Chess.app" in coverage
     assert "/System/Applications/Stocks.app" not in coverage
+
+
+def test_run_command_shares_folders_with_read_only_flag() -> None:
+    vm = VM("t", "base", ssh_fn=lambda _c, _t: "")
+    argv = vm.run_argv({"probe": ("/host/probe", True), "out": ("/host/out", False)})
+    assert argv[:4] == ["arch", "-arm64", "tart", "run"]
+    assert "--dir=probe:/host/probe:ro" in argv
+    assert "--dir=out:/host/out" in argv
+    assert argv[-1] == "t"

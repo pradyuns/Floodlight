@@ -60,10 +60,23 @@ class VM:
     def clone(self) -> None:
         _tart("clone", self.base, self.name)
 
-    def start(self, boot_timeout_s: float = 300) -> None:
+    def run_argv(self, shares: dict[str, tuple[str, bool]] | None = None) -> list[str]:
+        """`tart run` command line; shares map name -> (host path, read_only).
+
+        Shared folders appear in the guest under /Volumes/My Shared Files/<name>.
+        """
+        dirs = [
+            f"--dir={name}:{path}" + (":ro" if read_only else "")
+            for name, (path, read_only) in (shares or {}).items()
+        ]
+        return ["arch", "-arm64", "tart", "run", "--no-graphics", *dirs, self.name]
+
+    def start(
+        self, boot_timeout_s: float = 300, shares: dict[str, tuple[str, bool]] | None = None
+    ) -> None:
         env = {**os.environ, "TART_HOME": str(TART_HOME)}
         self._process = subprocess.Popen(
-            ["arch", "-arm64", "tart", "run", "--no-graphics", self.name],
+            self.run_argv(shares),
             env=env,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,

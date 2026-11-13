@@ -27,6 +27,7 @@ class Row:
     folder: str | None = None
     pane_id: str | None = None
     selected: bool | None = None
+    category: str | None = None  # the launcher's own label for the row, kept for audits
 
 
 @dataclass(frozen=True)
