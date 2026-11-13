@@ -1,0 +1,15 @@
+INSTRUCTIONS.local.md
+*.local.md
+*.local.*
+.venv/
+results/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.build/
+fixtures/out/
+corpus/out/
+heldout/
+installers/
+.superpowers/

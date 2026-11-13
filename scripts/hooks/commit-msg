@@ -1,0 +1,7 @@
+#!/bin/bash
+# Refuses commit messages that credit an AI tool. The rules file name CLAUDE.md is allowed.
+message="$(sed 's/CLAUDE\.md//g' "$1")"
+if printf '%s' "$message" | grep -qiE 'co-authored-by|claude|anthropic|generated with|noreply@anthropic\.com'; then
+  echo "BLOCKED: commit message contains AI attribution (Co-Authored-By / Claude / Anthropic / Generated with)." >&2
+  exit 1
+fi
