@@ -1,0 +1,17 @@
+#!/usr/bin/expect -f
+# Runs one command in the benchmark VM over SSH with password auth.
+# Usage: vmssh.exp <ip> <command>. The password comes from $FLOODLIGHT_VM_PASSWORD.
+set timeout 600
+set ip [lindex $argv 0]
+set cmd [lindex $argv 1]
+set known_hosts "$env(HOME)/VMs/known_hosts"
+log_user 0
+spawn -noecho ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=$known_hosts \
+  -o PubkeyAuthentication=no -o PreferredAuthentications=password -o LogLevel=ERROR \
+  bench@$ip $cmd
+expect {
+  "assword:" { send "$env(FLOODLIGHT_VM_PASSWORD)\r"; log_user 1; exp_continue }
+  eof
+}
+catch wait result
+exit [lindex $result 3]
