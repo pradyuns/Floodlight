@@ -1,0 +1,17 @@
+{
+  "note": "Typed label -> settings pane key. Pane keys map to verified pane identities in the feasibility gate (Task 5); unverified until then.",
+  "labels": {
+    "wifi": "wifi",
+    "wi-fi": "wifi",
+    "bluetooth": "bluetooth",
+    "display": "displays",
+    "displays": "displays",
+    "battery": "battery"
+  },
+  "panes": {
+    "wifi": {"title": "Wi-Fi", "verified_id": null},
+    "bluetooth": {"title": "Bluetooth", "verified_id": null},
+    "displays": {"title": "Displays", "verified_id": null},
+    "battery": {"title": "Battery", "verified_id": null}
+  }
+}

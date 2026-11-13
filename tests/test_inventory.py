@@ -6,7 +6,7 @@ LISTING = "\n".join(
         "/Applications/Safari.app\t/System/Cryptexes/App/Safari.app\tSafari\tcom.apple.Safari",
         "/Applications/Foo.app\t/Applications/Foo.app\tFoo\tcom.example.foo1",
         "/Applications/Utilities/Foo.app\t/Applications/Utilities/Foo.app\tFoo\tcom.example.foo2",
-        "/Applications/‎Chat.app\t/Applications/‎Chat.app\t‎Chat\tcom.example.chat",
+        "/Applications/\u200eChat.app\t/Applications/\u200eChat.app\t\u200eChat\tcom.example.chat",
         "/Applications/Raycast.app\t/Applications/Raycast.app\tRaycast\tcom.raycast.macos",
     ]
 )
@@ -27,8 +27,8 @@ def test_parse_excludes_duplicate_names_and_reports_them() -> None:
 
 def test_parse_excludes_names_with_format_characters() -> None:
     apps, excluded = parse_inventory(LISTING, tools_under_test=set())
-    assert all("‎" not in a.name for a in apps)
-    assert excluded["‎Chat"] == "format character in name"
+    assert all("\u200e" not in a.name for a in apps)
+    assert excluded["\u200eChat"] == "format character in name"
 
 
 def test_parse_assigns_kinds_from_bundle_ids() -> None:
