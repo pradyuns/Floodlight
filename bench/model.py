@@ -35,6 +35,7 @@ class Snapshot:
     t_ms: int  # milliseconds since the first key was posted
     rows: tuple[Row, ...]
     field_text: str
+    primary_action: str | None = None  # the launcher's own Enter label, e.g. Raycast's action bar
 
 
 @dataclass(frozen=True)

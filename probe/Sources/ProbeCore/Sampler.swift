@@ -49,7 +49,8 @@ public final class Sampler {
             } else if !field.isEmpty && expected.hasPrefix(field) {
                 do {
                     sample.snapshots.append(
-                        SnapshotDTO(tMs: t, rows: try adapter.readRows(), fieldText: field))
+                        SnapshotDTO(tMs: t, rows: try adapter.readRows(), fieldText: field,
+                                    primaryAction: adapter.primaryAction()))
                 } catch {
                     readFailures += 1
                 }

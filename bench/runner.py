@@ -72,7 +72,12 @@ def parse_results(path: Path, env: Literal["sparse", "busy"]) -> list[Sample]:
                 final_key_post_ms=raw["final_key_post_ms"],
                 field_shows_ms=raw.get("field_shows_ms"),
                 snapshots=[
-                    Snapshot(s["t_ms"], tuple(_row(r) for r in s["rows"]), s["field_text"])
+                    Snapshot(
+                        s["t_ms"],
+                        tuple(_row(r) for r in s["rows"]),
+                        s["field_text"],
+                        s.get("primary_action"),
+                    )
                     for s in raw["snapshots"]
                 ],
                 error=raw.get("error"),

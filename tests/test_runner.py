@@ -93,3 +93,12 @@ def test_stage_probe_names_binary_by_content_hash(tmp_path: Path) -> None:
     assert staged.read_bytes() == b"probe-v1"
     binary.write_bytes(b"probe-v2")
     assert stage_probe(binary, tmp_path / "share").name != staged.name
+
+
+def test_parse_results_keeps_the_enter_action_label(tmp_path: Path) -> None:
+    line = json.loads(json.dumps(PROBE_LINE))
+    line["snapshots"][0]["primary_action"] = "Open Application"
+    path = tmp_path / "samples.jsonl"
+    path.write_text(json.dumps(line) + "\n")
+    (sample,) = parse_results(path, env="sparse")
+    assert sample.snapshots[0].primary_action == "Open Application"

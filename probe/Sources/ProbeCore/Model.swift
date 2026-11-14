@@ -29,11 +29,14 @@ public struct SnapshotDTO: Codable, Sendable {
     public let tMs: Int
     public let rows: [RowDTO]
     public let fieldText: String
+    /// The launcher's own label for what Enter would do, when it shows one (Raycast's action bar).
+    public let primaryAction: String?
 
-    public init(tMs: Int, rows: [RowDTO], fieldText: String) {
+    public init(tMs: Int, rows: [RowDTO], fieldText: String, primaryAction: String? = nil) {
         self.tMs = tMs
         self.rows = rows
         self.fieldText = fieldText
+        self.primaryAction = primaryAction
     }
 }
 

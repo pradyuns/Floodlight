@@ -69,6 +69,15 @@ final class FakeLauncher: LauncherAdapter {
 let calc = RowDTO(title: "Calculator", kind: "app", source: "local", folder: nil, paneId: nil,
                   selected: true)
 
+/// Launcher that also shows an Enter action label, like Raycast's action bar.
+final class LabelledLauncher: LauncherAdapter {
+    var typed = ""
+    func isReady() -> Bool { true }
+    func fieldText() -> String? { typed }
+    func readRows() throws -> [RowDTO] { [calc] }
+    func primaryAction() -> String? { "Open Application" }
+}
+
 func makeSampler(_ launcher: FakeLauncher, _ clock: FakeClock) -> (Sampler, FakeKeys) {
     let keys = FakeKeys(clock: clock) { launcher.keyTyped($0) }
     return (Sampler(adapter: launcher, keys: keys, clock: clock), keys)
@@ -164,6 +173,62 @@ check(USKeyboard.keyCode(for: "a")?.code == 0 && USKeyboard.keyCode(for: "a")?.s
 check(USKeyboard.keyCode(for: "A")?.code == 0 && USKeyboard.keyCode(for: "A")?.shift == true, "A -> shift+0")
 check(USKeyboard.keyCode(for: "_")?.shift == true, "_ needs shift")
 check(USKeyboard.keyCode(for: "\u{200E}") == nil, "no key code for an invisible character")
+
+// 8. Raycast rows, from token sequences observed in Raycast 2.12.1.0's accessibility tree.
+do {
+    typealias T = RaycastToken
+    let home = "/Users/bench"
+    let dirs: Set<String> = ["/Users/bench/Documents/zorvexa"]
+    let files: Set<String> = ["/Users/bench/Documents/zorvexa/quelbrant-notes.txt"]
+    func isDir(_ p: String) -> Bool? { dirs.contains(p) ? true : files.contains(p) ? false : nil }
+    func parse(_ t: [T]) -> [RowDTO] { RaycastParsing.rows(from: t, home: home, isDirectory: isDir) }
+    let fallback: [T] = [.header("Use “x” with…"), .text("Quick AI"), .text("Raycast AI"),
+                         .text("Pro"), .text("Command"), .rowEnd]
+
+    let app = parse([.header("Results"), .text("Calculator"), .text("Application"), .rowEnd,
+                     .text("Calculator History"), .text("Calculator"), .text("Command"), .rowEnd]
+                    + fallback)
+    check(app.count == 3, "raycast: one row per row-end hint (got \(app.count))")
+    check(app.first == RowDTO(title: "Calculator", kind: "app", source: "local", folder: nil,
+                              paneId: nil, selected: nil, category: "raycast:Results:Application"),
+          "raycast: Application row -> local app, highlight unknown")
+    check(app[1].kind == "other" && app[1].source == "local", "raycast: Command row -> other")
+    check(app[2].source == "web" && app[2].kind == "other" && app[2].title == "Quick AI",
+          "raycast: 'Use … with…' fallback rows -> web, Pro badge ignored")
+
+    let setting = parse([.header("Results"), .text("Bluetooth"), .text("System Settings"),
+                         .text("System Setting"), .rowEnd])
+    check(setting.first?.kind == "settings_pane" && setting.first?.paneId == "Bluetooth",
+          "raycast: System Setting row -> settings pane identified by its title")
+
+    let file = parse([.header("Files"), .text("quelbrant-notes.txt"),
+                      .text("~/Documents/zorvexa"), .rowEnd])
+    check(file.first?.kind == "file" && file.first?.folder == "/Users/bench/Documents/zorvexa",
+          "raycast: Files row resolving to a file -> file with its full parent path")
+    let folder = parse([.header("Files"), .text("zorvexa"), .text("~/Documents"), .rowEnd])
+    check(folder.first?.kind == "folder" && folder.first?.folder == "/Users/bench/Documents",
+          "raycast: Files row resolving to a directory -> folder")
+    let gone = parse([.header("Files"), .text("deleted.txt"), .text("~/Documents"), .rowEnd])
+    check(gone.first?.kind == "other" && gone.first?.category == "raycast:Files:unresolved",
+          "raycast: Files row whose path doesn't exist -> other, labeled unresolved")
+
+    let calcRow = parse([.header("Calculator"), .text("12"), .text("×"), .text("3"),
+                         .text("Product"), .text("36"), .text("Thirty-Six"), .rowEnd])
+    check(calcRow.first?.source == "instant" && calcRow.first?.kind == "other",
+          "raycast: Calculator section -> instant")
+}
+
+// 9. Snapshots carry the launcher's Enter action label when it exposes one.
+do {
+    let clock = FakeClock()
+    let launcher = LabelledLauncher()
+    let keys = FakeKeys(clock: clock) { launcher.typed += $0 }
+    let s = Sampler(adapter: launcher, keys: keys, clock: clock).run(text: "ca", mode: .completed, windowMs: 200)
+    check(s.snapshots.allSatisfy { $0.primaryAction == "Open Application" },
+          "snapshots record the Enter action label")
+    let plain = FakeLauncher(clock: FakeClock(), rows: [calc])
+    check(plain.primaryAction() == nil, "launchers without an action label report none")
+}
 
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

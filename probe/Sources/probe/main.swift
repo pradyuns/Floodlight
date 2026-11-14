@@ -31,7 +31,6 @@ struct ResultLine: Codable {
 }
 
 let escapeKey: CGKeyCode = 53
-let spaceKey: CGKeyCode = 49
 let selectAllKey: CGKeyCode = 0
 let deleteKey: CGKeyCode = 51
 let readyTimeoutMs = 10_000
@@ -47,9 +46,12 @@ func fail(_ message: String) -> Never {
     exit(2)
 }
 
-@MainActor func adapter(for tool: String) -> SpotlightAdapter {
-    guard tool == "spotlight" else { fail("unknown tool \(tool)") }
-    return SpotlightAdapter()
+@MainActor func adapter(for tool: String) -> any ControlledLauncher {
+    switch tool {
+    case "spotlight": return SpotlightAdapter()
+    case "raycast": return RaycastAdapter()
+    default: fail("unknown tool \(tool)")
+    }
 }
 
 let clock = MonotonicClock()
@@ -64,7 +66,7 @@ let keys = CGEventKeys()
     return condition()
 }
 
-@MainActor func close(_ launcher: SpotlightAdapter) {
+@MainActor func close(_ launcher: any ControlledLauncher) {
     for _ in 0..<4 where launcher.isOpen() {
         keys.press(keyCode: escapeKey)
         usleep(300_000)
@@ -72,22 +74,22 @@ let keys = CGEventKeys()
 }
 
 /// Closes, optionally restarts the UI process, opens, and waits for an empty, idle field.
-@MainActor func prepare(_ launcher: SpotlightAdapter, uiRestart: Bool) -> Bool {
+@MainActor func prepare(_ launcher: any ControlledLauncher, uiRestart: Bool) -> Bool {
     close(launcher)
     if launcher.isOpen() { return false }
     if uiRestart {
         launcher.killUI()
-        // Wait for macOS to relaunch the Spotlight UI process before asking it to open.
+        // Wait for the launcher's UI process to be running again before asking it to open.
         guard waitUntil(readyTimeoutMs, { launcher.isRunning() }) else { return false }
         usleep(500_000)
     }
     var opened = false
     for _ in 0..<3 where !opened {
-        keys.press(keyCode: spaceKey, flags: .maskCommand)
+        keys.press(keyCode: launcher.openShortcut.key, flags: launcher.openShortcut.flags)
         opened = waitUntil(3000) { launcher.isOpen() }
     }
     guard opened else { return false }
-    // Spotlight reopens with the previous search text still in the field; clear it.
+    // Launchers can reopen with the previous search text still in the field; clear it.
     if launcher.fieldText() != "" {
         keys.press(keyCode: selectAllKey, flags: .maskCommand)
         keys.press(keyCode: deleteKey)

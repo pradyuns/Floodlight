@@ -1,3 +1,5 @@
+import CoreGraphics
+
 public protocol KeyPoster: AnyObject {
     func type(_ character: String)
 }
@@ -7,4 +9,18 @@ public protocol LauncherAdapter: AnyObject {
     func isReady() -> Bool
     func fieldText() -> String?
     func readRows() throws -> [RowDTO]
+    func primaryAction() -> String?
+}
+
+extension LauncherAdapter {
+    public func primaryAction() -> String? { nil }
+}
+
+/// A launcher the probe can open, close and restart, on top of reading it.
+public protocol ControlledLauncher: LauncherAdapter {
+    var openShortcut: (key: CGKeyCode, flags: CGEventFlags) { get }
+    func isOpen() -> Bool
+    func isRunning() -> Bool
+    func isBusy() -> Bool
+    func killUI()
 }

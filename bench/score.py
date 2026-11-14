@@ -13,7 +13,17 @@ WINDOW_MS = 3000
 MAX_SNAPSHOT_AGE_MS = 100
 
 Observed = bool | Literal["unobserved"]
-SafeEnter = Literal["intended", "other", "none", "unreadable"]
+SafeEnter = Literal["intended", "other", "none", "unreadable", "highlight_mismatch"]
+
+# Launchers that don't expose their highlighted row (Raycast 2.12) are read with the documented
+# rule "Enter opens the top row", checked against the type named by the Enter button's label.
+ENTER_LABEL_KINDS: dict[str, frozenset[Kind]] = {
+    "Open Application": frozenset({Kind.APP}),
+    "Open System Setting": frozenset({Kind.SETTINGS_PANE}),
+    "Open": frozenset({Kind.FILE, Kind.FOLDER}),
+    "Open Command": frozenset({Kind.OTHER}),
+    "Copy Answer": frozenset({Kind.OTHER}),
+}
 
 
 @dataclass(frozen=True)
@@ -62,7 +72,22 @@ def _snapshot_at(snapshots: list[Snapshot], t_ms: int) -> Snapshot | None:
     return before[-1]
 
 
-def _safe_enter(rows: list[Row], targets: frozenset[Target]) -> SafeEnter:
+def _safe_enter(view: list[Row], snap: Snapshot | None, targets: frozenset[Target]) -> SafeEnter:
+    action = snap.primary_action if snap else None
+    if action is None or any(r.selected is not None for r in view):
+        return _safe_enter_from_selection(view, targets)
+    screen = snap.rows if snap else ()
+    if not screen:
+        return "none"
+    kinds = ENTER_LABEL_KINDS.get(action)
+    if kinds is None:
+        return "unreadable"
+    if screen[0].kind not in kinds:
+        return "highlight_mismatch"
+    return "intended" if any(row_matches(screen[0], t) for t in targets) else "other"
+
+
+def _safe_enter_from_selection(rows: list[Row], targets: frozenset[Target]) -> SafeEnter:
     if not rows:
         return "none"
     if all(r.selected is None for r in rows):
@@ -102,7 +127,7 @@ def score_sample(
         intended_at1=None if query.intended is None else final_rank == 1,
         acceptable_at1=_rank(final_rows[:1], query.acceptable) == 1,
         wrong_enter=wrong_enter,
-        safe_enter=_safe_enter(final_rows, intended),
+        safe_enter=_safe_enter(final_rows, snaps[-1] if snaps else None, intended),
         rr10=1.0 / final_rank if final_rank is not None and final_rank <= 10 else 0.0,
         t_first_appear=t_first_appear,
         t_at1=t_at1,

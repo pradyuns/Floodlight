@@ -99,3 +99,34 @@ def test_ambiguous_query_counts_any_acceptable_app_at_1() -> None:
     score = score_sample(_sample(_every_50ms(4000, {0: [_row("Calendar")]})), query)
     assert score.acceptable_at1 is True
     assert score.intended_at1 is False
+
+
+def _labelled(rows: list[Row], action: str | None) -> Sample:
+    s = _sample([(1500, rows)])
+    snap = s.snapshots[0]
+    return Sample(
+        **{**s.__dict__, "snapshots": [Snapshot(snap.t_ms, snap.rows, snap.field_text, action)]}
+    )
+
+
+def test_safe_enter_assumes_top_row_when_enter_label_matches_its_type() -> None:
+    rows = [_row("Calculator"), _row("Calculator History", Kind.OTHER)]
+    score = score_sample(_labelled(rows, "Open Application"), _query())
+    assert score.safe_enter == "intended"
+
+
+def test_safe_enter_flags_highlight_mismatch_when_label_disagrees_with_top_row() -> None:
+    rows = [_row("Calculator"), _row("Calculator History", Kind.OTHER)]
+    score = score_sample(_labelled(rows, "Open Command"), _query())
+    assert score.safe_enter == "highlight_mismatch"
+
+
+def test_safe_enter_top_row_rule_uses_the_screen_order_not_the_local_only_view() -> None:
+    rows = [_row("Google Search", Kind.OTHER, Source.WEB), _row("Calculator")]
+    score = score_sample(_labelled(rows, "Open Command"), _query(), local_only=True)
+    assert score.safe_enter == "other"
+
+
+def test_safe_enter_unknown_enter_label_is_unreadable() -> None:
+    score = score_sample(_labelled([_row("Calculator")], "Reveal in Finder"), _query())
+    assert score.safe_enter == "unreadable"

@@ -75,9 +75,11 @@ enum AX {
 }
 
 /// Reads Spotlight's panel through Accessibility; keys are sent separately by a KeyPoster.
-public final class SpotlightAdapter: LauncherAdapter {
+public final class SpotlightAdapter: ControlledLauncher {
     static let bundleId = "com.apple.Spotlight"
     static let messagingTimeout: Float = 0.5
+
+    public let openShortcut = (key: CGKeyCode(49), flags: CGEventFlags.maskCommand)
 
     public init() {}
 
