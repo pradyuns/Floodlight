@@ -389,5 +389,10 @@ do {
     check(s.error == "field_never_matched", "only mismatched readings -> field_never_matched")
 }
 
+// 12. A locked screen is detected from the session dictionary (keys go to the lock screen).
+check(Session.isScreenLocked(["CGSSessionScreenIsLocked": true]), "session reporting a lock -> locked")
+check(!Session.isScreenLocked(["kCGSSessionOnConsoleKey": true]), "no lock key -> not locked")
+check(!Session.isScreenLocked(["CGSSessionScreenIsLocked": false]), "lock key false -> not locked")
+
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

@@ -108,6 +108,7 @@ switch CommandLine.arguments.dropFirst().first {
 case "dump":
     let launcher = adapter(for: arg("--tool") ?? "spotlight")
     guard let query = arg("--query") else { fail("--query required") }
+    guard !Session.isScreenLockedNow() else { fail("screen is locked: keys would go to the lock screen") }
     guard prepare(launcher, uiRestart: false) else { fail("launcher not ready") }
     let sample = Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock), clock: clock)
         .run(text: query, mode: .completed, windowMs: 2500)
@@ -120,11 +121,13 @@ case "state":
     let launcher = adapter(for: arg("--tool") ?? "spotlight")
     let rows = (try? launcher.readRows()) ?? []
     print("open=\(launcher.isOpen()) field=\(launcher.fieldText().map { "'\($0)'" } ?? "nil") "
+        + "focused=\(launcher.isFieldFocused().map(String.init) ?? "nil") "
         + "busy=\(launcher.isBusy()) ready=\(launcher.isReady()) rows=\(rows.count)")
 
 case "overhead":
     let launcher = adapter(for: arg("--tool") ?? "spotlight")
     let trials = Int(arg("--trials") ?? "10") ?? 10
+    guard !Session.isScreenLockedNow() else { fail("screen is locked: keys would go to the lock screen") }
     var echo: [Int] = []
     var read: [Int] = []
     for _ in 0..<trials {
@@ -154,7 +157,9 @@ case "run-schedule":
     for line in lines {
         let launcher = adapter(for: line.tool)
         var result: SampleDTO
-        if prepare(launcher, uiRestart: line.condition == "ui_restart") {
+        if Session.isScreenLockedNow() {
+            result = SampleDTO(keyPosts: [], fieldShowsMs: nil, snapshots: [], error: "screen_locked")
+        } else if prepare(launcher, uiRestart: line.condition == "ui_restart") {
             result = Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock),
                              clock: clock)
                 .run(text: line.text, mode: line.mode, windowMs: line.windowMs)

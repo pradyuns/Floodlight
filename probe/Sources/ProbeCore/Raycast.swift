@@ -131,6 +131,10 @@ public final class RaycastAdapter: ControlledLauncher {
 
     public func isOpen() -> Bool { field() != nil }
 
+    public func isFieldFocused() -> Bool? {
+        field().map { AX.attribute($0, kAXFocusedAttribute) ?? false }
+    }
+
     public func isRunning() -> Bool { application() != nil }
 
     /// Raycast shows no busy indicator in its accessibility tree.

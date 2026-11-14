@@ -119,6 +119,19 @@ public final class SpotlightAdapter: ControlledLauncher {
         window() != nil && fieldText() == "" && !isBusy()
     }
 
+    public func isFieldFocused() -> Bool? {
+        guard let w = window() else { return nil }
+        var focused: Bool?
+        walk(w) { e in
+            if focused == nil, let id: String = AX.attribute(e, "AXIdentifier"),
+               id == "SpotlightSearchField", AX.role(e) == kAXTextFieldRole {
+                focused = AX.attribute(e, kAXFocusedAttribute) ?? false
+            }
+            return focused == nil
+        }
+        return focused
+    }
+
     public func fieldText() -> String? {
         guard let w = window() else { return nil }
         var text: String?

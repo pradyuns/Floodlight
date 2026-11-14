@@ -22,5 +22,7 @@ public protocol ControlledLauncher: LauncherAdapter {
     func isOpen() -> Bool
     func isRunning() -> Bool
     func isBusy() -> Bool
+    /// Whether the search field has keyboard focus (nil: the field isn't there to ask).
+    func isFieldFocused() -> Bool?
     func killUI()
 }
