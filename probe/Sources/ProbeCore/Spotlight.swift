@@ -18,7 +18,8 @@ public enum SpotlightParsing {
         case "com.apple.applications": return "app"
         case "com.apple.systempreferences": return "settings_pane"
         case "com.apple.directories": return "folder"
-        case "com.apple.documents": return "file"
+        case "com.apple.documents", "com.apple.pdfs", "com.apple.developer", "com.apple.photos":
+            return "file"
         default: return "other"
         }
     }

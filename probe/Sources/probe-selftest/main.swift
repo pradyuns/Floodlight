@@ -223,6 +223,10 @@ check(SpotlightParsing.folder(fromSubtitle: "text · 5 bytes · Today, 1:17 PM �
 check(SpotlightParsing.source(forIdentifier: "Identifier:ResultCell,Section:1,Row:2,Bundle:com.apple.parsec.web_index") == "web", "parsec web_index -> web")
 check(SpotlightParsing.source(forIdentifier: "Identifier:ResultCell,Section:1,Row:2,Bundle:com.apple.parsec.kg") == "web", "parsec knowledge -> web")
 check(SpotlightParsing.kind(forIdentifier: "Identifier:ResultCell,Section:0,Row:0,Bundle:com.apple.directories") == "folder", "directories -> folder")
+// File groups seen in macOS 26.4.1 dumps: .pdf, .py, .svg files on disk.
+check(SpotlightParsing.kind(forIdentifier: "Identifier:ResultCell,Section:1,Row:0,Bundle:com.apple.pdfs") == "file", "pdfs -> file")
+check(SpotlightParsing.kind(forIdentifier: "Identifier:ResultCell,Section:1,Row:0,Bundle:com.apple.developer") == "file", "developer -> file")
+check(SpotlightParsing.kind(forIdentifier: "Identifier:ResultCell,Section:1,Row:0,Bundle:com.apple.photos") == "file", "photos -> file")
 check(SpotlightParsing.paneId(title: "Wi\u{2011}Fi", subtitle: nil) == "Wi\u{2011}Fi", "top-level pane identity is its title")
 check(SpotlightParsing.paneId(title: "Wi-Fi MAC address", subtitle: "Network") == "Network", "sub-item pane identity is its breadcrumb")
 
