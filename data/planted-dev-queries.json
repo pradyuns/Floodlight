@@ -1,0 +1,1674 @@
+[
+ {
+  "acceptable": [
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "tinaluv desk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:nospace:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "tinaluvdesk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:initials:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "initials",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "td"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "TV",
+    "kind": "app"
+   },
+   {
+    "id": "Telegram",
+    "kind": "app"
+   },
+   {
+    "id": "Terminal",
+    "kind": "app"
+   },
+   {
+    "id": "TextEdit",
+    "kind": "app"
+   },
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   },
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   },
+   {
+    "id": "Tips",
+    "kind": "app"
+   },
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "t"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   },
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   },
+   {
+    "id": "Tips",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix2:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "ti"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "tin"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "tina"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "dumavez studio"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:nospace:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "dumavezstudio"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:initials:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "initials",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "ds"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dictionary",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Discord",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   },
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   },
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "d"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix2:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "du"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "dum"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "duma"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vabofi works"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:nospace:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vabofiworks"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:initials:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "initials",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vw"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "VLC",
+    "kind": "app"
+   },
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   },
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   },
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "v"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix2:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "va"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vab"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vabo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "zezupaf sync"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:nospace:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "zezupafsync"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:initials:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "initials",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "zs"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix1:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "z"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix2:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "ze"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "zez"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "zezu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vovizu desk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:nospace:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vovizudesk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:initials:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "initials",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vd"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "VLC",
+    "kind": "app"
+   },
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   },
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   },
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "v"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix2:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vov"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vovi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Femedus",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:femedus",
+  "intended": {
+   "id": "Femedus",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "femedus"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   },
+   {
+    "id": "FaceTime",
+    "kind": "app"
+   },
+   {
+    "id": "Femedus",
+    "kind": "app"
+   },
+   {
+    "id": "Find My",
+    "kind": "app"
+   },
+   {
+    "id": "Firefox",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Freeform",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:femedus",
+  "intended": {
+   "id": "Femedus",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "f"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Femedus",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix2:femedus",
+  "intended": {
+   "id": "Femedus",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "fe"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Femedus",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:femedus",
+  "intended": {
+   "id": "Femedus",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "fem"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Femedus",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:femedus",
+  "intended": {
+   "id": "Femedus",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "feme"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bovepip",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:bovepip",
+  "intended": {
+   "id": "Bovepip",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "bovepip"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   },
+   {
+    "id": "Books",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Bovepip",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:bovepip",
+  "intended": {
+   "id": "Bovepip",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "b"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Books",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Bovepip",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix2:bovepip",
+  "intended": {
+   "id": "Bovepip",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "bo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bovepip",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:bovepip",
+  "intended": {
+   "id": "Bovepip",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "bov"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bovepip",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:bovepip",
+  "intended": {
+   "id": "Bovepip",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "bove"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:totidik",
+  "intended": {
+   "id": "Totidik",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "totidik"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "TV",
+    "kind": "app"
+   },
+   {
+    "id": "Telegram",
+    "kind": "app"
+   },
+   {
+    "id": "Terminal",
+    "kind": "app"
+   },
+   {
+    "id": "TextEdit",
+    "kind": "app"
+   },
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   },
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   },
+   {
+    "id": "Tips",
+    "kind": "app"
+   },
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:totidik",
+  "intended": {
+   "id": "Totidik",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "t"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix2:totidik",
+  "intended": {
+   "id": "Totidik",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "to"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:totidik",
+  "intended": {
+   "id": "Totidik",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "tot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:totidik",
+  "intended": {
+   "id": "Totidik",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "toti"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Pufiveb",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:pufiveb",
+  "intended": {
+   "id": "Pufiveb",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "pufiveb"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "Passwords",
+    "kind": "app"
+   },
+   {
+    "id": "Phone",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   },
+   {
+    "id": "Photos",
+    "kind": "app"
+   },
+   {
+    "id": "Podcasts",
+    "kind": "app"
+   },
+   {
+    "id": "Preview",
+    "kind": "app"
+   },
+   {
+    "id": "Print Center",
+    "kind": "app"
+   },
+   {
+    "id": "Pufiveb",
+    "kind": "app"
+   },
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:pufiveb",
+  "intended": {
+   "id": "Pufiveb",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "p"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Pufiveb",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix2:pufiveb",
+  "intended": {
+   "id": "Pufiveb",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "pu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Pufiveb",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:pufiveb",
+  "intended": {
+   "id": "Pufiveb",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "puf"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Pufiveb",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:pufiveb",
+  "intended": {
+   "id": "Pufiveb",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "pufi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:full:vimetaz",
+  "intended": {
+   "id": "Vimetaz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vimetaz"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "VLC",
+    "kind": "app"
+   },
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   },
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   },
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix1:vimetaz",
+  "intended": {
+   "id": "Vimetaz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "v"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "planted-dev:prefix2:vimetaz",
+  "intended": {
+   "id": "Vimetaz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix3:vimetaz",
+  "intended": {
+   "id": "Vimetaz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vim"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:prefix4:vimetaz",
+  "intended": {
+   "id": "Vimetaz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vime"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tinaluv Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:tinaluv-desk",
+  "intended": {
+   "id": "Tinaluv Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "tinluv desk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dumavez Studio",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:dumavez-studio",
+  "intended": {
+   "id": "Dumavez Studio",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "dmuavez studio"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vabofi Works",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:vabofi-works",
+  "intended": {
+   "id": "Vabofi Works",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "avbofi works"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zezupaf Sync",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:zezupaf-sync",
+  "intended": {
+   "id": "Zezupaf Sync",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "zezuapf sync"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vovizu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:vovizu-desk",
+  "intended": {
+   "id": "Vovizu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vvizu desk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Femedus",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:femedus",
+  "intended": {
+   "id": "Femedus",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "efmedus"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bovepip",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:bovepip",
+  "intended": {
+   "id": "Bovepip",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "bivepip"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Totidik",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:totidik",
+  "intended": {
+   "id": "Totidik",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "toridik"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Pufiveb",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:pufiveb",
+  "intended": {
+   "id": "Pufiveb",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "pufiven"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vimetaz",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "planted-dev:typo:vimetaz",
+  "intended": {
+   "id": "Vimetaz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "typo",
+  "stratum": null,
+  "suite": "planted-dev",
+  "text": "vumetaz"
+ }
+]

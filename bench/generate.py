@@ -9,7 +9,9 @@ from typing import Literal
 from bench.inventory import App
 from bench.normalize import edit_distance, normalize
 
-Rule = Literal["full", "nospace", "prefix1", "prefix2", "prefix3", "prefix4", "initials", "typo"]
+Rule = Literal[
+    "full", "nospace", "prefix1", "prefix2", "prefix3", "prefix4", "initials", "typo", "stem"
+]
 Mode = Literal["completed", "continuous", "stepped"]
 TargetKind = Literal["app", "file", "folder", "settings_pane"]
 Provenance = Literal["generated", "model", "human"]

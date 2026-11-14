@@ -75,3 +75,105 @@ def test_content_is_deterministic_per_seed() -> None:
 def test_unknown_extension_is_rejected() -> None:
     with pytest.raises(ValueError, match="no generator"):
         content_for("x.exe", seed=1)
+
+
+# --- Fixture layout (planted apps, stress, folders, cross-kind) ---
+
+from pathlib import Path  # noqa: E402
+
+from bench.inventory import App  # noqa: E402
+from bench.normalize import normalize  # noqa: E402
+from fixtures.plan import HOME, LRM, build_layout, corpus_forbid  # noqa: E402
+
+REPO = Path(__file__).resolve().parent.parent
+DICT = Path("/usr/share/dict/words")
+
+
+def _inventory() -> list[App]:
+    import json
+
+    raw = json.loads((REPO / "data/inventory-macos-26.4.1.json").read_text())["apps"]
+    return [App(**a) for a in raw]
+
+
+@pytest.fixture(scope="module")
+def layout():  # type: ignore[no-untyped-def]
+    if not DICT.exists():
+        pytest.skip("needs the macOS dictionary")
+    return build_layout(_inventory(), DICT)
+
+
+def test_layout_is_deterministic(layout) -> None:  # type: ignore[no-untyped-def]
+    assert build_layout(_inventory(), DICT) == layout
+
+
+def test_stress_2x2_marks_and_decoys_only_their_cells(layout) -> None:  # type: ignore[no-untyped-def]
+    fam = layout.families["stress-2x2"]
+    cells: dict[str, list[str]] = {}
+    for q in fam.queries:
+        assert q.stratum is not None
+        cells.setdefault(q.stratum, []).append(q.intended.id)
+    assert sorted(cells) == ["lrm=no,svg=no", "lrm=no,svg=yes", "lrm=yes,svg=no", "lrm=yes,svg=yes"]
+    for stratum, names in cells.items():
+        for name in set(names):
+            marked = LRM + name in fam.apps
+            assert marked == ("lrm=yes" in stratum) and (marked or name in fam.apps)
+            decoys = [f for f in fam.files if f.endswith(".svg") and name.lower() in f.lower()]
+            assert bool(decoys) == ("svg=yes" in stratum)
+
+
+def test_test_py_is_unique_and_queried_by_filename(layout) -> None:  # type: ignore[no-untyped-def]
+    fam = layout.families["stress-test-py"]
+    assert [f for f in fam.files if f.rsplit("/", 1)[-1] == "test.py"] == [
+        q.intended.id.removeprefix(HOME + "/") for q in fam.queries
+    ]
+    assert {q.text for q in fam.queries} == {"test.py"}
+    assert len(fam.files) > 3  # decoys present
+
+
+def test_cross_kind_targets_are_exact_matches_with_a_weaker_app(layout) -> None:  # type: ignore[no-untyped-def]
+    apps = [normalize(a.name).split() for a in _inventory()]
+    for q in layout.families["cross-kind"].queries:
+        assert q.intended is not None and q.intended.kind in ("file", "settings_pane")
+        assert q.acceptable == frozenset({q.intended})
+        first = q.text.split(".")[0].split()[0]
+        assert any(w.startswith(first) for words in apps for w in words), q.text
+        assert all(" ".join(words) != q.text for words in apps), q.text
+
+
+def test_folder_targets_are_unique_names(layout) -> None:  # type: ignore[no-untyped-def]
+    names = [q.intended.id.rsplit("/", 1)[-1] for q in layout.families["folders"].queries]
+    assert all(
+        q.intended.unique_name and q.intended.kind == "folder"
+        for q in layout.families["folders"].queries
+    )
+    all_parts = [p for fam in layout.families.values() for f in fam.files for p in f.split("/")]
+    for name in set(names):
+        assert all_parts.count(name) >= 1
+        assert (
+            sum(
+                1
+                for p in set(
+                    f.rsplit("/", 1)[0] for fam in layout.families.values() for f in fam.files
+                )
+                if p.endswith("/" + name)
+            )
+            == 1
+        )
+
+
+def test_planted_dev_apps_have_all_rules(layout) -> None:  # type: ignore[no-untyped-def]
+    fam = layout.families["planted-dev"]
+    assert len(fam.apps) == 10
+    rules = {q.rule for q in fam.queries}
+    assert {"full", "nospace", "initials", "prefix1", "typo"} <= rules
+
+
+def test_corpus_forbid_covers_every_targeted_string(layout) -> None:  # type: ignore[no-untyped-def]
+    forbid = corpus_forbid(layout)
+    for fam in layout.families.values():
+        for q in fam.queries:
+            if q.rule in ("full", "nospace", "stem"):
+                assert q.text in forbid
+        for app in fam.apps:
+            assert app.replace(LRM, "").lower() in forbid

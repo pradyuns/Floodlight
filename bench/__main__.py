@@ -62,6 +62,40 @@ def cmd_queries(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_fixtures(args: argparse.Namespace) -> int:
+    from corpus.make_corpus import Entry, write_tar
+    from fixtures.plan import PUBLIC_SEED, build_layout, corpus_forbid
+
+    inventory = [App(**a) for a in json.loads(Path(args.inventory).read_text())["apps"]]
+    layout = build_layout(inventory, Path(args.dictionary))
+    fam = layout.families
+    data, out = Path(args.data_dir), Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    manifests = {
+        "planted-dev-queries.json": list(fam["planted-dev"].queries),
+        "stress-queries.json": [
+            q for k in ("stress-2x2", "stress-two-word", "stress-test-py") for q in fam[k].queries
+        ],
+        "folder-queries.json": list(fam["folders"].queries),
+        "cross-kind-queries.json": list(fam["cross-kind"].queries),
+    }
+    for name, queries in manifests.items():
+        (data / name).write_text(queries_to_json(queries))
+        print(f"{name}: {len(queries)}")
+    plan = {
+        k: {"apps": list(f.apps), "files": list(f.files), "decoys": list(f.decoys)}
+        for k, f in fam.items()
+    }
+    (data / "fixture-layout.json").write_text(json.dumps(plan, indent=1, sort_keys=True) + "\n")
+    for k, f in fam.items():
+        (out / f"{k}-apps.txt").write_text("".join(a + "\n" for a in f.apps))
+        if f.files:
+            write_tar([Entry(p, "fixture") for p in f.files], PUBLIC_SEED, out / f"{k}.tar.gz")
+    (out / "corpus-forbid.json").write_text(json.dumps(sorted(corpus_forbid(layout))) + "\n")
+    print(f"families={len(fam)} out={out}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="bench")
     sub = parser.add_subparsers(required=True)
@@ -75,6 +109,12 @@ def main() -> int:
     qs.add_argument("--inventory", required=True)
     qs.add_argument("--out-dir", default="data")
     qs.set_defaults(func=cmd_queries)
+    fx = sub.add_parser("fixtures", help="write fixture query files and per-family bundles")
+    fx.add_argument("--inventory", required=True)
+    fx.add_argument("--dictionary", default="/usr/share/dict/words")
+    fx.add_argument("--data-dir", default="data")
+    fx.add_argument("--out-dir", default="fixtures/out")
+    fx.set_defaults(func=cmd_fixtures)
     args = parser.parse_args()
     result: int = args.func(args)
     return result

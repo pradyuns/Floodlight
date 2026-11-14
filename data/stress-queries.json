@@ -1,0 +1,624 @@
+[
+ {
+  "acceptable": [
+   {
+    "id": "Zofoge",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:zofoge",
+  "intended": {
+   "id": "Zofoge",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=no,svg=no",
+  "suite": "stress-2x2",
+  "text": "zofoge"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zofoge",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:zofoge",
+  "intended": {
+   "id": "Zofoge",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=no,svg=no",
+  "suite": "stress-2x2",
+  "text": "zofo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Sazuvis",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:sazuvis",
+  "intended": {
+   "id": "Sazuvis",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=no,svg=yes",
+  "suite": "stress-2x2",
+  "text": "sazuvis"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Sazuvis",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:sazuvis",
+  "intended": {
+   "id": "Sazuvis",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=no,svg=yes",
+  "suite": "stress-2x2",
+  "text": "sazu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Givomab",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:givomab",
+  "intended": {
+   "id": "Givomab",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=yes,svg=no",
+  "suite": "stress-2x2",
+  "text": "givomab"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Givomab",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:givomab",
+  "intended": {
+   "id": "Givomab",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=yes,svg=no",
+  "suite": "stress-2x2",
+  "text": "givo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Butufoz",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:butufoz",
+  "intended": {
+   "id": "Butufoz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=yes,svg=yes",
+  "suite": "stress-2x2",
+  "text": "butufoz"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Butufoz",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:butufoz",
+  "intended": {
+   "id": "Butufoz",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=yes,svg=yes",
+  "suite": "stress-2x2",
+  "text": "butu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vopenav",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:vopenav",
+  "intended": {
+   "id": "Vopenav",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=no,svg=no",
+  "suite": "stress-2x2",
+  "text": "vopenav"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Vopenav",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:vopenav",
+  "intended": {
+   "id": "Vopenav",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=no,svg=no",
+  "suite": "stress-2x2",
+  "text": "vope"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tazupur",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:tazupur",
+  "intended": {
+   "id": "Tazupur",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=no,svg=yes",
+  "suite": "stress-2x2",
+  "text": "tazupur"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tazupur",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:tazupur",
+  "intended": {
+   "id": "Tazupur",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=no,svg=yes",
+  "suite": "stress-2x2",
+  "text": "tazu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Rivutug",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:rivutug",
+  "intended": {
+   "id": "Rivutug",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=yes,svg=no",
+  "suite": "stress-2x2",
+  "text": "rivutug"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Rivutug",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:rivutug",
+  "intended": {
+   "id": "Rivutug",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=yes,svg=no",
+  "suite": "stress-2x2",
+  "text": "rivu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Losuviv",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:losuviv",
+  "intended": {
+   "id": "Losuviv",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=yes,svg=yes",
+  "suite": "stress-2x2",
+  "text": "losuviv"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Losuviv",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:losuviv",
+  "intended": {
+   "id": "Losuviv",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=yes,svg=yes",
+  "suite": "stress-2x2",
+  "text": "losu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zakukut",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:zakukut",
+  "intended": {
+   "id": "Zakukut",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=no,svg=no",
+  "suite": "stress-2x2",
+  "text": "zakukut"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Zakukut",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:zakukut",
+  "intended": {
+   "id": "Zakukut",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=no,svg=no",
+  "suite": "stress-2x2",
+  "text": "zaku"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Mamunuk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:mamunuk",
+  "intended": {
+   "id": "Mamunuk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=no,svg=yes",
+  "suite": "stress-2x2",
+  "text": "mamunuk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Mamunuk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:mamunuk",
+  "intended": {
+   "id": "Mamunuk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=no,svg=yes",
+  "suite": "stress-2x2",
+  "text": "mamu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tukunud",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:tukunud",
+  "intended": {
+   "id": "Tukunud",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=yes,svg=no",
+  "suite": "stress-2x2",
+  "text": "tukunud"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tukunud",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:tukunud",
+  "intended": {
+   "id": "Tukunud",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=yes,svg=no",
+  "suite": "stress-2x2",
+  "text": "tuku"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Rudufud",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:full:rudufud",
+  "intended": {
+   "id": "Rudufud",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "lrm=yes,svg=yes",
+  "suite": "stress-2x2",
+  "text": "rudufud"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Rudufud",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-2x2:prefix4:rudufud",
+  "intended": {
+   "id": "Rudufud",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": "lrm=yes,svg=yes",
+  "suite": "stress-2x2",
+  "text": "rudu"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Lozovu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-two-word:full:lozovu-desk",
+  "intended": {
+   "id": "Lozovu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stress-two-word",
+  "text": "lozovu desk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Lozovu Desk",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-two-word:nospace:lozovu-desk",
+  "intended": {
+   "id": "Lozovu Desk",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "stress-two-word",
+  "text": "lozovudesk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Fesufip Box",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-two-word:full:fesufip-box",
+  "intended": {
+   "id": "Fesufip Box",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stress-two-word",
+  "text": "fesufip box"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Fesufip Box",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-two-word:nospace:fesufip-box",
+  "intended": {
+   "id": "Fesufip Box",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "stress-two-word",
+  "text": "fesufipbox"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Gebavub Box",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-two-word:full:gebavub-box",
+  "intended": {
+   "id": "Gebavub Box",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stress-two-word",
+  "text": "gebavub box"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Gebavub Box",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-two-word:nospace:gebavub-box",
+  "intended": {
+   "id": "Gebavub Box",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "nospace",
+  "stratum": null,
+  "suite": "stress-two-word",
+  "text": "gebavubbox"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Projects/ridukit-api/test.py",
+    "kind": "file",
+    "unique_name": true
+   }
+  ],
+  "ambiguous": false,
+  "id": "stress-test-py:full:test.py",
+  "intended": {
+   "id": "/Users/bench/Projects/ridukit-api/test.py",
+   "kind": "file",
+   "unique_name": true
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "decoys=yes",
+  "suite": "stress-test-py",
+  "text": "test.py"
+ }
+]

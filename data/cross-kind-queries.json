@@ -1,0 +1,482 @@
+[
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/jms-166/digit.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:digit",
+  "intended": {
+   "id": "/Users/bench/Documents/jms-166/digit.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Digital Color Meter",
+  "suite": "cross-kind",
+  "text": "digit"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/jms-166/digit.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:digit",
+  "intended": {
+   "id": "/Users/bench/Documents/jms-166/digit.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Digital Color Meter",
+  "suite": "cross-kind",
+  "text": "digit.txt"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/vqr-304/face.pdf",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:face",
+  "intended": {
+   "id": "/Users/bench/Documents/vqr-304/face.pdf",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=FaceTime",
+  "suite": "cross-kind",
+  "text": "face"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/vqr-304/face.pdf",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:face",
+  "intended": {
+   "id": "/Users/bench/Documents/vqr-304/face.pdf",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=FaceTime",
+  "suite": "cross-kind",
+  "text": "face.pdf"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/dfb-758/facet.md",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:facet",
+  "intended": {
+   "id": "/Users/bench/Documents/dfb-758/facet.md",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=FaceTime",
+  "suite": "cross-kind",
+  "text": "facet"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/dfb-758/facet.md",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:facet",
+  "intended": {
+   "id": "/Users/bench/Documents/dfb-758/facet.md",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=FaceTime",
+  "suite": "cross-kind",
+  "text": "facet.md"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/zbc-832/message.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:message",
+  "intended": {
+   "id": "/Users/bench/Documents/zbc-832/message.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Messages",
+  "suite": "cross-kind",
+  "text": "message"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/zbc-832/message.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:message",
+  "intended": {
+   "id": "/Users/bench/Documents/zbc-832/message.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Messages",
+  "suite": "cross-kind",
+  "text": "message.txt"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/nlh-333/reminder.pdf",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:reminder",
+  "intended": {
+   "id": "/Users/bench/Documents/nlh-333/reminder.pdf",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Reminders",
+  "suite": "cross-kind",
+  "text": "reminder"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/nlh-333/reminder.pdf",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:reminder",
+  "intended": {
+   "id": "/Users/bench/Documents/nlh-333/reminder.pdf",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Reminders",
+  "suite": "cross-kind",
+  "text": "reminder.pdf"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/fpp-595/scree.md",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:scree",
+  "intended": {
+   "id": "/Users/bench/Documents/fpp-595/scree.md",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Screen Sharing,Screenshot",
+  "suite": "cross-kind",
+  "text": "scree"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/fpp-595/scree.md",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:scree",
+  "intended": {
+   "id": "/Users/bench/Documents/fpp-595/scree.md",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Screen Sharing,Screenshot",
+  "suite": "cross-kind",
+  "text": "scree.md"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/npk-703/spot.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:spot",
+  "intended": {
+   "id": "/Users/bench/Documents/npk-703/spot.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Spotify",
+  "suite": "cross-kind",
+  "text": "spot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/npk-703/spot.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:spot",
+  "intended": {
+   "id": "/Users/bench/Documents/npk-703/spot.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Spotify",
+  "suite": "cross-kind",
+  "text": "spot.txt"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/xvj-357/stud.pdf",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:stud",
+  "intended": {
+   "id": "/Users/bench/Documents/xvj-357/stud.pdf",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Visual Studio Code",
+  "suite": "cross-kind",
+  "text": "stud"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/xvj-357/stud.pdf",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:stud",
+  "intended": {
+   "id": "/Users/bench/Documents/xvj-357/stud.pdf",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Visual Studio Code",
+  "suite": "cross-kind",
+  "text": "stud.pdf"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/zpg-450/tele.md",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:tele",
+  "intended": {
+   "id": "/Users/bench/Documents/zpg-450/tele.md",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=Telegram",
+  "suite": "cross-kind",
+  "text": "tele"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/zpg-450/tele.md",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:tele",
+  "intended": {
+   "id": "/Users/bench/Documents/zpg-450/tele.md",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=Telegram",
+  "suite": "cross-kind",
+  "text": "tele.md"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/xmt-220/what.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:stem:what",
+  "intended": {
+   "id": "/Users/bench/Documents/xmt-220/what.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "stem",
+  "stratum": "file;competes=WhatsApp",
+  "suite": "cross-kind",
+  "text": "what"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/xmt-220/what.txt",
+    "kind": "file"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:what",
+  "intended": {
+   "id": "/Users/bench/Documents/xmt-220/what.txt",
+   "kind": "file"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "file;competes=WhatsApp",
+  "suite": "cross-kind",
+  "text": "what.txt"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:bluetooth",
+  "intended": {
+   "id": "Bluetooth",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "settings;competes=Bluetooth File Exchange",
+  "suite": "cross-kind",
+  "text": "bluetooth"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Time",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:screen time",
+  "intended": {
+   "id": "Screen Time",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "settings;competes=Screen Sharing,Screenshot",
+  "suite": "cross-kind",
+  "text": "screen time"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Game Center",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:game center",
+  "intended": {
+   "id": "Game Center",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "settings;competes=Games",
+  "suite": "cross-kind",
+  "text": "game center"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Control Center",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "cross-kind:full:control center",
+  "intended": {
+   "id": "Control Center",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": "settings;competes=Mission Control",
+  "suite": "cross-kind",
+  "text": "control center"
+ }
+]

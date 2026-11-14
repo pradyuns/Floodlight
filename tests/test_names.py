@@ -50,3 +50,20 @@ def test_settings_synonyms_map_to_the_same_pane() -> None:
 def test_settings_labels_file_is_valid_json_with_pane_keys() -> None:
     raw = json.loads((REPO / "data" / "settings-labels.json").read_text())
     assert all(isinstance(v, str) and v for v in raw["labels"].values())
+
+
+def test_trie_check_agrees_with_pairwise_distance() -> None:
+    import random
+
+    from bench.names import _far_from_all, _Trie
+
+    rng = random.Random(0)
+    letters = "abcdeklmnorst"
+    words = sorted(
+        {"".join(rng.choice(letters) for _ in range(rng.randint(2, 8))) for _ in range(400)}
+    )
+    trie = _Trie(words)
+    for _ in range(600):
+        cand = "".join(rng.choice(letters) for _ in range(rng.randint(2, 8)))
+        assert trie.far_from_all(cand) == _far_from_all(cand, words), cand
+    assert not trie.far_from_all("acb" if "abc" in words else words[0])
