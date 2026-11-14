@@ -141,12 +141,9 @@ def test_cross_kind_targets_are_exact_matches_with_a_weaker_app(layout) -> None:
         assert all(" ".join(words) != q.text for words in apps), q.text
 
 
-def test_folder_targets_are_unique_names(layout) -> None:  # type: ignore[no-untyped-def]
+def test_folder_targets_have_names_unique_among_fixtures(layout) -> None:  # type: ignore[no-untyped-def]
     names = [q.intended.id.rsplit("/", 1)[-1] for q in layout.families["folders"].queries]
-    assert all(
-        q.intended.unique_name and q.intended.kind == "folder"
-        for q in layout.families["folders"].queries
-    )
+    assert all(q.intended.kind == "folder" for q in layout.families["folders"].queries)
     all_parts = [p for fam in layout.families.values() for f in fam.files for p in f.split("/")]
     for name in set(names):
         assert all_parts.count(name) >= 1
@@ -173,7 +170,17 @@ def test_corpus_forbid_covers_every_targeted_string(layout) -> None:  # type: ig
     forbid = corpus_forbid(layout)
     for fam in layout.families.values():
         for q in fam.queries:
-            if q.rule in ("full", "nospace", "stem"):
+            if q.rule in ("full", "nospace", "punct_removed", "stem"):
                 assert q.text in forbid
         for app in fam.apps:
             assert app.replace(LRM, "").lower() in forbid
+
+
+def test_hyphenless_folder_queries_are_labelled_and_keep_an_exact_name_control(layout) -> None:  # type: ignore[no-untyped-def]
+    queries = layout.families["folders"].queries
+    removed = [q for q in queries if q.rule == "punct_removed"]
+    assert removed and all("-" not in q.text for q in removed)
+    assert not any(q.rule == "nospace" for q in queries)
+    exact = {q.intended: q.text for q in queries if q.rule == "full"}
+    for q in removed:
+        assert exact[q.intended].replace("-", "") == q.text

@@ -603,16 +603,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/ridukit-api/test.py",
-    "kind": "file",
-    "unique_name": true
+    "kind": "file"
    }
   ],
   "ambiguous": false,
   "id": "stress-test-py:full:test.py",
   "intended": {
    "id": "/Users/bench/Projects/ridukit-api/test.py",
-   "kind": "file",
-   "unique_name": true
+   "kind": "file"
   },
   "mode": "completed",
   "provenance": "generated",

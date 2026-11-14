@@ -45,3 +45,9 @@ def test_report_leads_with_verdict_and_always_has_losses_section() -> None:
     assert "better" in first_line.lower()
     assert "## Where Floodlight loses" in text
     assert "None found" in text
+
+
+def test_export_reports_whether_identity_was_unresolved() -> None:
+    sample = _sample()
+    (row,) = export_public([(sample, QUERY, score_sample(sample, QUERY))])
+    assert row["identity_unresolved"] is False

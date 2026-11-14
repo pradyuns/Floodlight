@@ -1,19 +1,21 @@
 """Scores one observed sample against its query (spec §5, §7, §13)."""
 
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import PurePosixPath
 from typing import Literal
 
 from bench.generate import Query, Target
 from bench.model import Kind, Row, Sample, Snapshot, Source
 from bench.normalize import normalize
+from bench.truth import GroundTruth
 
 CHECKPOINTS_MS = (100, 250, 500, 1000)
 WINDOW_MS = 3000
 MAX_SNAPSHOT_AGE_MS = 100
 
-Observed = bool | Literal["unobserved"]
-SafeEnter = Literal["intended", "other", "none", "unreadable", "highlight_mismatch"]
+Observed = bool | Literal["unobserved", "unresolved"]
+SafeEnter = Literal["intended", "other", "none", "unreadable", "highlight_mismatch", "unresolved"]
 
 # Launchers that don't expose their highlighted row (Raycast 2.12) are read with the documented
 # rule "Enter opens the top row", checked against the type named by the Enter button's label.
@@ -37,30 +39,75 @@ class SampleScore:
     t_at1: int | None
     final_observed_rank: int | None
     coverage_miss: bool
+    identity_unresolved: bool  # the first candidate row's file/folder identity can't be pinned down
 
 
-def row_matches(row: Row, target: Target) -> bool:
+class Identity(Enum):
+    MATCH = "match"
+    NO_MATCH = "no_match"
+    UNRESOLVED = "unresolved"
+
+
+def _yes(match: bool) -> Identity:
+    return Identity.MATCH if match else Identity.NO_MATCH
+
+
+def identify(row: Row, target: Target, truth: GroundTruth | None) -> Identity:
+    """Whether a row is the target. A file or folder row that shows its full parent path is
+    identified by it; one showing only the parent folder's name, or no location, is the target
+    only if the ground truth has no other path it could be."""
     if target.kind == "app":
-        return row.kind == Kind.APP and normalize(row.title) == normalize(target.id)
-    if target.kind in ("file", "folder"):
-        expected_kind = Kind.FILE if target.kind == "file" else Kind.FOLDER
-        path = PurePosixPath(target.id)
-        if row.kind != expected_kind or row.title != path.name:
-            return False
-        if row.folder is None:
-            return target.unique_name
-        shown = row.folder.rstrip("/")
-        return shown == str(path.parent) if "/" in shown else shown == path.parent.name
-    return row.kind == Kind.SETTINGS_PANE and row.pane_id == target.id
+        return _yes(row.kind == Kind.APP and normalize(row.title) == normalize(target.id))
+    if target.kind == "settings_pane":
+        return _yes(row.kind == Kind.SETTINGS_PANE and row.pane_id == target.id)
+    expected_kind = Kind.FILE if target.kind == "file" else Kind.FOLDER
+    path = PurePosixPath(target.id)
+    if row.kind != expected_kind or row.title != path.name:
+        return Identity.NO_MATCH
+    shown = None if row.folder is None else row.folder.rstrip("/")
+    if shown is not None and "/" in shown:
+        return _yes(shown == str(path.parent))
+    if shown is not None and shown != path.parent.name:
+        return Identity.NO_MATCH
+    if truth is None:
+        return Identity.UNRESOLVED
+    candidates = truth.candidates(expected_kind, path.name)
+    if target.id not in candidates:
+        raise ValueError(f"target {target.id} not in ground truth")
+    if shown is not None:
+        candidates = frozenset(p for p in candidates if PurePosixPath(p).parent.name == shown)
+    return Identity.MATCH if candidates == {target.id} else Identity.UNRESOLVED
+
+
+def row_matches(row: Row, target: Target, truth: GroundTruth | None = None) -> bool:
+    return identify(row, target, truth) is Identity.MATCH
+
+
+def _identity(row: Row, targets: frozenset[Target], truth: GroundTruth | None) -> Identity:
+    found = {identify(row, t, truth) for t in targets}
+    if Identity.MATCH in found:
+        return Identity.MATCH
+    return Identity.UNRESOLVED if Identity.UNRESOLVED in found else Identity.NO_MATCH
+
+
+def _first_candidate(
+    rows: list[Row], targets: frozenset[Target], truth: GroundTruth | None
+) -> Identity | None:
+    """Identity of the first row that is, or may be, a target."""
+    for row in rows:
+        found = _identity(row, targets, truth)
+        if found is not Identity.NO_MATCH:
+            return found
+    return None
 
 
 def _view(rows: tuple[Row, ...], local_only: bool) -> list[Row]:
     return [r for r in rows if r.source == Source.LOCAL] if local_only else list(rows)
 
 
-def _rank(rows: list[Row], targets: frozenset[Target]) -> int | None:
+def _rank(rows: list[Row], targets: frozenset[Target], truth: GroundTruth | None) -> int | None:
     for i, row in enumerate(rows, start=1):
-        if any(row_matches(row, t) for t in targets):
+        if any(row_matches(row, t, truth) for t in targets):
             return i
     return None
 
@@ -73,10 +120,19 @@ def _snapshot_at(snapshots: list[Snapshot], t_ms: int) -> Snapshot | None:
     return known[-1]
 
 
-def _safe_enter(view: list[Row], snap: Snapshot | None, targets: frozenset[Target]) -> SafeEnter:
+def _enter_outcome(row: Row, targets: frozenset[Target], truth: GroundTruth | None) -> SafeEnter:
+    found = _identity(row, targets, truth)
+    if found is Identity.UNRESOLVED:
+        return "unresolved"
+    return "intended" if found is Identity.MATCH else "other"
+
+
+def _safe_enter(
+    view: list[Row], snap: Snapshot | None, targets: frozenset[Target], truth: GroundTruth | None
+) -> SafeEnter:
     action = snap.primary_action if snap else None
     if action is None or any(r.selected is not None for r in view):
-        return _safe_enter_from_selection(view, targets)
+        return _safe_enter_from_selection(view, targets, truth)
     screen = snap.rows if snap else ()
     if not screen:
         return "none"
@@ -85,10 +141,12 @@ def _safe_enter(view: list[Row], snap: Snapshot | None, targets: frozenset[Targe
         return "unreadable"
     if screen[0].kind not in kinds:
         return "highlight_mismatch"
-    return "intended" if any(row_matches(screen[0], t) for t in targets) else "other"
+    return _enter_outcome(screen[0], targets, truth)
 
 
-def _safe_enter_from_selection(rows: list[Row], targets: frozenset[Target]) -> SafeEnter:
+def _safe_enter_from_selection(
+    rows: list[Row], targets: frozenset[Target], truth: GroundTruth | None
+) -> SafeEnter:
     if not rows:
         return "none"
     if all(r.selected is None for r in rows):
@@ -96,11 +154,15 @@ def _safe_enter_from_selection(rows: list[Row], targets: frozenset[Target]) -> S
     selected = [r for r in rows if r.selected]
     if not selected:
         return "none"
-    return "intended" if any(row_matches(selected[0], t) for t in targets) else "other"
+    return _enter_outcome(selected[0], targets, truth)
 
 
 def score_sample(
-    sample: Sample, query: Query, local_only: bool = False, window_ms: int = WINDOW_MS
+    sample: Sample,
+    query: Query,
+    local_only: bool = False,
+    window_ms: int = WINDOW_MS,
+    truth: GroundTruth | None = None,
 ) -> SampleScore:
     end = sample.final_key_post_ms + window_ms
     snaps = sorted(
@@ -110,31 +172,38 @@ def score_sample(
     intended = frozenset({query.intended}) if query.intended else query.acceptable
     views = [(s.read_end_ms - sample.final_key_post_ms, _view(s.rows, local_only)) for s in snaps]
     final_rows = views[-1][1] if views else []
-    final_rank = _rank(final_rows, intended)
+    final_rank = _rank(final_rows, intended, truth)
+    unresolved = _first_candidate(final_rows, intended, truth) is Identity.UNRESOLVED
 
     wrong_enter: dict[int, Observed] = {}
     for cp in CHECKPOINTS_MS:
         snap = _snapshot_at(snaps, sample.final_key_post_ms + cp)
+        view = _view(snap.rows, local_only) if snap else []
         if snap is None:
             wrong_enter[cp] = "unobserved"
+        elif view and _identity(view[0], intended, truth) is Identity.UNRESOLVED:
+            wrong_enter[cp] = "unresolved"
         else:
-            wrong_enter[cp] = _rank(_view(snap.rows, local_only), intended) != 1
+            wrong_enter[cp] = _rank(view, intended, truth) != 1
 
-    t_first_appear = next((t for t, rows in views if _rank(rows, intended) is not None), None)
+    t_first_appear = next(
+        (t for t, rows in views if _rank(rows, intended, truth) is not None), None
+    )
     t_at1: int | None = None
     for t, rows in reversed(views):
-        if _rank(rows, intended) != 1:
+        if _rank(rows, intended, truth) != 1:
             break
         t_at1 = t
 
     return SampleScore(
-        intended_at1=None if query.intended is None else final_rank == 1,
-        acceptable_at1=_rank(final_rows[:1], query.acceptable) == 1,
+        intended_at1=None if query.intended is None or unresolved else final_rank == 1,
+        acceptable_at1=_rank(final_rows[:1], query.acceptable, truth) == 1,
         wrong_enter=wrong_enter,
-        safe_enter=_safe_enter(final_rows, snaps[-1] if snaps else None, intended),
+        safe_enter=_safe_enter(final_rows, snaps[-1] if snaps else None, intended, truth),
         rr10=1.0 / final_rank if final_rank is not None and final_rank <= 10 else 0.0,
         t_first_appear=t_first_appear,
         t_at1=t_at1,
         final_observed_rank=final_rank,
-        coverage_miss=t_first_appear is None,
+        coverage_miss=not any(_first_candidate(rows, intended, truth) for _, rows in views),
+        identity_unresolved=unresolved,
     )

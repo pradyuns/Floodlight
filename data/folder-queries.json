@@ -3,16 +3,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/szx-621",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:szx-621",
   "intended": {
    "id": "/Users/bench/Documents/szx-621",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -25,20 +23,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/szx-621",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:szx-621",
+  "id": "folders:punct_removed:szx-621",
   "intended": {
    "id": "/Users/bench/Documents/szx-621",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "szx621"
@@ -47,16 +43,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/rbk-741",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:rbk-741",
   "intended": {
    "id": "/Users/bench/Documents/rbk-741",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -69,20 +63,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/rbk-741",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:rbk-741",
+  "id": "folders:punct_removed:rbk-741",
   "intended": {
    "id": "/Users/bench/Documents/rbk-741",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "rbk741"
@@ -91,16 +83,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/rrp-441",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:rrp-441",
   "intended": {
    "id": "/Users/bench/Documents/rrp-441",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -113,20 +103,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/rrp-441",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:rrp-441",
+  "id": "folders:punct_removed:rrp-441",
   "intended": {
    "id": "/Users/bench/Documents/rrp-441",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "rrp441"
@@ -135,16 +123,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/lrx-267",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:lrx-267",
   "intended": {
    "id": "/Users/bench/Documents/lrx-267",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -157,20 +143,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/lrx-267",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:lrx-267",
+  "id": "folders:punct_removed:lrx-267",
   "intended": {
    "id": "/Users/bench/Documents/lrx-267",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "lrx267"
@@ -179,16 +163,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/mlr-600",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:mlr-600",
   "intended": {
    "id": "/Users/bench/Documents/mlr-600",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -201,20 +183,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/mlr-600",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:mlr-600",
+  "id": "folders:punct_removed:mlr-600",
   "intended": {
    "id": "/Users/bench/Documents/mlr-600",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "mlr600"
@@ -223,16 +203,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/sbp-607",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:sbp-607",
   "intended": {
    "id": "/Users/bench/Documents/sbp-607",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -245,20 +223,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/sbp-607",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:sbp-607",
+  "id": "folders:punct_removed:sbp-607",
   "intended": {
    "id": "/Users/bench/Documents/sbp-607",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "sbp607"
@@ -267,16 +243,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/gzq-266",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:gzq-266",
   "intended": {
    "id": "/Users/bench/Documents/gzq-266",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -289,20 +263,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/gzq-266",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:gzq-266",
+  "id": "folders:punct_removed:gzq-266",
   "intended": {
    "id": "/Users/bench/Documents/gzq-266",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "gzq266"
@@ -311,16 +283,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/qgf-601",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:qgf-601",
   "intended": {
    "id": "/Users/bench/Documents/qgf-601",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -333,20 +303,18 @@
   "acceptable": [
    {
     "id": "/Users/bench/Documents/qgf-601",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
-  "id": "folders:nospace:qgf-601",
+  "id": "folders:punct_removed:qgf-601",
   "intended": {
    "id": "/Users/bench/Documents/qgf-601",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
-  "rule": "nospace",
+  "rule": "punct_removed",
   "stratum": "planted",
   "suite": "folders",
   "text": "qgf601"
@@ -355,16 +323,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/fisabub",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:fisabub",
   "intended": {
    "id": "/Users/bench/Projects/fisabub",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -377,16 +343,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/fisabub/src/fevomon",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:fevomon",
   "intended": {
    "id": "/Users/bench/Projects/fisabub/src/fevomon",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -399,16 +363,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/fozibu",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:fozibu",
   "intended": {
    "id": "/Users/bench/Projects/fozibu",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -421,16 +383,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/fozibu/src/vibadud",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:vibadud",
   "intended": {
    "id": "/Users/bench/Projects/fozibu/src/vibadud",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -443,16 +403,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/gagevig",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:gagevig",
   "intended": {
    "id": "/Users/bench/Projects/gagevig",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",
@@ -465,16 +423,14 @@
   "acceptable": [
    {
     "id": "/Users/bench/Projects/gagevig/src/bavobez",
-    "kind": "folder",
-    "unique_name": true
+    "kind": "folder"
    }
   ],
   "ambiguous": false,
   "id": "folders:full:bavobez",
   "intended": {
    "id": "/Users/bench/Projects/gagevig/src/bavobez",
-   "kind": "folder",
-   "unique_name": true
+   "kind": "folder"
   },
   "mode": "completed",
   "provenance": "generated",

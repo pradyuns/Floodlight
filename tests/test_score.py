@@ -1,6 +1,12 @@
+import subprocess
+from pathlib import Path
+
+import pytest
+
 from bench.generate import Query, Target
 from bench.model import KeyPost, Kind, Row, Sample, Snapshot, Source
-from bench.score import row_matches, score_sample
+from bench.score import Identity, identify, row_matches, score_sample
+from bench.truth import GroundTruth, ground_truth_command
 
 CALC = Target("app", "Calculator")
 
@@ -65,34 +71,108 @@ def test_web_row_is_skipped_in_local_only_view() -> None:
     assert score_sample(_sample(snaps), _query(), local_only=True).final_observed_rank == 1
 
 
-def test_file_row_without_folder_shown_is_not_a_match() -> None:
-    target = Target("file", "/Users/bench/Projects/test.py")
-    assert not row_matches(_row("test.py", Kind.FILE, folder=None), target)
-    assert row_matches(_row("test.py", Kind.FILE, folder="/Users/bench/Projects"), target)
+DOCS_A = "/Users/bench/Projects/alpha/docs/guide.md"
+DOCS_B = "/Users/bench/Projects/beta/docs/guide.md"
+ZK = "/Users/bench/Documents/zk-114/test.py"
 
 
-def test_file_row_showing_only_the_parent_folder_name_matches() -> None:
-    target = Target("file", "/Users/bench/Documents/zk-114/test.py")
-    assert row_matches(_row("test.py", Kind.FILE, folder="zk-114"), target)
-    assert not row_matches(_row("test.py", Kind.FILE, folder="Documents"), target)
-    assert not row_matches(_row("test.py", Kind.FILE, folder="/elsewhere/zk-114"), target)
+def _truth(*entries: tuple[str, str]) -> GroundTruth:
+    return GroundTruth.from_find_output("".join(f"{k} {p}\n" for k, p in entries))
 
 
-def test_row_without_location_matches_only_a_name_unique_on_disk() -> None:
-    unique = Target("folder", "/Users/bench/Documents/abc-101", unique_name=True)
-    shared = Target("folder", "/Users/bench/Documents/abc-101")
+def test_full_parent_path_shown_identifies_the_file_without_ground_truth() -> None:
+    target = Target("file", ZK)
+    assert (
+        identify(_row("test.py", Kind.FILE, folder="/Users/bench/Documents/zk-114"), target, None)
+        is Identity.MATCH
+    )
+    assert (
+        identify(_row("test.py", Kind.FILE, folder="/elsewhere/zk-114"), target, None)
+        is Identity.NO_MATCH
+    )
+
+
+def test_parent_name_shown_matches_when_only_one_such_file_exists() -> None:
+    truth = _truth(("f", ZK), ("f", "/Users/bench/Downloads/test.py"))
+    target = Target("file", ZK)
+    assert row_matches(_row("test.py", Kind.FILE, folder="zk-114"), target, truth)
+    assert (
+        identify(_row("test.py", Kind.FILE, folder="Documents"), target, truth) is Identity.NO_MATCH
+    )
+
+
+def test_same_name_under_two_parents_with_the_same_folder_name_is_unresolved() -> None:
+    truth = _truth(("f", DOCS_A), ("f", DOCS_B))
+    row = _row("guide.md", Kind.FILE, folder="docs")
+    assert identify(row, Target("file", DOCS_A), truth) is Identity.UNRESOLVED
+    assert not row_matches(row, Target("file", DOCS_A), truth)
+
+
+def test_row_without_location_matches_only_a_name_unique_in_ground_truth() -> None:
+    target = Target("folder", "/Users/bench/Documents/abc-101")
     row = _row("abc-101", Kind.FOLDER, folder=None)
-    assert row_matches(row, unique)
-    assert not row_matches(row, shared)
-    assert not row_matches(_row("abc-102", Kind.FOLDER, folder=None), unique)
+    assert (
+        identify(row, target, _truth(("d", target.id), ("f", "/Users/bench/abc-101")))
+        is Identity.MATCH
+    )
+    shared = _truth(("d", target.id), ("d", "/Users/bench/Downloads/abc-101"))
+    assert identify(row, target, shared) is Identity.UNRESOLVED
+    assert identify(_row("abc-102", Kind.FOLDER, folder=None), target, shared) is Identity.NO_MATCH
 
 
-def test_unique_name_flag_round_trips_through_json() -> None:
-    from bench.generate import queries_from_json, queries_to_json
+def test_partial_location_without_ground_truth_is_unresolved() -> None:
+    target = Target("file", ZK)
+    assert (
+        identify(_row("test.py", Kind.FILE, folder="zk-114"), target, None) is Identity.UNRESOLVED
+    )
+    assert identify(_row("test.py", Kind.FILE, folder=None), target, None) is Identity.UNRESOLVED
 
-    target = Target("folder", "/Users/bench/Documents/abc-101", unique_name=True)
-    q = Query("f1", "abc-101", "full", "completed", target, frozenset({target}), False, "folders")
-    assert queries_from_json(queries_to_json([q])) == [q]
+
+def test_ground_truth_missing_the_target_fails_loudly() -> None:
+    with pytest.raises(ValueError, match="not in ground truth"):
+        identify(
+            _row("test.py", Kind.FILE, folder="zk-114"), Target("file", ZK), _truth(("f", DOCS_A))
+        )
+
+
+def test_unresolved_top_row_is_neither_a_hit_nor_a_wrong_enter() -> None:
+    target = Target("file", DOCS_A)
+    q = Query("q1", "guide.md", "full", "completed", target, frozenset({target}), False, "files")
+    snaps = _every_50ms(4000, {0: [_row("guide.md", Kind.FILE, folder="docs", selected=True)]})
+    score = score_sample(_sample(snaps), q, truth=_truth(("f", DOCS_A), ("f", DOCS_B)))
+    assert score.identity_unresolved is True
+    assert score.intended_at1 is None
+    assert score.wrong_enter[250] == "unresolved"
+    assert score.safe_enter == "unresolved"
+    assert score.coverage_miss is False
+
+
+def test_ground_truth_command_skips_hidden_and_library_folders(tmp_path: Path) -> None:
+    for rel in (
+        "Documents/x/guide.md",
+        ".hidden/guide.md",
+        "Library/guide.md",
+        "docs/guide.md/keep",
+    ):
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / rel).write_text("x")
+    out = subprocess.run(
+        [
+            "sh",
+            "-c",
+            ground_truth_command(
+                ["guide.md"], roots=(str(tmp_path),), private=(f"{tmp_path}/Library",)
+            ),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    ).stdout
+    truth = GroundTruth.from_find_output(out)
+    assert truth.candidates(Kind.FILE, "guide.md") == frozenset(
+        {f"{tmp_path}/Documents/x/guide.md"}
+    )
+    assert truth.candidates(Kind.FOLDER, "guide.md") == frozenset({f"{tmp_path}/docs/guide.md"})
 
 
 def test_settings_rows_match_by_pane_id_not_title() -> None:

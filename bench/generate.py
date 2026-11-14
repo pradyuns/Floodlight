@@ -10,7 +10,16 @@ from bench.inventory import App
 from bench.normalize import edit_distance, normalize
 
 Rule = Literal[
-    "full", "nospace", "prefix1", "prefix2", "prefix3", "prefix4", "initials", "typo", "stem"
+    "full",
+    "nospace",
+    "punct_removed",
+    "prefix1",
+    "prefix2",
+    "prefix3",
+    "prefix4",
+    "initials",
+    "typo",
+    "stem",
 ]
 Mode = Literal["completed", "continuous", "stepped"]
 TargetKind = Literal["app", "file", "folder", "settings_pane"]
@@ -35,7 +44,6 @@ QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"]
 class Target:
     kind: TargetKind
     id: str
-    unique_name: bool = False  # the name occurs once on the guest disk (checked when planted)
 
 
 @dataclass(frozen=True)
@@ -238,13 +246,8 @@ def generate_stepped(
     ]
 
 
-def _target_json(t: Target | None) -> dict[str, str | bool] | None:
-    if t is None:
-        return None
-    out: dict[str, str | bool] = {"kind": t.kind, "id": t.id}
-    if t.unique_name:
-        out["unique_name"] = True
-    return out
+def _target_json(t: Target | None) -> dict[str, str] | None:
+    return None if t is None else {"kind": t.kind, "id": t.id}
 
 
 def queries_to_json(queries: list[Query]) -> str:

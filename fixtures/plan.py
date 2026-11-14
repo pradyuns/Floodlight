@@ -92,8 +92,8 @@ def _code(rng: random.Random, taken: set[str]) -> str:
             return name
 
 
-def _file_target(rel: str, unique: bool = False) -> Target:
-    return Target("file", f"{HOME}/{rel}", unique_name=unique)
+def _file_target(rel: str) -> Target:
+    return Target("file", f"{HOME}/{rel}")
 
 
 def _single(qid: str, text: str, rule: str, target: Target, suite: str, stratum: str) -> Query:
@@ -133,7 +133,7 @@ def _stress_test_py(rng: random.Random, words: list[str], taken: set[str]) -> Fa
         "stress-test-py:full:test.py",
         "test.py",
         "full",
-        _file_target(target, True),
+        _file_target(target),
         "stress-test-py",
         "decoys=yes",
     )
@@ -158,12 +158,19 @@ def _folders(rng: random.Random, words: list[str], taken: set[str]) -> Family:
     queries: list[Query] = []
     for folder in targets:
         name = PurePosixPath(folder).name
-        target = Target("folder", f"{HOME}/{folder}", unique_name=True)
+        target = Target("folder", f"{HOME}/{folder}")
         queries.append(_single(f"folders:full:{name}", name, "full", target, "folders", "planted"))
         if "-" in name:
-            nospace = name.replace("-", "")
+            bare = name.replace("-", "")
             queries.append(
-                _single(f"folders:nospace:{name}", nospace, "nospace", target, "folders", "planted")
+                _single(
+                    f"folders:punct_removed:{name}",
+                    bare,
+                    "punct_removed",
+                    target,
+                    "folders",
+                    "planted",
+                )
             )
     return Family((), tuple(files), (), tuple(queries))
 
@@ -264,7 +271,7 @@ def corpus_forbid(layout: Layout) -> set[str]:
         for path in fam.decoys:
             out.add(PurePosixPath(path).name.lower())
         for q in fam.queries:
-            if q.rule in ("full", "nospace", "stem"):
+            if q.rule in ("full", "nospace", "punct_removed", "stem"):
                 out.add(q.text)
             if q.intended is not None and q.intended.kind in ("file", "folder"):
                 out.add(PurePosixPath(q.intended.id).name.lower())
