@@ -9,6 +9,7 @@ Families, each planted in its own clone of the base snapshot:
 - cross-kind: an exact file name or settings label competing with a weaker app match.
 """
 
+import json
 import random
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
@@ -23,38 +24,11 @@ HOME = "/Users/bench"
 LRM = "‎"
 CONSONANTS = "bcdfghjklmnpqrstvwxz"
 SVG_DECOYS = ("{}.svg", "{}-icon.svg", "{}-logo.svg", "{}-white.svg", "{}_badge.svg")
-# Top-level System Settings panes both tools listed by title in the macOS 26.4.1 VM. Left out:
-# Control Center (under Menu Bar in macOS 26); Battery, Trackpad, Touch ID & Password, Wi-Fi (need
-# hardware the VM lacks); General (not confirmed). Only panes that compete with a weaker app match
-# are used.
-PANE_TITLES = [
-    *[
-        "Accessibility",
-        "Appearance",
-        "Spotlight",
-        "Wallpaper",
-        "Notifications",
-        "Sound",
-        "Focus",
-    ],
-    *[
-        "Keyboard",
-        "Mouse",
-        "Displays",
-        "Bluetooth",
-        "Network",
-        "Passwords",
-    ],
-    "Screen Time",
-    "Game Center",
-    "Lock Screen",
-    "Time Machine",
-    "Internet Accounts",
-    "Printers & Scanners",
-    "Privacy & Security",
-    "Desktop & Dock",
-    "Users & Groups",
-]
+# Top-level panes System Settings itself shows in the bench VM (see the file's note); only panes
+# that compete with a weaker app match are used.
+PANE_TITLES: list[str] = json.loads(
+    (Path(__file__).resolve().parent.parent / "data/settings-panes-macos-26.4.1.json").read_text()
+)["panes"]
 
 
 @dataclass(frozen=True)

@@ -1,5 +1,5 @@
 {
-  "note": "Typed label -> settings pane key. Pane keys map to verified pane identities in the feasibility gate (Task 5); unverified until then.",
+  "note": "Typed label -> settings pane key. verified_id is the pane's title as System Settings shows it in the bench VM (data/settings-panes-macos-26.4.1.json); null means the pane isn't shown there (reason in that file's not_shown).",
   "labels": {
     "wifi": "wifi",
     "wi-fi": "wifi",
@@ -9,9 +9,9 @@
     "battery": "battery"
   },
   "panes": {
-    "wifi": {"title": "Wi-Fi", "verified_id": null},
-    "bluetooth": {"title": "Bluetooth", "verified_id": null},
-    "displays": {"title": "Displays", "verified_id": null},
+    "wifi": {"title": "Wi-Fi", "verified_id": "Wi‑Fi"},
+    "bluetooth": {"title": "Bluetooth", "verified_id": "Bluetooth"},
+    "displays": {"title": "Displays", "verified_id": "Displays"},
     "battery": {"title": "Battery", "verified_id": null}
   }
 }

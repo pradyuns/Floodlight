@@ -184,3 +184,14 @@ def test_hyphenless_folder_queries_are_labelled_and_keep_an_exact_name_control(l
     exact = {q.intended: q.text for q in queries if q.rule == "full"}
     for q in removed:
         assert exact[q.intended].replace("-", "") == q.text
+
+
+def test_settings_targets_are_panes_system_settings_shows() -> None:
+    import json
+
+    catalog = json.loads((REPO / "data/settings-panes-macos-26.4.1.json").read_text())
+    from fixtures.plan import PANE_TITLES
+
+    assert catalog["panes"] == PANE_TITLES
+    assert "Control Center" not in PANE_TITLES and "General" in PANE_TITLES
+    assert all(reason for reason in catalog["not_shown"].values())

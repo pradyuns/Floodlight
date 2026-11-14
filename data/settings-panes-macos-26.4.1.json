@@ -1,0 +1,49 @@
+{
+ "note": "Top-level panes System Settings shows in the macOS 26.4.1 bench VM, in sidebar order, read with `probe settings-sidebar` (three identical reads, 2026-11-14). The pane catalog is System Settings' own Resources/Sidebar.plist; not_shown lists its panes absent from this VM's sidebar, with the reason. Wi‑Fi's title uses U+2011 (non-breaking hyphen). Menu Bar is the pane formerly named Control Center.",
+ "panes": [
+  "Wi‑Fi",
+  "Bluetooth",
+  "Network",
+  "Energy",
+  "General",
+  "Accessibility",
+  "Appearance",
+  "Desktop & Dock",
+  "Displays",
+  "Menu Bar",
+  "Siri",
+  "Spotlight",
+  "Wallpaper",
+  "Notifications",
+  "Sound",
+  "Focus",
+  "Screen Time",
+  "Lock Screen",
+  "Privacy & Security",
+  "Login Password",
+  "Users & Groups",
+  "Internet Accounts",
+  "Game Center",
+  "iCloud",
+  "Wallet & Apple Pay",
+  "Keyboard",
+  "Mouse",
+  "Printers & Scanners"
+ ],
+ "excluded_rows": {
+  "Sign in, with your Apple Account": "account sign-in row, not a settings pane"
+ },
+ "not_shown": {
+  "Battery": "VM has no battery (system_profiler SPPowerDataType reports none); the sidebar shows Energy instead",
+  "Touch ID & Password": "VM has no Touch ID sensor (bioutil reports no Touch ID configuration); the sidebar shows Login Password instead",
+  "Trackpad": "VM has no trackpad (ioreg and system_profiler report none)",
+  "Passwords": "not in this VM's sidebar",
+  "Game Controllers": "not in this VM's sidebar",
+  "CDs & DVDs": "not in this VM's sidebar",
+  "Headphones": "not in this VM's sidebar",
+  "Family": "not in this VM's sidebar (no Apple Account signed in)",
+  "Classroom": "not in this VM's sidebar",
+  "VPN": "not in this VM's sidebar",
+  "FollowUps": "not in this VM's sidebar"
+ }
+}

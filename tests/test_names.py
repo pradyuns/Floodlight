@@ -67,3 +67,13 @@ def test_trie_check_agrees_with_pairwise_distance() -> None:
         cand = "".join(rng.choice(letters) for _ in range(rng.randint(2, 8)))
         assert trie.far_from_all(cand) == _far_from_all(cand, words), cand
     assert not trie.far_from_all("acb" if "abc" in words else words[0])
+
+
+def test_settings_label_panes_are_shown_or_marked_not_shown_with_a_reason() -> None:
+    raw = json.loads((REPO / "data" / "settings-labels.json").read_text())
+    catalog = json.loads((REPO / "data" / "settings-panes-macos-26.4.1.json").read_text())
+    for key, pane in raw["panes"].items():
+        if pane["verified_id"] is None:
+            assert catalog["not_shown"][pane["title"]], key
+        else:
+            assert pane["verified_id"] in catalog["panes"], key
