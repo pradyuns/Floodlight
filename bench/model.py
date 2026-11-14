@@ -32,10 +32,22 @@ class Row:
 
 @dataclass(frozen=True)
 class Snapshot:
-    t_ms: int  # milliseconds since the first key was posted
+    """Times are milliseconds since the first key was due."""
+
+    read_start_ms: int  # the screen content is no older than this
+    read_end_ms: int  # the rows were not known before this
     rows: tuple[Row, ...]
     field_text: str
     primary_action: str | None = None  # the launcher's own Enter label, e.g. Raycast's action bar
+    field_mismatch: bool = (
+        False  # field showed text other than what was typed; evidence, not scored
+    )
+
+
+@dataclass(frozen=True)
+class KeyPost:
+    planned_ms: int
+    actual_ms: int
 
 
 @dataclass(frozen=True)
@@ -45,8 +57,13 @@ class Sample:
     env: Literal["sparse", "busy"]
     run: int
     condition: Literal["ui_restart", "warm"]
-    final_key_post_ms: int
+    final_key_post_ms: int  # when the final key was actually posted, not when it was due
     field_shows_ms: int | None
     snapshots: list[Snapshot]
     error: str | None
     attempt: int
+    key_posts: tuple[KeyPost, ...]
+
+    @property
+    def max_key_lateness_ms(self) -> int:
+        return max((k.actual_ms - k.planned_ms for k in self.key_posts), default=0)

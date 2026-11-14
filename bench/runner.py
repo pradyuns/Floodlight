@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from bench.generate import Query
-from bench.model import Kind, Row, Sample, Snapshot, Source
+from bench.model import KeyPost, Kind, Row, Sample, Snapshot, Source
 from bench.schedule import Slot
 
 GUEST_SHARE = "/Volumes/My Shared Files/run"
@@ -58,30 +58,50 @@ def _row(raw: dict[str, Any]) -> Row:
     )
 
 
+def _sample(raw: dict[str, Any], env: Literal["sparse", "busy"]) -> Sample:
+    sample = Sample(
+        query_id=raw["query_id"],
+        tool=raw["tool"],
+        env=env,
+        run=raw["run"],
+        condition=raw["condition"],
+        final_key_post_ms=raw["final_key_post_ms"],
+        field_shows_ms=raw.get("field_shows_ms"),
+        snapshots=[
+            Snapshot(
+                s["read_start_ms"],
+                s["read_end_ms"],
+                tuple(_row(r) for r in s["rows"]),
+                s["field_text"],
+                s.get("primary_action"),
+                s["field_mismatch"],
+            )
+            for s in raw["snapshots"]
+        ],
+        error=raw.get("error"),
+        attempt=raw.get("attempt", 0),
+        key_posts=tuple(KeyPost(k["planned_ms"], k["actual_ms"]) for k in raw["key_posts"]),
+    )
+    final_key = sample.key_posts[-1].actual_ms if sample.key_posts else 0
+    if sample.final_key_post_ms != final_key:
+        raise ValueError(f"final_key_post_ms disagrees with key_posts ({final_key})")
+    if raw["max_key_lateness_ms"] != sample.max_key_lateness_ms:
+        raise ValueError(
+            f"max_key_lateness_ms disagrees with key_posts ({sample.max_key_lateness_ms})"
+        )
+    return sample
+
+
 def parse_results(path: Path, env: Literal["sparse", "busy"]) -> list[Sample]:
     samples: list[Sample] = []
-    for line in path.read_text().splitlines():
-        raw = json.loads(line)
-        samples.append(
-            Sample(
-                query_id=raw["query_id"],
-                tool=raw["tool"],
-                env=env,
-                run=raw["run"],
-                condition=raw["condition"],
-                final_key_post_ms=raw["final_key_post_ms"],
-                field_shows_ms=raw.get("field_shows_ms"),
-                snapshots=[
-                    Snapshot(
-                        s["t_ms"],
-                        tuple(_row(r) for r in s["rows"]),
-                        s["field_text"],
-                        s.get("primary_action"),
-                    )
-                    for s in raw["snapshots"]
-                ],
-                error=raw.get("error"),
-                attempt=raw.get("attempt", 0),
-            )
-        )
+    for number, line in enumerate(path.read_text().splitlines(), start=1):
+        try:
+            samples.append(_sample(json.loads(line), env))
+        except KeyError as e:
+            raise ValueError(
+                f"{path}:{number}: probe output has no {e} field; it predates read and key"
+                " timing and cannot be scored, so re-run it with the current probe"
+            ) from e
+        except ValueError as e:
+            raise ValueError(f"{path}:{number}: {e}") from e
     return samples

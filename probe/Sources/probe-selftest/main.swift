@@ -1,5 +1,6 @@
 import Foundation
 import ProbeCore
+import os
 
 // Swift Testing / XCTest don't run under Command Line Tools 26.6, so checks live here.
 nonisolated(unsafe) var failures = 0
@@ -13,10 +14,23 @@ func check(_ condition: Bool, _ name: String) {
     }
 }
 
+/// Virtual time. Timers fire as time passes them, wherever the time is spent: in the sampler's
+/// sleep or inside a slow launcher read.
 final class FakeClock: ProbeClock {
-    var now = 0
+    private(set) var now = 0
+    private var timers: [(at: Int, fire: () -> Void)] = []
     func nowMs() -> Int { now }
-    func sleep(untilMs t: Int) { if t > now { now = t } }
+    func sleep(untilMs t: Int) {
+        while let i = timers.indices.filter({ timers[$0].at <= max(t, now) })
+            .min(by: { timers[$0].at < timers[$1].at }) {
+            let timer = timers.remove(at: i)
+            now = max(now, timer.at)
+            timer.fire()
+        }
+        now = max(now, t)
+    }
+    func spend(_ ms: Int) { sleep(untilMs: now + ms) }
+    func schedule(at: Int, _ fire: @escaping () -> Void) { timers.append((at, fire)) }
 }
 
 final class FakeKeys: KeyPoster {
@@ -33,6 +47,29 @@ final class FakeKeys: KeyPoster {
     }
 }
 
+/// Posts each key when virtual time reaches its due time plus `lateByMs[index]`.
+final class FakePacer: KeyPacer {
+    let clock: FakeClock
+    let keys: FakeKeys
+    var lateByMs: [Int: Int] = [:]
+    var log: [KeyPostDTO] = []
+    init(clock: FakeClock, keys: FakeKeys) {
+        self.clock = clock
+        self.keys = keys
+    }
+    func begin(_ characters: [String], startMs: Int, intervalMs: Int) {
+        for (i, character) in characters.enumerated() {
+            let planned = i * intervalMs
+            clock.schedule(at: startMs + planned + (lateByMs[i] ?? 0)) { [self] in
+                let actual = clock.now - startMs
+                keys.type(character)
+                log.append(KeyPostDTO(plannedMs: planned, actualMs: actual))
+            }
+        }
+    }
+    func posted() -> [KeyPostDTO] { log }
+}
+
 /// Launcher whose field echoes typed text after `echoDelayMs`, showing `rows` once the field
 /// holds the whole query.
 final class FakeLauncher: LauncherAdapter {
@@ -43,6 +80,8 @@ final class FakeLauncher: LauncherAdapter {
     let echoDelayMs: Int
     let rowsForQuery: [RowDTO]
     var stalePreviousRows: [RowDTO] = []
+    var dropFirstKey = false
+    var readRowsTakesMs = 0
 
     init(clock: FakeClock, echoDelayMs: Int = 0, rows: [RowDTO]) {
         self.clock = clock
@@ -58,11 +97,12 @@ final class FakeLauncher: LauncherAdapter {
     /// query, the previous query's rows are still on screen.
     func readRows() throws -> [RowDTO] {
         let f = fieldText() ?? ""
+        clock.spend(readRowsTakesMs)
         return !f.isEmpty && typed.hasPrefix(f) ? rowsForQuery : stalePreviousRows
     }
     func keyTyped(_ c: String) {
         typed += c
-        echoedAt[clock.now] = typed
+        echoedAt[clock.now] = dropFirstKey ? String(typed.dropFirst()) : typed
     }
 }
 
@@ -78,9 +118,30 @@ final class LabelledLauncher: LauncherAdapter {
     func primaryAction() -> String? { "Open Application" }
 }
 
-func makeSampler(_ launcher: FakeLauncher, _ clock: FakeClock) -> (Sampler, FakeKeys) {
+/// Keys typed from the pacing thread, readable from the sampling thread.
+final class TypedText: KeyPoster, Sendable {
+    let text = OSAllocatedUnfairLock(initialState: "")
+    func type(_ character: String) { text.withLock { $0 += character } }
+}
+
+/// Launcher on the real clock whose row read blocks the calling thread for 150 ms.
+final class SlowLauncher: LauncherAdapter {
+    let typed: TypedText
+    init(typed: TypedText) { self.typed = typed }
+    func isReady() -> Bool { true }
+    func fieldText() -> String? { typed.text.withLock { $0 } }
+    func readRows() throws -> [RowDTO] {
+        usleep(150_000)
+        return [calc]
+    }
+}
+
+func makeSampler(_ launcher: FakeLauncher, _ clock: FakeClock,
+                 lateByMs: [Int: Int] = [:]) -> (Sampler, FakeKeys) {
     let keys = FakeKeys(clock: clock) { launcher.keyTyped($0) }
-    return (Sampler(adapter: launcher, keys: keys, clock: clock), keys)
+    let pacer = FakePacer(clock: clock, keys: keys)
+    pacer.lateByMs = lateByMs
+    return (Sampler(adapter: launcher, pacer: pacer, clock: clock), keys)
 }
 
 // 1. Full window, no early stop.
@@ -89,7 +150,7 @@ do {
     let launcher = FakeLauncher(clock: clock, rows: [calc])
     let (sampler, _) = makeSampler(launcher, clock)
     let s = sampler.run(text: "calc", mode: .completed, windowMs: 3000)
-    let last = s.snapshots.last?.tMs ?? -1
+    let last = s.snapshots.last?.readStartMs ?? -1
     check(s.error == nil, "completed sample has no error")
     check(s.finalKeyPostMs == 240, "4 keys at 80 ms: final key posted at 240 ms")
     check(last >= s.finalKeyPostMs + 3000 - 50, "samples continue to the end of the 3 s window")
@@ -223,11 +284,109 @@ do {
     let clock = FakeClock()
     let launcher = LabelledLauncher()
     let keys = FakeKeys(clock: clock) { launcher.typed += $0 }
-    let s = Sampler(adapter: launcher, keys: keys, clock: clock).run(text: "ca", mode: .completed, windowMs: 200)
+    let s = Sampler(adapter: launcher, pacer: FakePacer(clock: clock, keys: keys), clock: clock)
+        .run(text: "ca", mode: .completed, windowMs: 200)
     check(s.snapshots.allSatisfy { $0.primaryAction == "Open Application" },
           "snapshots record the Enter action label")
     let plain = FakeLauncher(clock: FakeClock(), rows: [calc])
     check(plain.primaryAction() == nil, "launchers without an action label report none")
+}
+
+// 10. A slow accessibility read neither delays keys nor is credited to the moment it began.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    launcher.readRowsTakesMs = 150
+    let (sampler, keys) = makeSampler(launcher, clock)
+    let s = sampler.run(text: "calc", mode: .continuous, windowMs: 1000)
+    check(keys.posted.map { $0.0 } == [0, 80, 160, 240],
+          "keys stay on the 80 ms schedule while each read takes 150 ms (got \(keys.posted.map { $0.0 }))")
+    check(s.keyPosts == [0, 80, 160, 240].map { KeyPostDTO(plannedMs: $0, actualMs: $0) },
+          "each key's planned and actual post time is recorded")
+    check(s.maxKeyLatenessMs == 0 && s.error == nil, "on-time keys: zero lateness, no error")
+    let first = s.snapshots.first
+    check(first?.readStartMs == 0 && first?.readEndMs == 150,
+          "a read begun at 0 that takes 150 ms is known at 150, with its start kept "
+          + "(got \(first?.readStartMs ?? -1)..\(first?.readEndMs ?? -1))")
+    check(s.snapshots.allSatisfy { $0.readEndMs - $0.readStartMs == 150 },
+          "every snapshot carries its own read duration")
+    check(zip(s.snapshots, s.snapshots.dropFirst()).allSatisfy { $0.readEndMs <= $1.readStartMs },
+          "a read never starts before the previous one finished")
+    check(s.snapshots.contains { $0.readStartMs >= s.finalKeyPostMs + 1000 - 150 },
+          "slow reads still cover the whole window")
+}
+
+// 11. Timing is anchored to when the final key was really posted, and lateness is flagged.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    let (sampler, _) = makeSampler(launcher, clock, lateByMs: [3: 30])
+    let s = sampler.run(text: "calc", mode: .completed, windowMs: 3000)
+    check(s.finalKeyPostMs == 270, "final key due at 240 but posted at 270 is reported as 270 (got \(s.finalKeyPostMs))")
+    check(s.keyPosts.last == KeyPostDTO(plannedMs: 240, actualMs: 270), "the late key keeps its planned time")
+    check(s.maxKeyLatenessMs == 30, "worst key lateness is exposed (got \(s.maxKeyLatenessMs))")
+    check(s.error == "key_post_late", "lateness over \(Sampler.maxKeyLatenessMs) ms is a harness error")
+    check((s.snapshots.last?.readStartMs ?? -1) >= 270 + 3000 - 50,
+          "the window runs from the actual final key post")
+    check(s.snapshots.count >= 60, "a late sample keeps its snapshots for audit")
+
+    let clock2 = FakeClock()
+    let launcher2 = FakeLauncher(clock: clock2, rows: [calc])
+    let (sampler2, _) = makeSampler(launcher2, clock2, lateByMs: [1: Sampler.maxKeyLatenessMs])
+    let s2 = sampler2.run(text: "calc", mode: .completed, windowMs: 3000)
+    check(s2.error == nil && s2.maxKeyLatenessMs == Sampler.maxKeyLatenessMs,
+          "lateness at the threshold is recorded but not an error")
+}
+
+// 12. Keys that are never posted are a harness error, not an endless wait.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    let (sampler, _) = makeSampler(launcher, clock, lateByMs: [3: 1_000_000])
+    let s = sampler.run(text: "calc", mode: .completed, windowMs: 3000)
+    check(s.error == "keys_not_posted", "a key still unposted when the window ends -> keys_not_posted")
+}
+
+// 13. Real thread, real clock: keys keep their pace while the reading thread is blocked.
+do {
+    let typed = TypedText()
+    let clock = MonotonicClock()
+    let s = Sampler(adapter: SlowLauncher(typed: typed), pacer: ThreadKeyPacer(keys: typed, clock: clock),
+                    clock: clock).run(text: "calc", mode: .continuous, windowMs: 300)
+    check(typed.text.withLock { $0 } == "calc", "the pacing thread posts every key in order")
+    check(s.keyPosts.count == 4 && s.maxKeyLatenessMs <= Sampler.maxKeyLatenessMs && s.error == nil,
+          "150 ms reads on the sampling thread do not delay keys (worst lateness \(s.maxKeyLatenessMs) ms)")
+    check(s.snapshots.contains { $0.readEndMs - $0.readStartMs >= 150 },
+          "real snapshots carry the read duration")
+}
+
+// 10. Tree search is bounded: a launcher's accessibility tree can loop back on itself (seen
+// while Raycast restarts), which must not recurse forever.
+do {
+    let loop: [Int: [Int]] = [0: [1], 1: [2], 2: [0]]
+    check(TreeSearch.first(from: 0, children: { loop[$0] ?? [] }, where: { $0 == 9 }) == nil,
+          "search of a cyclic tree ends without a match")
+    let tree: [Int: [Int]] = [0: [1, 2], 2: [3]]
+    check(TreeSearch.first(from: 0, children: { tree[$0] ?? [] }, where: { $0 == 3 }) == 3,
+          "search finds a nested match depth-first")
+    let chain = Dictionary(uniqueKeysWithValues: (0..<500).map { ($0, [$0 + 1]) })
+    check(TreeSearch.first(from: 0, children: { chain[$0] ?? [] }, where: { $0 == 499 }) == nil,
+          "search stops at the depth limit (\(TreeSearch.maxDepth))")
+}
+
+// 11. Field readings that don't match what was typed (e.g. a first key lost while a launcher
+// restarts) are kept as flagged evidence, never silently dropped, and never count as matches.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    launcher.dropFirstKey = true
+    let (sampler, _) = makeSampler(launcher, clock)
+    let s = sampler.run(text: "notes", mode: .completed, windowMs: 300)
+    let flagged = s.snapshots.filter { $0.fieldMismatch }
+    check(!flagged.isEmpty && flagged.allSatisfy { $0.rows.isEmpty }
+              && flagged.contains { $0.fieldText == "otes" },
+          "mismatched field readings are recorded with the text the field showed, without rows")
+    check(s.error == "field_never_matched", "only mismatched readings -> field_never_matched")
 }
 
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")

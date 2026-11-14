@@ -24,6 +24,8 @@ struct ResultLine: Codable {
     let condition: String
     let mode: TypingMode
     let finalKeyPostMs: Int
+    let maxKeyLatenessMs: Int
+    let keyPosts: [KeyPostDTO]
     let fieldShowsMs: Int?
     let snapshots: [SnapshotDTO]
     let error: String?
@@ -107,7 +109,7 @@ case "dump":
     let launcher = adapter(for: arg("--tool") ?? "spotlight")
     guard let query = arg("--query") else { fail("--query required") }
     guard prepare(launcher, uiRestart: false) else { fail("launcher not ready") }
-    let sample = Sampler(adapter: launcher, keys: keys, clock: clock)
+    let sample = Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock), clock: clock)
         .run(text: query, mode: .completed, windowMs: 2500)
     close(launcher)
     let rows = sample.snapshots.last?.rows ?? []
@@ -153,15 +155,17 @@ case "run-schedule":
         let launcher = adapter(for: line.tool)
         var result: SampleDTO
         if prepare(launcher, uiRestart: line.condition == "ui_restart") {
-            result = Sampler(adapter: launcher, keys: keys, clock: clock)
+            result = Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock),
+                             clock: clock)
                 .run(text: line.text, mode: line.mode, windowMs: line.windowMs)
         } else {
-            result = SampleDTO(finalKeyPostMs: 0, fieldShowsMs: nil, snapshots: [], error: "not_ready")
+            result = SampleDTO(keyPosts: [], fieldShowsMs: nil, snapshots: [], error: "not_ready")
         }
         close(launcher)
         let record = ResultLine(
             queryId: line.queryId, tool: line.tool, run: line.run, condition: line.condition,
             mode: line.mode, finalKeyPostMs: result.finalKeyPostMs,
+            maxKeyLatenessMs: result.maxKeyLatenessMs, keyPosts: result.keyPosts,
             fieldShowsMs: result.fieldShowsMs, snapshots: result.snapshots, error: result.error,
             attempt: 0)
         out.write(try encoder.encode(record))

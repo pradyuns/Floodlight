@@ -66,10 +66,11 @@ def _rank(rows: list[Row], targets: frozenset[Target]) -> int | None:
 
 
 def _snapshot_at(snapshots: list[Snapshot], t_ms: int) -> Snapshot | None:
-    before = [s for s in snapshots if s.t_ms <= t_ms]
-    if not before or t_ms - before[-1].t_ms > MAX_SNAPSHOT_AGE_MS:
+    """The latest read that had finished by t_ms, unless what it saw may be too old."""
+    known = [s for s in snapshots if s.read_end_ms <= t_ms]
+    if not known or t_ms - known[-1].read_start_ms > MAX_SNAPSHOT_AGE_MS:
         return None
-    return before[-1]
+    return known[-1]
 
 
 def _safe_enter(view: list[Row], snap: Snapshot | None, targets: frozenset[Target]) -> SafeEnter:
@@ -102,9 +103,12 @@ def score_sample(
     sample: Sample, query: Query, local_only: bool = False, window_ms: int = WINDOW_MS
 ) -> SampleScore:
     end = sample.final_key_post_ms + window_ms
-    snaps = sorted((s for s in sample.snapshots if s.t_ms <= end), key=lambda s: s.t_ms)
+    snaps = sorted(
+        (s for s in sample.snapshots if s.read_end_ms <= end and not s.field_mismatch),
+        key=lambda s: s.read_end_ms,
+    )
     intended = frozenset({query.intended}) if query.intended else query.acceptable
-    views = [(s.t_ms - sample.final_key_post_ms, _view(s.rows, local_only)) for s in snaps]
+    views = [(s.read_end_ms - sample.final_key_post_ms, _view(s.rows, local_only)) for s in snaps]
     final_rows = views[-1][1] if views else []
     final_rank = _rank(final_rows, intended)
 

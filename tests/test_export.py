@@ -1,6 +1,6 @@
 from bench.export import PUBLIC_FIELDS, export_public
 from bench.generate import Query, Target
-from bench.model import Kind, Row, Sample, Snapshot, Source
+from bench.model import KeyPost, Kind, Row, Sample, Snapshot, Source
 from bench.report import Comparison, render_report
 from bench.score import score_sample
 
@@ -12,9 +12,19 @@ QUERY = Query(
 
 def _sample() -> Sample:
     row = Row("Calculator", Kind.APP, Source.LOCAL, None, None, None)
-    snaps = [Snapshot(t, (row,), "calculator") for t in range(0, 4001, 50)]
+    snaps = [Snapshot(t, t, (row,), "calculator") for t in range(0, 4001, 50)]
     return Sample(
-        "dev:full:calculator", "spotlight", "sparse", 0, "warm", 1000, 1005, snaps, None, 0
+        "dev:full:calculator",
+        "spotlight",
+        "sparse",
+        0,
+        "warm",
+        1000,
+        1005,
+        snaps,
+        None,
+        0,
+        (KeyPost(1000, 1000),),
     )
 
 

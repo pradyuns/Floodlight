@@ -171,7 +171,7 @@ public enum ProbeError: Error {
 }
 
 /// Posts real keyboard events (the launcher sees them exactly like a person typing).
-public final class CGEventKeys: KeyPoster {
+public final class CGEventKeys: KeyPoster, Sendable {
     public init() {}
 
     /// Sends the character as a real US-keyboard key press. Characters with no key are

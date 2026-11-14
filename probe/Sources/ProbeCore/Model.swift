@@ -25,29 +25,53 @@ public struct RowDTO: Codable, Equatable, Sendable {
     }
 }
 
+/// Times are milliseconds since the first key was due.
 public struct SnapshotDTO: Codable, Sendable {
-    public let tMs: Int
+    /// When the accessibility read began: the screen content is no older than this.
+    public let readStartMs: Int
+    /// When the read finished: the rows were not known before this.
+    public let readEndMs: Int
     public let rows: [RowDTO]
     public let fieldText: String
     /// The launcher's own label for what Enter would do, when it shows one (Raycast's action bar).
     public let primaryAction: String?
+    /// The field showed text that isn't what was typed so far (e.g. a lost first key). Kept as
+    /// evidence; never scored.
+    public let fieldMismatch: Bool
 
-    public init(tMs: Int, rows: [RowDTO], fieldText: String, primaryAction: String? = nil) {
-        self.tMs = tMs
+    public init(readStartMs: Int, readEndMs: Int, rows: [RowDTO], fieldText: String,
+                primaryAction: String? = nil, fieldMismatch: Bool = false) {
+        self.readStartMs = readStartMs
+        self.readEndMs = readEndMs
         self.rows = rows
         self.fieldText = fieldText
         self.primaryAction = primaryAction
+        self.fieldMismatch = fieldMismatch
     }
 }
 
-public struct SampleDTO: Codable, Sendable {
-    public var finalKeyPostMs: Int
+public struct KeyPostDTO: Codable, Equatable, Sendable {
+    public let plannedMs: Int
+    public let actualMs: Int
+
+    public init(plannedMs: Int, actualMs: Int) {
+        self.plannedMs = plannedMs
+        self.actualMs = actualMs
+    }
+}
+
+public struct SampleDTO: Sendable {
+    public var keyPosts: [KeyPostDTO]
     public var fieldShowsMs: Int?
     public var snapshots: [SnapshotDTO]
     public var error: String?
 
-    public init(finalKeyPostMs: Int, fieldShowsMs: Int?, snapshots: [SnapshotDTO], error: String?) {
-        self.finalKeyPostMs = finalKeyPostMs
+    /// When the final key was actually posted, not when it was due.
+    public var finalKeyPostMs: Int { keyPosts.last?.actualMs ?? 0 }
+    public var maxKeyLatenessMs: Int { keyPosts.map { $0.actualMs - $0.plannedMs }.max() ?? 0 }
+
+    public init(keyPosts: [KeyPostDTO], fieldShowsMs: Int?, snapshots: [SnapshotDTO], error: String?) {
+        self.keyPosts = keyPosts
         self.fieldShowsMs = fieldShowsMs
         self.snapshots = snapshots
         self.error = error

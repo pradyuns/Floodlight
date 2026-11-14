@@ -73,6 +73,29 @@ public enum RaycastParsing {
     }
 }
 
+/// Depth-first search with a depth and visit cap: accessibility trees can be cyclic or
+/// pathologically deep (Raycast's is, briefly, while it restarts).
+public enum TreeSearch {
+    public static let maxDepth = 64
+    public static let maxVisits = 5000
+
+    public static func first<T>(
+        from root: T, children: (T) -> [T], where match: (T) -> Bool
+    ) -> T? {
+        var visits = 0
+        func search(_ node: T, _ depth: Int) -> T? {
+            guard depth < maxDepth, visits < maxVisits else { return nil }
+            visits += 1
+            if match(node) { return node }
+            for child in children(node) {
+                if let hit = search(child, depth + 1) { return hit }
+            }
+            return nil
+        }
+        return search(root, 0)
+    }
+}
+
 /// Reads Raycast's main window through Accessibility; keys are sent separately by a KeyPoster.
 public final class RaycastAdapter: ControlledLauncher {
     static let bundleId = "com.raycast.macos"
@@ -94,11 +117,7 @@ public final class RaycastAdapter: ControlledLauncher {
     }
 
     func find(_ element: AXUIElement, _ match: (AXUIElement) -> Bool) -> AXUIElement? {
-        if match(element) { return element }
-        for child in AX.children(element) {
-            if let hit = find(child, match) { return hit }
-        }
-        return nil
+        TreeSearch.first(from: element, children: AX.children, where: match)
     }
 
     func field() -> AXUIElement? {

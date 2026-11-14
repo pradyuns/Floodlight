@@ -6,11 +6,11 @@ public protocol ProbeClock: AnyObject {
 }
 
 /// Monotonic wall-independent clock (milliseconds since boot).
-public final class MonotonicClock: ProbeClock {
+public final class MonotonicClock: ProbeClock, Sendable {
     public init() {}
     public func nowMs() -> Int { Int(DispatchTime.now().uptimeNanoseconds / 1_000_000) }
     public func sleep(untilMs target: Int) {
-        let remaining = target - nowMs()
-        if remaining > 0 { usleep(useconds_t(remaining * 1000)) }
+        let remainingUs = target * 1000 - Int(DispatchTime.now().uptimeNanoseconds / 1000)
+        if remainingUs > 0 { usleep(useconds_t(remainingUs)) }
     }
 }
