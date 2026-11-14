@@ -398,5 +398,24 @@ check(Session.isScreenLocked(["CGSSessionScreenIsLocked": true]), "session repor
 check(!Session.isScreenLocked(["kCGSSessionOnConsoleKey": true]), "no lock key -> not locked")
 check(!Session.isScreenLocked(["CGSSessionScreenIsLocked": false]), "lock key false -> not locked")
 
+// System Settings sidebar: row titles of the first outline, in order; text elsewhere ignored.
+do {
+    struct Node { let role: String; var value: String? = nil; var kids: [Node] = [] }
+    func row(_ title: String) -> Node {
+        Node(role: "AXRow", kids: [Node(role: "AXCell", kids: [Node(role: "AXImage"), Node(role: "AXStaticText", value: title)])])
+    }
+    let window = Node(role: "AXWindow", kids: [
+        Node(role: "AXStaticText", value: "Search"),
+        Node(role: "AXScrollArea", kids: [Node(role: "AXOutline", kids: [
+            row("Wi‑Fi"), Node(role: "AXRow", kids: [Node(role: "AXCell")]), row("Bluetooth"), Node(role: "AXColumn"),
+        ])]),
+        Node(role: "AXGroup", kids: [Node(role: "AXStaticText", value: "Pane body")]),
+    ])
+    let titles = SettingsSidebar.titles(root: window, children: { $0.kids }, role: { $0.role }, value: { $0.value })
+    check(titles == ["Wi‑Fi", "Bluetooth"], "sidebar titles come from outline rows only, in order")
+    check(SettingsSidebar.titles(root: Node(role: "AXWindow"), children: { $0.kids }, role: { $0.role }, value: { $0.value }) == nil,
+          "no outline -> nil, not an empty sidebar")
+}
+
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

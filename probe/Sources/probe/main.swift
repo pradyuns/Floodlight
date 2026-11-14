@@ -183,6 +183,23 @@ case "run-schedule":
     }
     try out.close()
 
+case "settings-sidebar":
+    let opener = Process()
+    opener.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+    opener.arguments = ["-b", "com.apple.systempreferences"]
+    try opener.run()
+    opener.waitUntilExit()
+    // The sidebar fills in over a few seconds: wait for two identical reads a second apart.
+    var previous: [String]?
+    var titles: [String]?
+    guard waitUntil(30_000, {
+        previous = titles
+        titles = SettingsSidebar.read()
+        if titles != previous || (titles ?? []).isEmpty { usleep(1_000_000); return false }
+        return true
+    }), let shown = titles else { fail("System Settings sidebar not readable or not settling") }
+    print(String(data: try encoder.encode(shown), encoding: .utf8) ?? "[]")
+
 default:
-    fail("usage: probe dump|overhead|run-schedule ...")
+    fail("usage: probe dump|overhead|run-schedule|settings-sidebar ...")
 }
