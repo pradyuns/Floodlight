@@ -23,11 +23,12 @@ HOME = "/Users/bench"
 LRM = "‎"
 CONSONANTS = "bcdfghjklmnpqrstvwxz"
 SVG_DECOYS = ("{}.svg", "{}-icon.svg", "{}-logo.svg", "{}-white.svg", "{}_badge.svg")
-# Top-level System Settings panes in macOS 26 (titles as shown); only the ones that compete with
-# a weaker app match are used.
+# Top-level System Settings panes both tools listed by title in the macOS 26.4.1 VM. Left out:
+# Control Center (under Menu Bar in macOS 26); Battery, Trackpad, Touch ID & Password, Wi-Fi (need
+# hardware the VM lacks); General (not confirmed). Only panes that compete with a weaker app match
+# are used.
 PANE_TITLES = [
     *[
-        "General",
         "Accessibility",
         "Appearance",
         "Spotlight",
@@ -39,21 +40,16 @@ PANE_TITLES = [
     *[
         "Keyboard",
         "Mouse",
-        "Trackpad",
         "Displays",
-        "Battery",
         "Bluetooth",
         "Network",
-        "Wi-Fi",
         "Passwords",
     ],
     "Screen Time",
     "Game Center",
-    "Control Center",
     "Lock Screen",
     "Time Machine",
     "Internet Accounts",
-    "Touch ID & Password",
     "Printers & Scanners",
     "Privacy & Security",
     "Desktop & Dock",

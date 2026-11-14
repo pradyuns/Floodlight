@@ -458,25 +458,5 @@
   "stratum": "settings;competes=Games",
   "suite": "cross-kind",
   "text": "game center"
- },
- {
-  "acceptable": [
-   {
-    "id": "Control Center",
-    "kind": "settings_pane"
-   }
-  ],
-  "ambiguous": false,
-  "id": "cross-kind:full:control center",
-  "intended": {
-   "id": "Control Center",
-   "kind": "settings_pane"
-  },
-  "mode": "completed",
-  "provenance": "generated",
-  "rule": "full",
-  "stratum": "settings;competes=Mission Control",
-  "suite": "cross-kind",
-  "text": "control center"
  }
 ]
