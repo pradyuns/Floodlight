@@ -45,12 +45,12 @@ def row_matches(row: Row, target: Target) -> bool:
     if target.kind in ("file", "folder"):
         expected_kind = Kind.FILE if target.kind == "file" else Kind.FOLDER
         path = PurePosixPath(target.id)
-        return (
-            row.kind == expected_kind
-            and row.folder is not None
-            and row.title == path.name
-            and row.folder.rstrip("/") == str(path.parent)
-        )
+        if row.kind != expected_kind or row.title != path.name:
+            return False
+        if row.folder is None:
+            return target.unique_name
+        shown = row.folder.rstrip("/")
+        return shown == str(path.parent) if "/" in shown else shown == path.parent.name
     return row.kind == Kind.SETTINGS_PANE and row.pane_id == target.id
 
 

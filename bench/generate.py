@@ -33,6 +33,7 @@ QWERTY_ROWS = ["qwertyuiop", "asdfghjkl", "zxcvbnm"]
 class Target:
     kind: TargetKind
     id: str
+    unique_name: bool = False  # the name occurs once on the guest disk (checked when planted)
 
 
 @dataclass(frozen=True)
@@ -235,8 +236,13 @@ def generate_stepped(
     ]
 
 
-def _target_json(t: Target | None) -> dict[str, str] | None:
-    return None if t is None else {"kind": t.kind, "id": t.id}
+def _target_json(t: Target | None) -> dict[str, str | bool] | None:
+    if t is None:
+        return None
+    out: dict[str, str | bool] = {"kind": t.kind, "id": t.id}
+    if t.unique_name:
+        out["unique_name"] = True
+    return out
 
 
 def queries_to_json(queries: list[Query]) -> str:
@@ -245,8 +251,8 @@ def queries_to_json(queries: list[Query]) -> str:
             **q.__dict__,
             "intended": _target_json(q.intended),
             "acceptable": sorted(
-                ({"kind": t.kind, "id": t.id} for t in q.acceptable),
-                key=lambda d: (d["kind"], d["id"]),
+                (_target_json(t) for t in q.acceptable),
+                key=lambda d: (str(d["kind"]), str(d["id"])) if d else ("", ""),
             ),
         }
         for q in queries

@@ -71,6 +71,30 @@ def test_file_row_without_folder_shown_is_not_a_match() -> None:
     assert row_matches(_row("test.py", Kind.FILE, folder="/Users/bench/Projects"), target)
 
 
+def test_file_row_showing_only_the_parent_folder_name_matches() -> None:
+    target = Target("file", "/Users/bench/Documents/zk-114/test.py")
+    assert row_matches(_row("test.py", Kind.FILE, folder="zk-114"), target)
+    assert not row_matches(_row("test.py", Kind.FILE, folder="Documents"), target)
+    assert not row_matches(_row("test.py", Kind.FILE, folder="/elsewhere/zk-114"), target)
+
+
+def test_row_without_location_matches_only_a_name_unique_on_disk() -> None:
+    unique = Target("folder", "/Users/bench/Documents/abc-101", unique_name=True)
+    shared = Target("folder", "/Users/bench/Documents/abc-101")
+    row = _row("abc-101", Kind.FOLDER, folder=None)
+    assert row_matches(row, unique)
+    assert not row_matches(row, shared)
+    assert not row_matches(_row("abc-102", Kind.FOLDER, folder=None), unique)
+
+
+def test_unique_name_flag_round_trips_through_json() -> None:
+    from bench.generate import queries_from_json, queries_to_json
+
+    target = Target("folder", "/Users/bench/Documents/abc-101", unique_name=True)
+    q = Query("f1", "abc-101", "full", "completed", target, frozenset({target}), False, "folders")
+    assert queries_from_json(queries_to_json([q])) == [q]
+
+
 def test_settings_rows_match_by_pane_id_not_title() -> None:
     target = Target("settings_pane", "wifi")
     assert row_matches(_row("Anything", Kind.SETTINGS_PANE, pane_id="wifi"), target)
