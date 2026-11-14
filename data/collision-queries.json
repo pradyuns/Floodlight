@@ -1,0 +1,1992 @@
+[
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   },
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   },
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Apps",
+    "kind": "app"
+   },
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "Automator",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:a",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "a"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Apps",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ap",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ap"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Apps",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:app",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "app"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:as",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "as"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:ass",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ass"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:assi",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "assi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "Automator",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:au",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "au"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   },
+   {
+    "id": "Books",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:b",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "b"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Books",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:bo",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "bo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Books",
+    "kind": "app"
+   },
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:boo",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "boo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Books",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:book",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "book"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:boot",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "boot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Calculator",
+    "kind": "app"
+   },
+   {
+    "id": "Calendar",
+    "kind": "app"
+   },
+   {
+    "id": "Chess",
+    "kind": "app"
+   },
+   {
+    "id": "Clock",
+    "kind": "app"
+   },
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Console",
+    "kind": "app"
+   },
+   {
+    "id": "Contacts",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Google Chrome",
+    "kind": "app"
+   },
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   },
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   },
+   {
+    "id": "Print Center",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:c",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "c"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Calculator",
+    "kind": "app"
+   },
+   {
+    "id": "Calendar",
+    "kind": "app"
+   },
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ca",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ca"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Calculator",
+    "kind": "app"
+   },
+   {
+    "id": "Calendar",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:cal",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "cal"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Chess",
+    "kind": "app"
+   },
+   {
+    "id": "Google Chrome",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ch",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ch"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Console",
+    "kind": "app"
+   },
+   {
+    "id": "Contacts",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:co",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "co"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:col",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "col"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:colo",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "colo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Console",
+    "kind": "app"
+   },
+   {
+    "id": "Contacts",
+    "kind": "app"
+   },
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:con",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "con"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Contacts",
+    "kind": "app"
+   },
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:cont",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "cont"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dictionary",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Discord",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:d",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "d"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dictionary",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Discord",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:di",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "di"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Discord",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:dis",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "dis"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   },
+   {
+    "id": "Script Editor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:e",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "e"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   },
+   {
+    "id": "FaceTime",
+    "kind": "app"
+   },
+   {
+    "id": "Find My",
+    "kind": "app"
+   },
+   {
+    "id": "Firefox",
+    "kind": "app"
+   },
+   {
+    "id": "Font Book",
+    "kind": "app"
+   },
+   {
+    "id": "Freeform",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:f",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "f"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   },
+   {
+    "id": "Find My",
+    "kind": "app"
+   },
+   {
+    "id": "Firefox",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:fi",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "fi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Games",
+    "kind": "app"
+   },
+   {
+    "id": "Google Chrome",
+    "kind": "app"
+   },
+   {
+    "id": "Grapher",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:g",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "g"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   },
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "System Information",
+    "kind": "app"
+   },
+   {
+    "id": "iPhone Mirroring",
+    "kind": "app"
+   },
+   {
+    "id": "iTerm",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:i",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "i"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   },
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "iPhone Mirroring",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:im",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "im"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   },
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:ima",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ima"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   },
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:imag",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "imag"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "iPhone Mirroring",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ip",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ip"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   },
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Find My",
+    "kind": "app"
+   },
+   {
+    "id": "Magnifier",
+    "kind": "app"
+   },
+   {
+    "id": "Mail",
+    "kind": "app"
+   },
+   {
+    "id": "Maps",
+    "kind": "app"
+   },
+   {
+    "id": "Messages",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   },
+   {
+    "id": "Music",
+    "kind": "app"
+   },
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   },
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "iPhone Mirroring",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:m",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "m"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Magnifier",
+    "kind": "app"
+   },
+   {
+    "id": "Mail",
+    "kind": "app"
+   },
+   {
+    "id": "Maps",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ma",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ma"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   },
+   {
+    "id": "Messages",
+    "kind": "app"
+   },
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:me",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "me"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   },
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   },
+   {
+    "id": "iPhone Mirroring",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:mi",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "mi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "News",
+    "kind": "app"
+   },
+   {
+    "id": "Notes",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:n",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "n"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "Passwords",
+    "kind": "app"
+   },
+   {
+    "id": "Phone",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   },
+   {
+    "id": "Photos",
+    "kind": "app"
+   },
+   {
+    "id": "Podcasts",
+    "kind": "app"
+   },
+   {
+    "id": "Preview",
+    "kind": "app"
+   },
+   {
+    "id": "Print Center",
+    "kind": "app"
+   },
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:p",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "p"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Phone",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   },
+   {
+    "id": "Photos",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ph",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ph"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Phone",
+    "kind": "app"
+   },
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   },
+   {
+    "id": "Photos",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:pho",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "pho"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   },
+   {
+    "id": "Photos",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:phot",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "phot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:pl",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "pl"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:pla",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "pla"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   },
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:play",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "play"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Preview",
+    "kind": "app"
+   },
+   {
+    "id": "Print Center",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:pr",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "pr"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Raycast",
+    "kind": "app"
+   },
+   {
+    "id": "Rectangle",
+    "kind": "app"
+   },
+   {
+    "id": "Reminders",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:r",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "r"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Rectangle",
+    "kind": "app"
+   },
+   {
+    "id": "Reminders",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:re",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "re"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "Safari",
+    "kind": "app"
+   },
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   },
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   },
+   {
+    "id": "Script Editor",
+    "kind": "app"
+   },
+   {
+    "id": "Shortcuts",
+    "kind": "app"
+   },
+   {
+    "id": "Siri",
+    "kind": "app"
+   },
+   {
+    "id": "Slack",
+    "kind": "app"
+   },
+   {
+    "id": "Spotify",
+    "kind": "app"
+   },
+   {
+    "id": "Stickies",
+    "kind": "app"
+   },
+   {
+    "id": "Stocks",
+    "kind": "app"
+   },
+   {
+    "id": "System Information",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:s",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "s"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   },
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   },
+   {
+    "id": "Script Editor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:sc",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "sc"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   },
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   },
+   {
+    "id": "Script Editor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:scr",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "scr"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   },
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:scre",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "scre"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "Script Editor",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:se",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "se"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:set",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "set"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   },
+   {
+    "id": "Shortcuts",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:sh",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "sh"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Siri",
+    "kind": "app"
+   },
+   {
+    "id": "System Information",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:si",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "si"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ss",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ss"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Stickies",
+    "kind": "app"
+   },
+   {
+    "id": "Stocks",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:st",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "st"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   },
+   {
+    "id": "Stocks",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:sto",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "sto"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "System Information",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:sy",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "sy"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "System Information",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:sys",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "sys"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "System Information",
+    "kind": "app"
+   },
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:syst",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "syst"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "TV",
+    "kind": "app"
+   },
+   {
+    "id": "Telegram",
+    "kind": "app"
+   },
+   {
+    "id": "Terminal",
+    "kind": "app"
+   },
+   {
+    "id": "TextEdit",
+    "kind": "app"
+   },
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   },
+   {
+    "id": "Tips",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:t",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "t"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Telegram",
+    "kind": "app"
+   },
+   {
+    "id": "Terminal",
+    "kind": "app"
+   },
+   {
+    "id": "TextEdit",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:te",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "te"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   },
+   {
+    "id": "Tips",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ti",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ti"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   },
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:u",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "u"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   },
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:ut",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "ut"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   },
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:uti",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "uti"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   },
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   },
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:util",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "util"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "VLC",
+    "kind": "app"
+   },
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   },
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:v",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "v"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix2:vo",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix2",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "vo"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix3:voi",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix3",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "voi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   },
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix4:voic",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix4",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "voic"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Weather",
+    "kind": "app"
+   },
+   {
+    "id": "WhatsApp",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "collisions:prefix1:w",
+  "intended": null,
+  "mode": "completed",
+  "provenance": "generated",
+  "rule": "prefix1",
+  "stratum": null,
+  "suite": "collisions",
+  "text": "w"
+ }
+]

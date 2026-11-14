@@ -1,0 +1,1562 @@
+[
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:activity-monitor",
+  "intended": {
+   "id": "Activity Monitor",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "activity monitor"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "AirPort Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:airport-utility",
+  "intended": {
+   "id": "AirPort Utility",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "airport utility"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "App Store",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:app-store",
+  "intended": {
+   "id": "App Store",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "app store"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Apps",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:apps",
+  "intended": {
+   "id": "Apps",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "apps"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Audio MIDI Setup",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:audio-midi-setup",
+  "intended": {
+   "id": "Audio MIDI Setup",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "audio midi setup"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Automator",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:automator",
+  "intended": {
+   "id": "Automator",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "automator"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth File Exchange",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:bluetooth-file-exchange",
+  "intended": {
+   "id": "Bluetooth File Exchange",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "bluetooth file exchange"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Books",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:books",
+  "intended": {
+   "id": "Books",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "books"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Boot Camp Assistant",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:boot-camp-assistant",
+  "intended": {
+   "id": "Boot Camp Assistant",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "boot camp assistant"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Calculator",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:calculator",
+  "intended": {
+   "id": "Calculator",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "calculator"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Calendar",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:calendar",
+  "intended": {
+   "id": "Calendar",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "calendar"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Chess",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:chess",
+  "intended": {
+   "id": "Chess",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "chess"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Clock",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:clock",
+  "intended": {
+   "id": "Clock",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "clock"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "ColorSync Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:colorsync-utility",
+  "intended": {
+   "id": "ColorSync Utility",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "colorsync utility"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Console",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:console",
+  "intended": {
+   "id": "Console",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "console"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Contacts",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:contacts",
+  "intended": {
+   "id": "Contacts",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "contacts"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Dictionary",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:dictionary",
+  "intended": {
+   "id": "Dictionary",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "dictionary"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Digital Color Meter",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:digital-color-meter",
+  "intended": {
+   "id": "Digital Color Meter",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "digital color meter"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Discord",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:discord",
+  "intended": {
+   "id": "Discord",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "discord"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:disk-utility",
+  "intended": {
+   "id": "Disk Utility",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "disk utility"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "FaceTime",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:facetime",
+  "intended": {
+   "id": "FaceTime",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "facetime"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Find My",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:find-my",
+  "intended": {
+   "id": "Find My",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "find my"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Firefox",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:firefox",
+  "intended": {
+   "id": "Firefox",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "firefox"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Font Book",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:font-book",
+  "intended": {
+   "id": "Font Book",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "font book"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Freeform",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:freeform",
+  "intended": {
+   "id": "Freeform",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "freeform"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Games",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:games",
+  "intended": {
+   "id": "Games",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "games"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Google Chrome",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:google-chrome",
+  "intended": {
+   "id": "Google Chrome",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "google chrome"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Grapher",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:grapher",
+  "intended": {
+   "id": "Grapher",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "grapher"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Home",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:home",
+  "intended": {
+   "id": "Home",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "home"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Capture",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:image-capture",
+  "intended": {
+   "id": "Image Capture",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "image capture"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Image Playground",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:image-playground",
+  "intended": {
+   "id": "Image Playground",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "image playground"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "iPhone Mirroring",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:iphone-mirroring",
+  "intended": {
+   "id": "iPhone Mirroring",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "iphone mirroring"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "iTerm",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:iterm",
+  "intended": {
+   "id": "iTerm",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "iterm"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Journal",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:journal",
+  "intended": {
+   "id": "Journal",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "journal"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Magnifier",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:magnifier",
+  "intended": {
+   "id": "Magnifier",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "magnifier"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Mail",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:mail",
+  "intended": {
+   "id": "Mail",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "mail"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Maps",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:maps",
+  "intended": {
+   "id": "Maps",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "maps"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Messages",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:messages",
+  "intended": {
+   "id": "Messages",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "messages"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Migration Assistant",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:migration-assistant",
+  "intended": {
+   "id": "Migration Assistant",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "migration assistant"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Mission Control",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:mission-control",
+  "intended": {
+   "id": "Mission Control",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "mission control"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Music",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:music",
+  "intended": {
+   "id": "Music",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "music"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "News",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:news",
+  "intended": {
+   "id": "News",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "news"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Notes",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:notes",
+  "intended": {
+   "id": "Notes",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "notes"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Obsidian",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:obsidian",
+  "intended": {
+   "id": "Obsidian",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "obsidian"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Passwords",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:passwords",
+  "intended": {
+   "id": "Passwords",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "passwords"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Phone",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:phone",
+  "intended": {
+   "id": "Phone",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "phone"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Photo Booth",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:photo-booth",
+  "intended": {
+   "id": "Photo Booth",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "photo booth"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Photos",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:photos",
+  "intended": {
+   "id": "Photos",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "photos"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Podcasts",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:podcasts",
+  "intended": {
+   "id": "Podcasts",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "podcasts"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Preview",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:preview",
+  "intended": {
+   "id": "Preview",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "preview"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Print Center",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:print-center",
+  "intended": {
+   "id": "Print Center",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "print center"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:quicktime-player",
+  "intended": {
+   "id": "QuickTime Player",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "quicktime player"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Rectangle",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:rectangle",
+  "intended": {
+   "id": "Rectangle",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "rectangle"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Reminders",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:reminders",
+  "intended": {
+   "id": "Reminders",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "reminders"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Safari",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:safari",
+  "intended": {
+   "id": "Safari",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "safari"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screen Sharing",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:screen-sharing",
+  "intended": {
+   "id": "Screen Sharing",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "screen sharing"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:screenshot",
+  "intended": {
+   "id": "Screenshot",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "screenshot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Script Editor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:script-editor",
+  "intended": {
+   "id": "Script Editor",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "script editor"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Shortcuts",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:shortcuts",
+  "intended": {
+   "id": "Shortcuts",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "shortcuts"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Siri",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:siri",
+  "intended": {
+   "id": "Siri",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "siri"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Slack",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:slack",
+  "intended": {
+   "id": "Slack",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "slack"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Spotify",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:spotify",
+  "intended": {
+   "id": "Spotify",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "spotify"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Stickies",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:stickies",
+  "intended": {
+   "id": "Stickies",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "stickies"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Stocks",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:stocks",
+  "intended": {
+   "id": "Stocks",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "stocks"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "System Information",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:system-information",
+  "intended": {
+   "id": "System Information",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "system information"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "System Settings",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:system-settings",
+  "intended": {
+   "id": "System Settings",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "system settings"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Telegram",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:telegram",
+  "intended": {
+   "id": "Telegram",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "telegram"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Terminal",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:terminal",
+  "intended": {
+   "id": "Terminal",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "terminal"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "TextEdit",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:textedit",
+  "intended": {
+   "id": "TextEdit",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "textedit"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Time Machine",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:time-machine",
+  "intended": {
+   "id": "Time Machine",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "time machine"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Tips",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:tips",
+  "intended": {
+   "id": "Tips",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "tips"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "TV",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:tv",
+  "intended": {
+   "id": "TV",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "tv"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:visual-studio-code",
+  "intended": {
+   "id": "Visual Studio Code",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "visual studio code"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "VLC",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:vlc",
+  "intended": {
+   "id": "VLC",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "vlc"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Voice Memos",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:voice-memos",
+  "intended": {
+   "id": "Voice Memos",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "voice memos"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "VoiceOver Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:voiceover-utility",
+  "intended": {
+   "id": "VoiceOver Utility",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "voiceover utility"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Weather",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:weather",
+  "intended": {
+   "id": "Weather",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "weather"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "WhatsApp",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "stepped:full:whatsapp",
+  "intended": {
+   "id": "WhatsApp",
+   "kind": "app"
+  },
+  "mode": "stepped",
+  "provenance": "generated",
+  "rule": "full",
+  "stratum": null,
+  "suite": "stepped",
+  "text": "whatsapp"
+ }
+]

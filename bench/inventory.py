@@ -1,5 +1,6 @@
 """Reference app inventory, built from .app bundles on the VM filesystem (never from mdfind)."""
 
+import json
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass
@@ -8,6 +9,7 @@ from typing import Literal
 from bench.vm import VM
 
 AppKind = Literal["builtin", "third_party", "tool_under_test", "planted"]
+TOOLS_UNDER_TEST = frozenset({"com.raycast.macos"})
 
 APP_DIRS = [
     "/Applications",
@@ -40,6 +42,17 @@ class App:
 
 def _has_format_char(s: str) -> bool:
     return any(unicodedata.category(c) == "Cf" for c in s)
+
+
+def manifest_kinds(manifest_json: str) -> tuple[set[str], set[str]]:
+    """Splits the third-party manifest into (tools under test, third-party) bundle ids."""
+    ids: set[str] = set()
+    for entry in json.loads(manifest_json):
+        bundle_id = entry.get("bundle_id")
+        if not isinstance(bundle_id, str) or not bundle_id:
+            raise ValueError(f"manifest entry without bundle_id: {entry}")
+        ids.add(bundle_id)
+    return ids & TOOLS_UNDER_TEST, ids - TOOLS_UNDER_TEST
 
 
 def parse_inventory(

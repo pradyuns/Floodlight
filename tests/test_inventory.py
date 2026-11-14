@@ -1,4 +1,6 @@
-from bench.inventory import App, index_coverage, parse_inventory
+import pytest
+
+from bench.inventory import App, index_coverage, manifest_kinds, parse_inventory
 
 LISTING = "\n".join(
     [
@@ -57,3 +59,37 @@ def test_coverage_accepts_real_path_of_symlinked_app() -> None:
     )
     indexed = {"/System/Cryptexes/App/Safari.app"}
     assert index_coverage([safari, chess], indexed) == {"Safari": True, "Chess": False}
+
+
+def test_manifest_marks_raycast_as_tool_under_test_and_the_rest_third_party() -> None:
+    manifest = (
+        '[{"name": "Slack", "bundle_id": "com.tinyspeck.slackmacgap"},'
+        ' {"name": "Raycast", "bundle_id": "com.raycast.macos"}]'
+    )
+    tools_under_test, third_party = manifest_kinds(manifest)
+    assert tools_under_test == {"com.raycast.macos"}
+    assert third_party == {"com.tinyspeck.slackmacgap"}
+
+
+def test_listing_labels_manifest_apps_by_kind() -> None:
+    listing = "\n".join(
+        [
+            "/Applications/Slack.app\t/Applications/Slack.app\tSlack\tcom.tinyspeck.slackmacgap",
+            "/Applications/Raycast.app\t/Applications/Raycast.app\tRaycast\tcom.raycast.macos",
+            "/System/Applications/Chess.app\t/System/Applications/Chess.app\tChess\tcom.apple.Chess",
+        ]
+    )
+    tools_under_test, third_party = manifest_kinds(
+        '[{"bundle_id": "com.tinyspeck.slackmacgap"}, {"bundle_id": "com.raycast.macos"}]'
+    )
+    apps, _ = parse_inventory(listing, tools_under_test, third_party)
+    assert {a.name: a.kind for a in apps} == {
+        "Chess": "builtin",
+        "Raycast": "tool_under_test",
+        "Slack": "third_party",
+    }
+
+
+def test_manifest_without_bundle_id_fails_loudly() -> None:
+    with pytest.raises(ValueError, match="bundle_id"):
+        manifest_kinds('[{"name": "Slack"}]')

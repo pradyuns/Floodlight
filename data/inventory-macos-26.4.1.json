@@ -127,6 +127,13 @@
       "real_path": "/System/Applications/Utilities/Digital Color Meter.app"
     },
     {
+      "bundle_id": "com.hnc.Discord",
+      "kind": "third_party",
+      "name": "Discord",
+      "path": "/Applications/Discord.app",
+      "real_path": "/Applications/Discord.app"
+    },
+    {
       "bundle_id": "com.apple.DiskUtility",
       "kind": "builtin",
       "name": "Disk Utility",
@@ -148,6 +155,13 @@
       "real_path": "/System/Applications/FindMy.app"
     },
     {
+      "bundle_id": "org.mozilla.firefox",
+      "kind": "third_party",
+      "name": "Firefox",
+      "path": "/Applications/Firefox.app",
+      "real_path": "/Applications/Firefox.app"
+    },
+    {
       "bundle_id": "com.apple.FontBook",
       "kind": "builtin",
       "name": "Font Book",
@@ -167,6 +181,13 @@
       "name": "Games",
       "path": "/System/Applications/Games.app",
       "real_path": "/System/Applications/Games.app"
+    },
+    {
+      "bundle_id": "com.google.Chrome",
+      "kind": "third_party",
+      "name": "Google Chrome",
+      "path": "/Applications/Google Chrome.app",
+      "real_path": "/Applications/Google Chrome.app"
     },
     {
       "bundle_id": "com.apple.grapher",
@@ -202,6 +223,13 @@
       "name": "iPhone Mirroring",
       "path": "/System/Applications/iPhone Mirroring.app",
       "real_path": "/System/Applications/iPhone Mirroring.app"
+    },
+    {
+      "bundle_id": "com.googlecode.iterm2",
+      "kind": "third_party",
+      "name": "iTerm",
+      "path": "/Applications/iTerm.app",
+      "real_path": "/Applications/iTerm.app"
     },
     {
       "bundle_id": "com.apple.journal",
@@ -274,6 +302,13 @@
       "real_path": "/System/Applications/Notes.app"
     },
     {
+      "bundle_id": "md.obsidian",
+      "kind": "third_party",
+      "name": "Obsidian",
+      "path": "/Applications/Obsidian.app",
+      "real_path": "/Applications/Obsidian.app"
+    },
+    {
       "bundle_id": "com.apple.Passwords",
       "kind": "builtin",
       "name": "Passwords",
@@ -330,6 +365,20 @@
       "real_path": "/System/Applications/QuickTime Player.app"
     },
     {
+      "bundle_id": "com.raycast.macos",
+      "kind": "tool_under_test",
+      "name": "Raycast",
+      "path": "/Applications/Raycast.app",
+      "real_path": "/Applications/Raycast.app"
+    },
+    {
+      "bundle_id": "com.knollsoft.Rectangle",
+      "kind": "third_party",
+      "name": "Rectangle",
+      "path": "/Applications/Rectangle.app",
+      "real_path": "/Applications/Rectangle.app"
+    },
+    {
       "bundle_id": "com.apple.reminders",
       "kind": "builtin",
       "name": "Reminders",
@@ -379,6 +428,20 @@
       "real_path": "/System/Applications/Siri.app"
     },
     {
+      "bundle_id": "com.tinyspeck.slackmacgap",
+      "kind": "third_party",
+      "name": "Slack",
+      "path": "/Applications/Slack.app",
+      "real_path": "/Applications/Slack.app"
+    },
+    {
+      "bundle_id": "com.spotify.client",
+      "kind": "third_party",
+      "name": "Spotify",
+      "path": "/Applications/Spotify.app",
+      "real_path": "/Applications/Spotify.app"
+    },
+    {
       "bundle_id": "com.apple.Stickies",
       "kind": "builtin",
       "name": "Stickies",
@@ -405,6 +468,13 @@
       "name": "System Settings",
       "path": "/System/Applications/System Settings.app",
       "real_path": "/System/Applications/System Settings.app"
+    },
+    {
+      "bundle_id": "ru.keepcoder.Telegram",
+      "kind": "third_party",
+      "name": "Telegram",
+      "path": "/Applications/Telegram.app",
+      "real_path": "/Applications/Telegram.app"
     },
     {
       "bundle_id": "com.apple.Terminal",
@@ -442,6 +512,20 @@
       "real_path": "/System/Applications/TV.app"
     },
     {
+      "bundle_id": "com.microsoft.VSCode",
+      "kind": "third_party",
+      "name": "Visual Studio Code",
+      "path": "/Applications/Visual Studio Code.app",
+      "real_path": "/Applications/Visual Studio Code.app"
+    },
+    {
+      "bundle_id": "org.videolan.vlc",
+      "kind": "third_party",
+      "name": "VLC",
+      "path": "/Applications/VLC.app",
+      "real_path": "/Applications/VLC.app"
+    },
+    {
       "bundle_id": "com.apple.VoiceMemos",
       "kind": "builtin",
       "name": "Voice Memos",
@@ -461,9 +545,16 @@
       "name": "Weather",
       "path": "/System/Applications/Weather.app",
       "real_path": "/System/Applications/Weather.app"
+    },
+    {
+      "bundle_id": "net.whatsapp.WhatsApp",
+      "kind": "third_party",
+      "name": "WhatsApp",
+      "path": "/Applications/WhatsApp.app",
+      "real_path": "/Applications/WhatsApp.app"
     }
   ],
-  "base_snapshot": "bench-clean-2026-11-12",
+  "base_snapshot": "bench-resized-2026-11-13",
   "excluded": {},
   "index_settled": true,
   "indexed": {
@@ -485,12 +576,15 @@
     "Contacts": true,
     "Dictionary": true,
     "Digital Color Meter": true,
+    "Discord": true,
     "Disk Utility": true,
     "FaceTime": true,
     "Find My": true,
+    "Firefox": true,
     "Font Book": true,
     "Freeform": true,
     "Games": true,
+    "Google Chrome": true,
     "Grapher": true,
     "Home": true,
     "Image Capture": true,
@@ -505,6 +599,7 @@
     "Music": true,
     "News": true,
     "Notes": true,
+    "Obsidian": true,
     "Passwords": true,
     "Phone": true,
     "Photo Booth": true,
@@ -513,6 +608,8 @@
     "Preview": true,
     "Print Center": true,
     "QuickTime Player": true,
+    "Raycast": true,
+    "Rectangle": true,
     "Reminders": true,
     "Safari": true,
     "Screen Sharing": true,
@@ -520,19 +617,26 @@
     "Script Editor": true,
     "Shortcuts": true,
     "Siri": true,
+    "Slack": true,
+    "Spotify": true,
     "Stickies": true,
     "Stocks": true,
     "System Information": true,
     "System Settings": true,
     "TV": true,
+    "Telegram": true,
     "Terminal": true,
     "TextEdit": true,
     "Time Machine": true,
     "Tips": true,
+    "VLC": true,
+    "Visual Studio Code": true,
     "Voice Memos": true,
     "VoiceOver Utility": true,
     "Weather": true,
-    "iPhone Mirroring": true
+    "WhatsApp": true,
+    "iPhone Mirroring": true,
+    "iTerm": true
   },
   "macos": {
     "build": "25E253",
