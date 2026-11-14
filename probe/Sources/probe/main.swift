@@ -36,6 +36,9 @@ let escapeKey: CGKeyCode = 53
 let selectAllKey: CGKeyCode = 0
 let deleteKey: CGKeyCode = 51
 let readyTimeoutMs = 10_000
+/// Pause between "ready" and the first key, the same for every launcher (a person doesn't type
+/// within milliseconds of the hotkey). Overridable with --settle-ms for measuring its effect.
+let settleAfterReadyMs = Int(arg("--settle-ms") ?? "") ?? 0
 
 func arg(_ name: String) -> String? {
     guard let i = CommandLine.arguments.firstIndex(of: name), i + 1 < CommandLine.arguments.count
@@ -96,7 +99,9 @@ let keys = CGEventKeys()
         keys.press(keyCode: selectAllKey, flags: .maskCommand)
         keys.press(keyCode: deleteKey)
     }
-    return waitUntil(readyTimeoutMs) { launcher.isReady() }
+    guard waitUntil(readyTimeoutMs, { launcher.isReady() }) else { return false }
+    usleep(useconds_t(settleAfterReadyMs * 1000))
+    return launcher.isReady()
 }
 
 let encoder = JSONEncoder()
