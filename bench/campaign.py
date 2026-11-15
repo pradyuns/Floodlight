@@ -13,8 +13,9 @@ import threading
 import time
 from dataclasses import asdict
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
+from bench.delivery import quarter_gate
 from bench.generate import Query
 from bench.hostload import HostSample, Policy, evaluate, make_blocks, read_host_sample, should_retry
 from bench.lock import verify_lock
@@ -61,6 +62,10 @@ def probe_digest(name: str, data: bytes) -> str:
     if name != f"probe-{full[:12]}":
         raise ValueError(f"probe file {name} does not match its contents (sha256 {full})")
     return full
+
+
+class StopRuleError(RuntimeError):
+    pass
 
 
 class StuckToolError(RuntimeError):
@@ -129,6 +134,7 @@ def run_campaign(
     guest_ready_timeout_s: float = 1200,
     extra_meta: dict[str, str] | None = None,
     block_pause_ms: list[int] | None = None,
+    stop_rule: bool = False,
 ) -> None:
     if require_lock:
         verify_lock(REPO)
@@ -179,6 +185,7 @@ def run_campaign(
         }
         (out_dir / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
         raw = (out_dir / "raw.jsonl").open("a")
+        recorded: list[dict[str, Any]] = []
         log = (out_dir / "blocks.jsonl").open("a")
         blocks = make_blocks(slots, block_size)
         if block_pause_ms is not None:
@@ -209,6 +216,7 @@ def run_campaign(
                 rec = json.loads(ln)
                 rec.update(block=b, attempt=attempt, env=env)
                 raw.write(json.dumps(rec) + "\n")
+                recorded.append(rec)
             log.write(
                 json.dumps(
                     {
@@ -237,6 +245,10 @@ def run_campaign(
                 raise StuckToolError(
                     f"{stuck} failed every sample in block {b}; VM {vm.name} kept for diagnosis"
                 )
+            if stop_rule and (breach := quarter_gate(slots, recorded)) is not None:
+                keep_vm = True
+                (out_dir / "stopped.txt").write_text(f"stop rule after block {b}: {breach}\n")
+                raise StopRuleError(f"stop rule: {breach}; data kept, VM {vm.name} kept")
             if should_retry(attempt, bool(reasons), policy):
                 time.sleep(policy.recovery_wait_s)
                 queue.insert(i, (b, block, attempt + 1, requeue))

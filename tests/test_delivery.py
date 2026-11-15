@@ -64,3 +64,65 @@ def test_summary_uses_first_attempts_and_keeps_every_outcome_visible() -> None:
 def test_endurance_plan_uses_one_pause_for_every_block() -> None:
     slots, pauses = delivery_plan(IDS, per_tool_per_pause=30, block_size=20, seed=7, pauses=(150,))
     assert pauses == [150, 150, 150] and len(slots) == 60
+
+
+def _slot(q: str, tool: str, run: int):  # type: ignore[no-untyped-def]
+    from bench.schedule import Slot
+
+    return Slot(q, tool, run, "warm")
+
+
+def _sample_rec(slot, outcome: str, attempt: int = 0):  # type: ignore[no-untyped-def]
+    base = {
+        "query_id": slot.query_id,
+        "tool": slot.tool,
+        "run": slot.run,
+        "condition": "warm",
+        "attempt": attempt,
+        "block": 0,
+    }
+    if outcome == "delivered":
+        return {**base, **_rec(field_shows=1, snaps=[("a", False, None)])}
+    if outcome == "dropped":
+        return {**base, **_rec(error="field_never_matched", snaps=[("x", True, None)])}
+    return {**base, **_rec(error="not_ready")}
+
+
+def test_quarter_gate_waits_until_a_quarter_is_complete() -> None:
+    from bench.delivery import quarter_gate
+
+    slots = [_slot(f"q{i}", "raycast", 0) for i in range(400)]
+    raw = [_sample_rec(s, "dropped") for s in slots[:99]]
+    assert quarter_gate(slots, raw) is None
+
+
+def test_quarter_gate_trips_on_drops_unverified_or_climb() -> None:
+    from bench.delivery import quarter_gate
+
+    slots = [_slot(f"q{i}", "raycast", 0) for i in range(400)]
+    clean = [_sample_rec(s, "delivered") for s in slots]
+    assert quarter_gate(slots, clean) is None
+    two_drops = [
+        _sample_rec(s, "dropped") if i < 2 else r
+        for i, (s, r) in enumerate(zip(slots, clean, strict=True))
+    ]
+    assert "raycast quarter 1: dropped 2.0%" in (quarter_gate(slots, two_drops) or "")
+    unverified = [
+        _sample_rec(s, "not_ready") if i in (5, 6) else r
+        for i, (s, r) in enumerate(zip(slots, clean, strict=True))
+    ]
+    assert "unverified 2.0%" in (quarter_gate(slots, unverified) or "")
+    one_late = [
+        _sample_rec(s, "dropped") if i == 150 else r
+        for i, (s, r) in enumerate(zip(slots, clean, strict=True))
+    ]
+    assert quarter_gate(slots, one_late) is None
+
+
+def test_quarter_gate_ignores_retries() -> None:
+    from bench.delivery import quarter_gate
+
+    slots = [_slot(f"q{i}", "spotlight", 0) for i in range(400)]
+    raw = [_sample_rec(s, "delivered") for s in slots]
+    raw += [_sample_rec(s, "dropped", attempt=1) for s in slots[:50]]
+    assert quarter_gate(slots, raw) is None

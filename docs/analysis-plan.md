@@ -367,13 +367,20 @@ Synthetic typing is deferred, outside Phase 1.
       tool, chosen from 0/150/300/500 ms by an unscored, counterbalanced input-delivery
       calibration (shortest pause at which, for every tool, observed first-try drops are ≤ 0.5%
       and unverified first tries — not ready, unreadable, timed out — are ≤ 1%; if none
-      qualifies, none is chosen), then checked in a separate endurance run of about 5 h in the
-      full sampling flow (drops ≤ 1% per tool overall, last quarter ≤ 1 point above the first;
-      all four quarters' counts and rates reported; passing means meeting this operational gate). Chosen on delivery only, never on
-      ranking. Timing stays anchored to actual key posts; the pause is recorded separately.
+      qualifies, none is chosen), then checked during the scored rerun itself by the stop rule
+      below (no separate endurance run). Chosen on delivery only, never on ranking. Timing
+      stays anchored to actual key posts; the pause is recorded separately.
+    - **Stop rule for scored runs:** each tool's scheduled slots are split into quarters in run
+      order. Once a quarter's slots have all been reached, its first attempts (retries excluded)
+      must show ≤ 1% confirmed drops and ≤ 1% unverified tries (not ready, unreadable, timed out,
+      missing), and its drop rate may not exceed quarter 1's by more than 1 point. A breach stops
+      the run at the next block boundary; all data and the VM are kept and the cause diagnosed.
+      Any fix gets a new published lock and a separately authorized rerun; unchanged runs are
+      never repeated until one passes. The pause and rules never change during a run. All four
+      quarters' counts and rates are reported; passing means meeting this operational gate.
     - **Power source (overrides item 27 and the locked host-load policy):** running on battery is
       recorded for every block but no longer flags or retries it; Low Power Mode, load, memory
-      pressure and swap still flag. Applies from the delivery endurance run onward; reports state
+      pressure and swap still flag. Applies from the dev baseline rerun onward; reports state
       that runs were allowed on battery.
 
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)

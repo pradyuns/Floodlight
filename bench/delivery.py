@@ -76,3 +76,40 @@ def summarize(
         key = (rec["tool"], block_pause[rec["block"]])
         out.setdefault(key, Counter())[classify(rec)] += 1
     return out
+
+
+MAX_QUARTER_RATE = 0.01
+MAX_QUARTER_CLIMB = 0.01
+UNVERIFIED = frozenset({"not_ready", "unreadable", "timeout", "other_error"})
+
+
+def quarter_gate(slots: list[Slot], raw: list[dict[str, Any]]) -> str | None:
+    """Stop rule for a scored run (analysis plan item 28). Each tool's scheduled slots are split
+    into quarters in run order; once a quarter's slots have all been reached, its first attempts
+    must show ≤ 1% dropped and ≤ 1% unverified (a missing first attempt counts as unverified),
+    and its drop rate may not exceed quarter 1's by more than 1 point. Returns the first
+    breach, or None."""
+    first = {
+        (r["query_id"], r["tool"], r["run"], r["condition"]): classify(r)
+        for r in raw
+        if r["attempt"] == 0
+    }
+    for tool in sorted({s.tool for s in slots}):
+        mine = [(s.query_id, s.tool, s.run, s.condition) for s in slots if s.tool == tool]
+        reached = max((i for i, k in enumerate(mine) if k in first), default=-1)
+        q1_drop: float | None = None
+        for q in range(4):
+            part = mine[q * len(mine) // 4 : (q + 1) * len(mine) // 4]
+            if not part or reached < q * len(mine) // 4 + len(part) - 1:
+                break
+            outcomes = [first.get(k, "other_error") for k in part]
+            drop = outcomes.count("dropped") / len(part)
+            unverified = sum(o in UNVERIFIED for o in outcomes) / len(part)
+            q1_drop = drop if q1_drop is None else q1_drop
+            if drop > MAX_QUARTER_RATE:
+                return f"{tool} quarter {q + 1}: dropped {100 * drop:.1f}%"
+            if unverified > MAX_QUARTER_RATE:
+                return f"{tool} quarter {q + 1}: unverified {100 * unverified:.1f}%"
+            if drop - q1_drop > MAX_QUARTER_CLIMB:
+                return f"{tool} quarter {q + 1}: dropped {100 * (drop - q1_drop):.1f} pts above Q1"
+    return None

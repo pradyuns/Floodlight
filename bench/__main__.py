@@ -179,6 +179,7 @@ def cmd_baseline(args: argparse.Namespace) -> int:
         window_ms=plan.window_ms,
         require_lock=True,
         extra_meta={"commit": head, "campaign": plan.name},
+        stop_rule=True,
     )
     print("done")
     return 0
