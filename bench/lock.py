@@ -26,6 +26,8 @@ LOCKED_GLOBS = (
     "fixtures/make_files.py",
     "docs/analysis-plan.md",
     "pyproject.toml",
+    "probe/Package.swift",
+    "probe/Sources/**/*.swift",
 )
 _DIGEST = re.compile(r"^[0-9a-f]{64}$")
 

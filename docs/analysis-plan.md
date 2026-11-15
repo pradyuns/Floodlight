@@ -374,3 +374,9 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
   which 22 coincide with public query strings (allowed and reported).
 - Secret-name dictionary: `/usr/share/dict/words`, sha256
   `be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9` (identical in the guest).
+
+## Measurement binary
+- The probe's Swift sources are locked with everything else. Every scored run uses the binary built
+  from them, `probe-6fa42c2a7df2` (first 12 hex digits of its sha256; the runner names staged
+  binaries by hash and records the name in each run's metadata). A harness fix after the lock is
+  a logged amendment with a new lock, and every affected run is redone.

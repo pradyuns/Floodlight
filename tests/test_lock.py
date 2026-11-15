@@ -64,6 +64,12 @@ def test_locked_set_covers_queries_scoring_and_plan() -> None:
         "bench/schedule.py",
         "bench/truth.py",
         "corpus/make_corpus.py",
+        "bench/campaign.py",
+        "probe/Package.swift",
+        "probe/Sources/ProbeCore/Spotlight.swift",
+        "probe/Sources/ProbeCore/Raycast.swift",
+        "probe/Sources/ProbeCore/Sampler.swift",
+        "probe/Sources/probe/main.swift",
     ):
         assert must in names, must
     assert not any(n.endswith(".local.md") or n.startswith("results/") for n in names)
