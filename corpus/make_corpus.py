@@ -162,9 +162,9 @@ def _stem(pattern: str, rng: random.Random) -> str:
 def _folders(rng: random.Random, count: int) -> tuple[list[str], list[str]]:
     """Document-like folders and project source folders (including node_modules)."""
     w = rng.choice
-    docs: list[str] = ["Downloads", "Desktop"]
+    docs: list[str] = []
     code: list[str] = []
-    while len(docs) + len(code) < count:
+    while len(docs) + len(code) < max(count, 2):
         if rng.random() < 0.6:
             base = f"Documents/{w(VOCABULARY)}-{w(VOCABULARY)}"
             docs.append(base if rng.random() < 0.5 else f"{base}/{rng.randint(2019, 2025)}")
@@ -177,7 +177,23 @@ def _folders(rng: random.Random, count: int) -> tuple[list[str], list[str]]:
     return sorted(set(docs)), sorted(set(code))
 
 
+# Fixed shares of document-type files placed directly in these standard home folders.
+LOOSE_SHARES = (("Downloads", 0.10), ("Desktop", 0.02))
+MAX_REJECTS = 1_000_000
+
+
+def _doc_folder(rng: random.Random, docs: list[str]) -> str:
+    r = rng.random()
+    for folder, share in LOOSE_SHARES:
+        if r < share:
+            return folder
+        r -= share
+    return rng.choice(docs)
+
+
 def build_manifest(seed: int, n: int, forbid: set[str]) -> list[Entry]:
+    """Forbidden strings are checked against the names the corpus creates, not against the
+    standard home folders (Documents, Downloads, Desktop, Projects) that every Mac has."""
     rng = random.Random(seed)
     banned = [f.lower() for f in forbid]
     docs, code = _folders(rng, max(4, n // 40))
@@ -186,12 +202,17 @@ def build_manifest(seed: int, n: int, forbid: set[str]) -> list[Entry]:
     extensions = {p[0]: p[2] for p in PATTERNS}
     seen: set[str] = set()
     out: list[Entry] = []
+    rejects = 0
     while len(out) < n:
         pattern = rng.choices(names, weights)[0]
         ext = rng.choice(extensions[pattern])
-        folder = rng.choice(code if ext in CODE_EXTENSIONS and code else docs)
+        folder = rng.choice(code) if ext in CODE_EXTENSIONS and code else _doc_folder(rng, docs)
         path = f"{folder}/{_stem(pattern, rng)}{ext}"
-        if path in seen or any(b in path.lower() for b in banned):
+        created = path.split("/", 1)[1].lower()
+        if path in seen or any(b in created for b in banned):
+            rejects += 1
+            if rejects > MAX_REJECTS:
+                raise ValueError(f"forbidden strings reject too many paths ({len(out)}/{n} made)")
             continue
         seen.add(path)
         out.append(Entry(path, pattern))

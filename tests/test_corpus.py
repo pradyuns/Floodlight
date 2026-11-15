@@ -49,3 +49,29 @@ def test_summary_has_shape_but_no_names_or_contents() -> None:
         assert entry.path.rsplit("/", 1)[-1] not in text
         body = content_for(entry.path, 4)[:40]
         assert body.decode(errors="ignore") not in text or not body.strip()
+
+
+def test_forbidden_strings_never_empty_a_standard_home_folder() -> None:
+    manifest = build_manifest(seed=3, n=4000, forbid={"desk", "down", "doc", "proj"})
+    tops = {e.path.split("/")[0] for e in manifest}
+    assert {"Desktop", "Downloads", "Documents", "Projects"} <= tops
+    for e in manifest:
+        created = e.path.split("/")[1:]
+        assert not any(
+            b in part.lower() for part in created for b in ("desk", "down", "doc", "proj")
+        )
+
+
+def test_downloads_and_desktop_get_their_fixed_share_of_document_files() -> None:
+    manifest = build_manifest(seed=4, n=20000, forbid=set())
+    tops = [e.path.split("/")[0] for e in manifest]
+    docs = sum(t in ("Documents", "Downloads", "Desktop") for t in tops)
+    assert abs(tops.count("Downloads") / docs - 0.10) < 0.02
+    assert abs(tops.count("Desktop") / docs - 0.02) < 0.01
+
+
+def test_impossible_forbid_set_fails_loudly_instead_of_looping() -> None:
+    import pytest
+
+    with pytest.raises(ValueError, match="reject too many"):
+        build_manifest(seed=1, n=10, forbid=set("abcdefghijklmnopqrstuvwxyz0123456789"))
