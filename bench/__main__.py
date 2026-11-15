@@ -215,7 +215,7 @@ def cmd_delivery(args: argparse.Namespace) -> int:
         label=f"delivery-{args.phase}",
         policy=LOCKED_POLICY,
         block_size=DELIVERY_BLOCK,
-        window_ms=DELIVERY_WINDOW_MS,
+        window_ms=args.window_ms,
         require_lock=False,
         extra_meta={"commit": _git("rev-parse", "HEAD"), "phase": args.phase},
         block_pause_ms=block_pauses,
@@ -264,6 +264,7 @@ def main() -> int:
     dv.add_argument("--per-tool-per-pause", type=int, default=320)
     dv.add_argument("--pause", type=int)
     dv.add_argument("--seed", type=int, default=2811)
+    dv.add_argument("--window-ms", type=int, default=DELIVERY_WINDOW_MS)
     dv.set_defaults(func=cmd_delivery)
     args = parser.parse_args()
     result: int = args.func(args)
