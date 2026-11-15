@@ -371,6 +371,10 @@ Synthetic typing is deferred, outside Phase 1.
       full sampling flow (drops ≤ 1% per tool overall, last quarter ≤ 1 point above the first;
       all four quarters' counts and rates reported; passing means meeting this operational gate). Chosen on delivery only, never on
       ranking. Timing stays anchored to actual key posts; the pause is recorded separately.
+    - **Power source (overrides item 27 and the locked host-load policy):** running on battery is
+      recorded for every block but no longer flags or retries it; Low Power Mode, load, memory
+      pressure and swap still flag. Applies from the delivery endurance run onward; reports state
+      that runs were allowed on battery.
 
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)
 Pilot data: 240 samples sparse (restart + warm), 180 busy (warm), 120 sparse during light host use;

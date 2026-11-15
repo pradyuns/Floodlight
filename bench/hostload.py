@@ -20,6 +20,7 @@ class Policy:
     max_swap_pages_per_s: float
     recovery_wait_s: float
     max_retries: int
+    flag_battery: bool = True  # power source is always recorded; this decides if it flags
 
 
 # Locked values (docs/analysis-plan.md, "Pilot-derived settings").
@@ -30,6 +31,7 @@ LOCKED_POLICY = Policy(
     max_swap_pages_per_s=500,
     recovery_wait_s=120,
     max_retries=2,
+    flag_battery=False,
 )
 
 
@@ -80,7 +82,7 @@ def evaluate(samples: list[HostSample], policy: Policy) -> list[str]:
             reasons.append(f"load {s.load1:.2f} > {policy.max_load1}")
         if s.pressure_level > policy.max_pressure_level:
             reasons.append(f"memory pressure level {s.pressure_level}")
-        if not s.on_ac:
+        if policy.flag_battery and not s.on_ac:
             reasons.append("on battery")
         if s.low_power:
             reasons.append("low power mode on")

@@ -80,3 +80,12 @@ def test_block_pauses_must_match_the_blocks() -> None:
     check_block_pauses(blocks, [0, 150])
     with pytest.raises(ValueError, match="2 blocks but 3 pauses"):
         check_block_pauses(blocks, [0, 150, 300])
+
+
+def test_locked_policy_records_battery_but_does_not_flag_it() -> None:
+    from bench.hostload import LOCKED_POLICY, HostSample, evaluate
+
+    on_battery = HostSample(0.0, 1.0, 1, 0, 0, on_ac=False, low_power=False)
+    low_power = HostSample(0.0, 1.0, 1, 0, 0, on_ac=False, low_power=True)
+    assert evaluate([on_battery], LOCKED_POLICY) == []
+    assert any("low power" in r for r in evaluate([low_power], LOCKED_POLICY))
