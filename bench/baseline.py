@@ -15,6 +15,9 @@ RUNS = 5
 WINDOW_MS = 3000
 SCHEDULE_SEED = 42
 SUBSET_SEED = 2026
+# Pause between "ready" and the first key, the same for every tool: chosen by the unscored
+# delivery calibration of 2026-11-15 (analysis plan item 28).
+PAUSE_MS = 300
 CAMPAIGNS = ("dev-warm", "dev-restart", "natural", "dev-busy")
 
 
@@ -29,6 +32,7 @@ class Plan:
     runs: int = RUNS
     window_ms: int = WINDOW_MS
     schedule_seed: int = SCHEDULE_SEED
+    pause_ms: int = PAUSE_MS
 
 
 def _load(data_dir: Path, name: str) -> list[Query]:

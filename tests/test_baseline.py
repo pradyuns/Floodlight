@@ -40,3 +40,8 @@ def test_every_campaign_uses_both_tools_five_runs_and_the_3s_window() -> None:
         plan = baseline_plan(name, REPO / "data")
         assert plan.tools == ("spotlight", "raycast") and plan.runs == 5
         assert plan.window_ms == 3000
+
+
+def test_every_campaign_waits_300ms_after_ready_before_typing() -> None:
+    for name in CAMPAIGNS:
+        assert baseline_plan(name, REPO / "data").pause_ms == 300

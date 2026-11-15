@@ -378,6 +378,13 @@ Synthetic typing is deferred, outside Phase 1.
       Any fix gets a new published lock and a separately authorized rerun; unchanged runs are
       never repeated until one passes. The pause and rules never change during a run. All four
       quarters' counts and rates are reported; passing means meeting this operational gate.
+    - **Calibration result (2026-11-15, unscored, probe `e3e18537995d`):** 320 first tries per
+      tool per pause. Confirmed drops: Raycast 1 at 0 ms, none otherwise; Spotlight none.
+      Unverified (Spotlight; Raycast none): 1.25% at 0 ms, 1.88% at 150, 0.94% at 300, 0.31% at
+      500. Chosen: **300 ms** (also 300 ms with the battery-powered blocks excluded, Spotlight at
+      1.00%). A follow-up unscored check with the 3 s window (160 per tool, 300 ms) found 0%
+      unobserved at the final cutoff for both tools; Spotlight's over-budget reads all fell in the
+      first second after the final key.
     - **Power source (overrides item 27 and the locked host-load policy):** running on battery is
       recorded for every block but no longer flags or retries it; Low Power Mode, load, memory
       pressure and swap still flag. Applies from the dev baseline rerun onward; reports state

@@ -151,7 +151,7 @@ def cmd_baseline(args: argparse.Namespace) -> int:
     from bench.baseline import SNAPSHOTS, baseline_plan
     from bench.campaign import run_campaign
     from bench.generate import queries_from_json
-    from bench.hostload import LOCKED_POLICY
+    from bench.hostload import LOCKED_POLICY, make_blocks
     from bench.schedule import schedule
 
     if _git("status", "--porcelain"):
@@ -180,6 +180,8 @@ def cmd_baseline(args: argparse.Namespace) -> int:
         require_lock=True,
         extra_meta={"commit": head, "campaign": plan.name},
         stop_rule=True,
+        block_pause_ms=[plan.pause_ms] * len(make_blocks(slots, BASELINE_BLOCK)),
+        block_size=BASELINE_BLOCK,
     )
     print("done")
     return 0
@@ -224,6 +226,7 @@ def cmd_delivery(args: argparse.Namespace) -> int:
     return 0
 
 
+BASELINE_BLOCK = 40
 DELIVERY_BLOCK = 20
 DELIVERY_WINDOW_MS = 1000
 
