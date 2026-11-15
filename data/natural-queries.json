@@ -1,0 +1,1298 @@
+[
+ {
+  "acceptable": [
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t1:screenshot",
+  "intended": {
+   "id": "Screenshot",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=1;app;style=name",
+  "suite": "natural",
+  "text": "screenshot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t1:screen-capture",
+  "intended": {
+   "id": "Screenshot",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=1;app;style=synonym",
+  "suite": "natural",
+  "text": "screen capture"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t1:screnshot",
+  "intended": {
+   "id": "Screenshot",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=1;app;style=misspelling",
+  "suite": "natural",
+  "text": "screnshot"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t2:activity-mon",
+  "intended": {
+   "id": "Activity Monitor",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=2;app;style=partial",
+  "suite": "natural",
+  "text": "activity mon"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t2:task-manager",
+  "intended": {
+   "id": "Activity Monitor",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=2;app;style=synonym",
+  "suite": "natural",
+  "text": "task manager"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t2:cpu-usage",
+  "intended": {
+   "id": "Activity Monitor",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=2;app;style=description",
+  "suite": "natural",
+  "text": "cpu usage"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t3:vscode",
+  "intended": {
+   "id": "Visual Studio Code",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=3;app;style=abbreviation",
+  "suite": "natural",
+  "text": "vscode"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t3:vs-code",
+  "intended": {
+   "id": "Visual Studio Code",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=3;app;style=abbreviation",
+  "suite": "natural",
+  "text": "vs code"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Visual Studio Code",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t3:code",
+  "intended": {
+   "id": "Visual Studio Code",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=3;app;style=partial",
+  "suite": "natural",
+  "text": "code"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Safari",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t4:safari",
+  "intended": {
+   "id": "Safari",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=4;app;style=name",
+  "suite": "natural",
+  "text": "safari"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Safari",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t4:safri",
+  "intended": {
+   "id": "Safari",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=4;app;style=misspelling",
+  "suite": "natural",
+  "text": "safri"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Firefox",
+    "kind": "app"
+   },
+   {
+    "id": "Google Chrome",
+    "kind": "app"
+   },
+   {
+    "id": "Safari",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "natural:model:t4:browser",
+  "intended": {
+   "id": "Safari",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=4;app;style=description",
+  "suite": "natural",
+  "text": "browser"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Terminal",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t5:terminal",
+  "intended": {
+   "id": "Terminal",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=5;app;style=name",
+  "suite": "natural",
+  "text": "terminal"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Terminal",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t5:term",
+  "intended": {
+   "id": "Terminal",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=5;app;style=partial",
+  "suite": "natural",
+  "text": "term"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Terminal",
+    "kind": "app"
+   },
+   {
+    "id": "iTerm",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "natural:model:t5:command-line",
+  "intended": {
+   "id": "Terminal",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=5;app;style=synonym",
+  "suite": "natural",
+  "text": "command line"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Calculator",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t6:calc",
+  "intended": {
+   "id": "Calculator",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=6;app;style=partial",
+  "suite": "natural",
+  "text": "calc"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Calculator",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t6:calculater",
+  "intended": {
+   "id": "Calculator",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=6;app;style=misspelling",
+  "suite": "natural",
+  "text": "calculater"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Messages",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t7:messages",
+  "intended": {
+   "id": "Messages",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=7;app;style=name",
+  "suite": "natural",
+  "text": "messages"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Messages",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t7:imessage",
+  "intended": {
+   "id": "Messages",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=7;app;style=synonym",
+  "suite": "natural",
+  "text": "imessage"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Messages",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t7:texts",
+  "intended": {
+   "id": "Messages",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=7;app;style=synonym",
+  "suite": "natural",
+  "text": "texts"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t8:quicktime",
+  "intended": {
+   "id": "QuickTime Player",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=8;app;style=partial",
+  "suite": "natural",
+  "text": "quicktime"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "QuickTime Player",
+    "kind": "app"
+   },
+   {
+    "id": "VLC",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": true,
+  "id": "natural:model:t8:video-player",
+  "intended": {
+   "id": "QuickTime Player",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=8;app;style=description",
+  "suite": "natural",
+  "text": "video player"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t9:disk-utility",
+  "intended": {
+   "id": "Disk Utility",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=9;app;style=name",
+  "suite": "natural",
+  "text": "disk utility"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t9:disk-util",
+  "intended": {
+   "id": "Disk Utility",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=9;app;style=partial",
+  "suite": "natural",
+  "text": "disk util"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t9:format-drive",
+  "intended": {
+   "id": "Disk Utility",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=9;app;style=description",
+  "suite": "natural",
+  "text": "format drive"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Passwords",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t10:passwords",
+  "intended": {
+   "id": "Passwords",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=10;app;style=name",
+  "suite": "natural",
+  "text": "passwords"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Passwords",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t10:pasword",
+  "intended": {
+   "id": "Passwords",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=10;app;style=misspelling",
+  "suite": "natural",
+  "text": "pasword"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Passwords",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t10:keychain",
+  "intended": {
+   "id": "Passwords",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=10;app;style=synonym",
+  "suite": "natural",
+  "text": "keychain"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Spotify",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t11:spotify",
+  "intended": {
+   "id": "Spotify",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=11;app;style=name",
+  "suite": "natural",
+  "text": "spotify"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Spotify",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t11:spotfy",
+  "intended": {
+   "id": "Spotify",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=11;app;style=misspelling",
+  "suite": "natural",
+  "text": "spotfy"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Wi‑Fi",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t12:wifi",
+  "intended": {
+   "id": "Wi‑Fi",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=12;settings_pane;style=name",
+  "suite": "natural",
+  "text": "wifi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Wi‑Fi",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t12:wireless",
+  "intended": {
+   "id": "Wi‑Fi",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=12;settings_pane;style=synonym",
+  "suite": "natural",
+  "text": "wireless"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Wi‑Fi",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t12:wifi-settings",
+  "intended": {
+   "id": "Wi‑Fi",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=12;settings_pane;style=description",
+  "suite": "natural",
+  "text": "wifi settings"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t13:bluetooth",
+  "intended": {
+   "id": "Bluetooth",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=13;settings_pane;style=name",
+  "suite": "natural",
+  "text": "bluetooth"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t13:blutooth",
+  "intended": {
+   "id": "Bluetooth",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=13;settings_pane;style=misspelling",
+  "suite": "natural",
+  "text": "blutooth"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t13:bt",
+  "intended": {
+   "id": "Bluetooth",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=13;settings_pane;style=abbreviation",
+  "suite": "natural",
+  "text": "bt"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Displays",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t14:display",
+  "intended": {
+   "id": "Displays",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=14;settings_pane;style=partial",
+  "suite": "natural",
+  "text": "display"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Displays",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t14:monitor",
+  "intended": {
+   "id": "Displays",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=14;settings_pane;style=synonym",
+  "suite": "natural",
+  "text": "monitor"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Displays",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t14:screen-resolution",
+  "intended": {
+   "id": "Displays",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=14;settings_pane;style=description",
+  "suite": "natural",
+  "text": "screen resolution"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Sound",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t15:sound",
+  "intended": {
+   "id": "Sound",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=15;settings_pane;style=name",
+  "suite": "natural",
+  "text": "sound"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Sound",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t15:volume",
+  "intended": {
+   "id": "Sound",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=15;settings_pane;style=synonym",
+  "suite": "natural",
+  "text": "volume"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Sound",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t15:audio-output",
+  "intended": {
+   "id": "Sound",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=15;settings_pane;style=description",
+  "suite": "natural",
+  "text": "audio output"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Desktop & Dock",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t16:dock",
+  "intended": {
+   "id": "Desktop & Dock",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=16;settings_pane;style=partial",
+  "suite": "natural",
+  "text": "dock"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Desktop & Dock",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t16:dock-settings",
+  "intended": {
+   "id": "Desktop & Dock",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=16;settings_pane;style=description",
+  "suite": "natural",
+  "text": "dock settings"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Privacy & Security",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t17:privacy",
+  "intended": {
+   "id": "Privacy & Security",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=17;settings_pane;style=partial",
+  "suite": "natural",
+  "text": "privacy"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Privacy & Security",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t17:camera-permissions",
+  "intended": {
+   "id": "Privacy & Security",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=17;settings_pane;style=description",
+  "suite": "natural",
+  "text": "camera permissions"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Energy",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t18:energy-saver",
+  "intended": {
+   "id": "Energy",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=18;settings_pane;style=synonym",
+  "suite": "natural",
+  "text": "energy saver"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Projects/fozibu",
+    "kind": "folder"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t19:fozi",
+  "intended": {
+   "id": "/Users/bench/Projects/fozibu",
+   "kind": "folder"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=19;folder;style=partial",
+  "suite": "natural",
+  "text": "fozi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Projects/fozibu",
+    "kind": "folder"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t19:fozibu-project",
+  "intended": {
+   "id": "/Users/bench/Projects/fozibu",
+   "kind": "folder"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=19;folder;style=description",
+  "suite": "natural",
+  "text": "fozibu project"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Projects/gagevig/src/bavobez",
+    "kind": "folder"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t20:bavobes",
+  "intended": {
+   "id": "/Users/bench/Projects/gagevig/src/bavobez",
+   "kind": "folder"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=20;folder;style=misspelling",
+  "suite": "natural",
+  "text": "bavobes"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "/Users/bench/Documents/rbk-741",
+    "kind": "folder"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:model:t21:rbk",
+  "intended": {
+   "id": "/Users/bench/Documents/rbk-741",
+   "kind": "folder"
+  },
+  "mode": "completed",
+  "provenance": "model",
+  "rule": "natural",
+  "stratum": "task=21;folder;style=partial",
+  "suite": "natural",
+  "text": "rbk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Screenshot",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t1:screen",
+  "intended": {
+   "id": "Screenshot",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=1;app;human",
+  "suite": "natural",
+  "text": "screen"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Activity Monitor",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t2:act",
+  "intended": {
+   "id": "Activity Monitor",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=2;app;human",
+  "suite": "natural",
+  "text": "act"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Safari",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t4:safari",
+  "intended": {
+   "id": "Safari",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=4;app;human",
+  "suite": "natural",
+  "text": "safari"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Google Chrome",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t4:chrome",
+  "intended": {
+   "id": "Google Chrome",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=4;app;human",
+  "suite": "natural",
+  "text": "chrome"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Firefox",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t4:firefox",
+  "intended": {
+   "id": "Firefox",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=4;app;human",
+  "suite": "natural",
+  "text": "firefox"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Terminal",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t5:terminal",
+  "intended": {
+   "id": "Terminal",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=5;app;human",
+  "suite": "natural",
+  "text": "terminal"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Terminal",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t5:term",
+  "intended": {
+   "id": "Terminal",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=5;app;human",
+  "suite": "natural",
+  "text": "term"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Calculator",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t6:calc",
+  "intended": {
+   "id": "Calculator",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=6;app;human",
+  "suite": "natural",
+  "text": "calc"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Messages",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t7:message",
+  "intended": {
+   "id": "Messages",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=7;app;human",
+  "suite": "natural",
+  "text": "message"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Disk Utility",
+    "kind": "app"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t9:disk",
+  "intended": {
+   "id": "Disk Utility",
+   "kind": "app"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=9;app;human",
+  "suite": "natural",
+  "text": "disk"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Wi‑Fi",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t12:wifi",
+  "intended": {
+   "id": "Wi‑Fi",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=12;settings_pane;human",
+  "suite": "natural",
+  "text": "wifi"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Bluetooth",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t13:blue",
+  "intended": {
+   "id": "Bluetooth",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=13;settings_pane;human",
+  "suite": "natural",
+  "text": "blue"
+ },
+ {
+  "acceptable": [
+   {
+    "id": "Desktop & Dock",
+    "kind": "settings_pane"
+   }
+  ],
+  "ambiguous": false,
+  "id": "natural:human:t16:dock",
+  "intended": {
+   "id": "Desktop & Dock",
+   "kind": "settings_pane"
+  },
+  "mode": "completed",
+  "provenance": "human",
+  "rule": "natural",
+  "stratum": "task=16;settings_pane;human",
+  "suite": "natural",
+  "text": "dock"
+ }
+]

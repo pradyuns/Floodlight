@@ -1,0 +1,86 @@
+[
+ {
+  "task": 1,
+  "prompt": "You want to capture a picture of part of your screen."
+ },
+ {
+  "task": 2,
+  "prompt": "Your Mac feels slow and you want to see which program is using the most processor."
+ },
+ {
+  "task": 3,
+  "prompt": "You want to open your code editor to continue working on a project."
+ },
+ {
+  "task": 4,
+  "prompt": "You want to open Safari to look something up on the web."
+ },
+ {
+  "task": 5,
+  "prompt": "You want to open Apple's built-in Terminal app to run a quick command."
+ },
+ {
+  "task": 6,
+  "prompt": "You want to quickly add up a few numbers."
+ },
+ {
+  "task": 7,
+  "prompt": "You want to send a text message from your Mac."
+ },
+ {
+  "task": 8,
+  "prompt": "You want to watch a video file using the Mac's built-in video player."
+ },
+ {
+  "task": 9,
+  "prompt": "You want to erase and reformat a USB drive."
+ },
+ {
+  "task": 10,
+  "prompt": "You want to look up a saved password for a website."
+ },
+ {
+  "task": 11,
+  "prompt": "You want to put on some music in Spotify."
+ },
+ {
+  "task": 12,
+  "prompt": "You want to switch your Mac to a different Wi-Fi network."
+ },
+ {
+  "task": 13,
+  "prompt": "You want to check whether your wireless headphones are connected to your Mac."
+ },
+ {
+  "task": 14,
+  "prompt": "You plugged in a second screen and want to change how it is arranged and its resolution."
+ },
+ {
+  "task": 15,
+  "prompt": "You want to change which speakers your Mac plays sound through."
+ },
+ {
+  "task": 16,
+  "prompt": "You want the Dock to hide automatically when you are not using it."
+ },
+ {
+  "task": 17,
+  "prompt": "You want to check which apps are allowed to use your camera."
+ },
+ {
+  "task": 18,
+  "prompt": "You want to change the power-saving options on your Mac."
+ },
+ {
+  "task": 19,
+  "prompt": "You want to open the fozibu project folder to look through its files."
+ },
+ {
+  "task": 20,
+  "prompt": "You want to open the bavobez source folder inside one of your projects."
+ },
+ {
+  "task": 21,
+  "prompt": "You want to open the rbk-741 folder in your Documents."
+ }
+]

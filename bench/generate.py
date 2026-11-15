@@ -20,6 +20,7 @@ Rule = Literal[
     "initials",
     "typo",
     "stem",
+    "natural",
 ]
 Mode = Literal["completed", "continuous", "stepped"]
 TargetKind = Literal["app", "file", "folder", "settings_pane"]
