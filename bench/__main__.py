@@ -184,6 +184,49 @@ def cmd_baseline(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_delivery(args: argparse.Namespace) -> int:
+    """Unscored input-delivery check (analysis plan item 28): calibration over four pauses, or
+    endurance at one pause. Never a scored run."""
+    import time
+
+    from bench.baseline import SNAPSHOTS
+    from bench.campaign import run_campaign
+    from bench.delivery import PAUSES_MS, delivery_plan
+    from bench.generate import queries_from_json
+    from bench.hostload import LOCKED_POLICY
+
+    queries = {q.id: q for q in queries_from_json((REPO / "data/dev-queries.json").read_text())}
+    pauses = PAUSES_MS if args.phase == "calibrate" else (args.pause,)
+    if args.phase == "endurance" and args.pause is None:
+        sys.exit("--pause is required for endurance")
+    slots, block_pauses = delivery_plan(
+        sorted(queries), args.per_tool_per_pause, DELIVERY_BLOCK, args.seed, pauses
+    )
+    out = REPO / "results" / f"delivery-{args.phase}-{time.strftime('%Y%m%d-%H%M')}"
+    print(f"{args.phase}: {len(slots)} trials, pauses {sorted(set(block_pauses))} -> {out.name}")
+    run_campaign(
+        snapshot=SNAPSHOTS["sparse"],
+        env="sparse",
+        queries=queries,
+        slots=slots,
+        probe=args.probe,
+        out_dir=out,
+        label=f"delivery-{args.phase}",
+        policy=LOCKED_POLICY,
+        block_size=DELIVERY_BLOCK,
+        window_ms=DELIVERY_WINDOW_MS,
+        require_lock=False,
+        extra_meta={"commit": _git("rev-parse", "HEAD"), "phase": args.phase},
+        block_pause_ms=block_pauses,
+    )
+    print("done")
+    return 0
+
+
+DELIVERY_BLOCK = 20
+DELIVERY_WINDOW_MS = 1000
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="bench")
     sub = parser.add_subparsers(required=True)
@@ -214,6 +257,12 @@ def main() -> int:
     bl.add_argument("--campaign", required=True)
     bl.add_argument("--probe", required=True)
     bl.set_defaults(func=cmd_baseline)
+    dv = sub.add_parser("delivery", help="unscored input-delivery check (calibrate or endurance)")
+    dv.add_argument("phase", choices=["calibrate", "endurance"])
+    dv.add_argument("--probe", required=True)
+    dv.add_argument("--per-tool-per-pause", type=int, default=320)
+    dv.add_argument("--pause", type=int)
+    dv.add_argument("--seed", type=int, default=2811)
     args = parser.parse_args()
     result: int = args.func(args)
     return result

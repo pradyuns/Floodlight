@@ -328,6 +328,33 @@ Synthetic typing is deferred, outside Phase 1.
     tool) and locked below. Interleaving reduces, but does not rule out, background effects. The
     first block starts only after the guest's 1-minute load is below 3.0. Reported as "ran under
     a monitored host-load policy allowing light use".
+28. **Amendment 1 (2026-11-15, after the first dev baseline; overrides earlier sections where they
+    conflict).** Hand review of the first dev baseline found measurement defects. That run, its
+    lock and its raw data are kept unchanged as a labelled diagnostic and are not reported as a
+    comparison.
+    - **Read states:** each read of the search field is readable text (possibly empty) or
+      unreadable, with its reason; a failed row read is unreadable too. An unreadable read is an
+      observation failure, never an empty result, and never counts as "ready to type".
+    - **Read budget:** one whole read (field, rows, Enter label) must finish within 150 ms. Every
+      accessibility call gets only the time left; a read that runs out is unreadable
+      ("deadline") and its partial rows are discarded.
+    - **Final freshness:** the final outcome comes from a readable read that started at least
+      2.9 s and finished by 3.0 s after the final key. A later read never fills the gap. Without
+      one, the outcome is unobserved: kept in the denominator with its own rate per tool, distinct
+      from unresolved identity. Early checkpoints keep their 100 ms rule and report their own
+      unobserved rates.
+    - **Observability gate:** the final Intended@1 comparison is inconclusive on observability if
+      any tool's unobserved rate exceeds 5% of scheduled samples, or the tools differ by more
+      than 2 points. The limits are not loosened to obtain a verdict.
+    - **Retries (supersedes item 12's "up to twice"):** an errored or missing sample is run once
+      more, right after its block; a host-load-flagged block is retried up to 2 times (separate
+      rule). The reported sample is the first attempt that is neither errored nor in a flagged
+      block; if every clean attempt was flagged, the last clean one, labelled flagged; a slot with
+      no clean attempt is a kept error. All attempts are kept; first-attempt and after-retry error
+      rates are both reported.
+    - **Dropped keys:** a dropped key is counted only when a readable field shows text other than
+      what was typed. First-attempt drop rates are reported per tool and per quarter of each
+      campaign.
 
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)
 Pilot data: 240 samples sparse (restart + warm), 180 busy (warm), 120 sparse during light host use;

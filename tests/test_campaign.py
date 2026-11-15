@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from bench.campaign import _stuck_tool
 from bench.schedule import Slot
 
@@ -61,3 +63,20 @@ def test_probe_name_must_match_its_full_sha256() -> None:
     assert probe_digest(f"probe-{full[:12]}", data) == full
     with pytest.raises(ValueError, match="does not match"):
         probe_digest("probe-000000000000", data)
+
+
+def test_block_command_passes_the_block_pause_only_when_set() -> None:
+    from bench.campaign import probe_command
+
+    assert "--settle-ms" not in probe_command("/io", "s.jsonl", "r.jsonl", None)
+    assert "--settle-ms 300 " in probe_command("/io", "s.jsonl", "r.jsonl", 300)
+
+
+def test_block_pauses_must_match_the_blocks() -> None:
+    from bench.campaign import check_block_pauses
+    from bench.schedule import Slot
+
+    blocks = [[Slot("q", "spotlight", 0, "warm")], [Slot("q", "raycast", 1, "warm")]]
+    check_block_pauses(blocks, [0, 150])
+    with pytest.raises(ValueError, match="2 blocks but 3 pauses"):
+        check_block_pauses(blocks, [0, 150, 300])

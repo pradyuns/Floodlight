@@ -99,6 +99,19 @@ def _wait_for_host(policy: Policy) -> float:
     return time.monotonic() - start
 
 
+def probe_command(guest_io: str, name: str, result_name: str, pause_ms: int | None) -> str:
+    pause = f"--settle-ms {pause_ms} " if pause_ms is not None else ""
+    return (
+        f"~/probe run-schedule {pause}--schedule {guest_io}/{name} "
+        f"--out {guest_io}/{result_name} >/dev/null 2>&1; true"
+    )
+
+
+def check_block_pauses(blocks: list[list[Slot]], pauses: list[int]) -> None:
+    if len(blocks) != len(pauses):
+        raise ValueError(f"{len(blocks)} blocks but {len(pauses)} pauses")
+
+
 def run_campaign(
     *,
     snapshot: str,
@@ -115,6 +128,7 @@ def run_campaign(
     guest_ready_load1: float = 3.0,
     guest_ready_timeout_s: float = 1200,
     extra_meta: dict[str, str] | None = None,
+    block_pause_ms: list[int] | None = None,
 ) -> None:
     if require_lock:
         verify_lock(REPO)
@@ -166,7 +180,10 @@ def run_campaign(
         (out_dir / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
         raw = (out_dir / "raw.jsonl").open("a")
         log = (out_dir / "blocks.jsonl").open("a")
-        queue = [(b, blk, 0, False) for b, blk in enumerate(make_blocks(slots, block_size))]
+        blocks = make_blocks(slots, block_size)
+        if block_pause_ms is not None:
+            check_block_pauses(blocks, block_pause_ms)
+        queue = [(b, blk, 0, False) for b, blk in enumerate(blocks)]
         i = 0
         while i < len(queue):
             b, block, attempt, requeue = queue[i]
@@ -178,10 +195,10 @@ def run_campaign(
             guest_load_before = sh("sysctl -n vm.loadavg").strip()
             started = time.monotonic()
             guest_io = shlex.quote(GUEST_SHARE)
+            pause_ms = block_pause_ms[b] if block_pause_ms is not None else None
             with _Monitor(policy.interval_s) as mon:
                 sh(
-                    f"~/probe run-schedule --schedule {guest_io}/{name} "
-                    f"--out {guest_io}/{result_name} >/dev/null 2>&1; true",
+                    probe_command(guest_io, name, result_name, pause_ms),
                     timeout=60 * len(block) + 300,
                 )
             result_file = io / result_name
@@ -198,6 +215,7 @@ def run_campaign(
                         "block": b,
                         "attempt": attempt,
                         "requeue_of_errors": requeue,
+                        "pause_ms": pause_ms,
                         "slots": len(block),
                         "results": len(lines),
                         "secs": round(time.monotonic() - started, 1),
