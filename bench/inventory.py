@@ -4,7 +4,7 @@ import json
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from bench.vm import VM
 
@@ -96,3 +96,40 @@ def build_inventory(
 
 def index_coverage(apps: list[App], indexed_paths: set[str]) -> dict[str, bool]:
     return {a.name: a.path in indexed_paths or a.real_path in indexed_paths for a in apps}
+
+
+def parse_bundle_names(output: str, apps_by_path: dict[str, str]) -> dict[str, Any]:
+    """Alias table from scripts/app_names.sh output: each app's other names from its own bundle
+    (Info.plist and English localizations), with their source. A name claimed by two apps is
+    refused, so an alias can never make a row ambiguous."""
+    from bench.normalize import normalize
+
+    meta = {}
+    found: dict[str, dict[str, str]] = {}
+    for line in output.splitlines():
+        parts = line.split("\t")
+        if parts[0] in ("LOCALE", "LANGS"):
+            meta[parts[0]] = parts[1]
+        elif parts[0] == "NAME":
+            _, path, source, key, value = parts
+            name = apps_by_path[path]
+            if normalize(value) != normalize(name):
+                found.setdefault(name, {}).setdefault(value, f"{source} {key}")
+    owners: dict[str, set[str]] = {}
+    shown: dict[str, set[str]] = {}
+    pairs = [(name, name) for name in apps_by_path.values()]
+    pairs += [(alias, name) for name, aliases in found.items() for alias in aliases]
+    for text, name in pairs:
+        owners.setdefault(normalize(text), set()).add(name)
+        shown.setdefault(normalize(text), set()).add(text)
+    shared = {"/".join(sorted(shown[n])): sorted(o) for n, o in owners.items() if len(o) > 1}
+    if shared:
+        raise ValueError(f"names claimed by more than one app: {shared}")
+    return {
+        "locale": meta["LOCALE"],
+        "languages": meta["LANGS"],
+        "aliases": {
+            name: [[alias, src] for alias, src in sorted(aliases.items())]
+            for name, aliases in sorted(found.items())
+        },
+    }

@@ -334,3 +334,11 @@ def test_unreadable_read_at_a_checkpoint_is_unobserved_not_wrong() -> None:
         _snap(3950, 3960, [_row("Calculator")]),
     ]
     assert score_sample(_with(snaps), _query()).wrong_enter[100] == "unobserved"
+
+
+def test_app_rows_match_by_any_name_from_the_apps_own_bundle() -> None:
+    print_center = Target("app", "Print Center")
+    assert row_matches(_row("Print Centre"), print_center)
+    assert row_matches(_row("Playground"), Target("app", "Image Playground"))
+    assert not row_matches(_row("Print"), print_center)
+    assert not row_matches(_row("Print Centre", Kind.OTHER), print_center)

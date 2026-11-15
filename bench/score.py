@@ -1,8 +1,9 @@
 """Scores one observed sample against its query (spec §5, §7, §13)."""
 
+import json
 from dataclasses import dataclass
 from enum import Enum
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
 from typing import Literal
 
 from bench.generate import Query, Target
@@ -13,6 +14,13 @@ from bench.truth import GroundTruth
 CHECKPOINTS_MS = (100, 250, 500, 1000)
 WINDOW_MS = 3000
 MAX_SNAPSHOT_AGE_MS = 100
+
+ALIASES_FILE = Path(__file__).resolve().parent.parent / "data/app-aliases-macos-26.4.1.json"
+# Each app's other names from its own bundle (analysis plan item 28); none is shared by two apps.
+APP_NAMES: dict[str, frozenset[str]] = {
+    app: frozenset(normalize(alias) for alias, _ in aliases)
+    for app, aliases in json.loads(ALIASES_FILE.read_text())["aliases"].items()
+}
 
 Observed = bool | Literal["unobserved", "unresolved"]
 SafeEnter = Literal[
@@ -62,7 +70,8 @@ def identify(row: Row, target: Target, truth: GroundTruth | None) -> Identity:
     identified by it; one showing only the parent folder's name, or no location, is the target
     only if the ground truth has no other path it could be."""
     if target.kind == "app":
-        return _yes(row.kind == Kind.APP and normalize(row.title) == normalize(target.id))
+        names = APP_NAMES.get(target.id, frozenset()) | {normalize(target.id)}
+        return _yes(row.kind == Kind.APP and normalize(row.title) in names)
     if target.kind == "settings_pane":
         return _yes(row.kind == Kind.SETTINGS_PANE and row.pane_id == target.id)
     expected_kind = Kind.FILE if target.kind == "file" else Kind.FOLDER

@@ -1,0 +1,56 @@
+{
+ "base_snapshot": "bench-ready-2026-11-14b",
+ "source": "scripts/app_names.sh over the inventory paths",
+ "locale": "en_US",
+ "languages": "(\"en-US\")",
+ "aliases": {
+  "Digital Color Meter": [
+   [
+    "Digital Colour Meter",
+    "loctable:en_GB CFBundleDisplayName"
+   ]
+  ],
+  "Find My": [
+   [
+    "FindMy",
+    "Info.plist CFBundleDisplayName"
+   ]
+  ],
+  "Google Chrome": [
+   [
+    "Chrome",
+    "Info.plist CFBundleName"
+   ]
+  ],
+  "Image Playground": [
+   [
+    "Playground",
+    "loctable:en CFBundleDisplayName"
+   ]
+  ],
+  "Print Center": [
+   [
+    "Print Centre",
+    "loctable:en_GB CFBundleDisplayName"
+   ]
+  ],
+  "Visual Studio Code": [
+   [
+    "Code",
+    "Info.plist CFBundleDisplayName"
+   ]
+  ],
+  "Voice Memos": [
+   [
+    "VoiceMemos",
+    "Info.plist CFBundleDisplayName"
+   ]
+  ],
+  "iTerm": [
+   [
+    "iTerm2",
+    "Info.plist CFBundleName"
+   ]
+  ]
+ }
+}
