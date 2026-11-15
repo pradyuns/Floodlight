@@ -67,3 +67,12 @@ def test_locked_set_covers_queries_scoring_and_plan() -> None:
     ):
         assert must in names, must
     assert not any(n.endswith(".local.md") or n.startswith("results/") for n in names)
+
+
+def test_lock_refuses_an_analysis_plan_with_unfilled_settings(tmp_path: Path) -> None:
+    files = _tree(tmp_path)
+    plan = tmp_path / "docs" / "analysis-plan.md"
+    plan.parent.mkdir()
+    plan.write_text("- Late-change window: TBD\n")
+    with pytest.raises(ValueError, match="TBD"):
+        write_lock([*files, plan], root=tmp_path, commitment="ab" * 32)

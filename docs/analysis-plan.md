@@ -1,0 +1,336 @@
+# Analysis plan
+
+Public copy of the pre-registered measurement, metrics, statistics and lock rules (spec §6–§9) and the
+v4.2 amendments (§13). Values set by the pilot are in "Pilot-derived settings" at the end. Locked in
+LOCK.txt before any scored run.
+
+## 6. Measurement
+- **One observation channel:** an in-VM probe reads rows via the Accessibility API.
+  - **Feasibility gate before any scored run:** app identity, file identity, the selected row, and
+    timing must be readable for Spotlight and Raycast. Each tool's exact file-search interaction is
+    documented.
+  - If the gate fails: stop and ask. No silent OCR.
+  - A sample of runs is checked against a screen recording; the disagreement rate is published.
+- **Two typing modes:**
+  - **Completed query:** type the query (e.g. `cal`), stop, then measure at checkpoints anchored to
+    the last key of that query.
+  - **Continuous typing:** the stepped `prefix-all` sequence (§4), to measure early appearance and
+    result movement.
+- **Input pacing (fixed, absolute):** 80 ms/key. It models a human, who doesn't slow down for a
+  slow machine.
+  - Input-delivery overhead (key posted → field shows the text) is measured per sample and reported
+    separately.
+  - Whether the VM delivers keys at a steady 80 ms is checked in the pilot.
+- **Sampling:**
+  - 50 ms sampling with real timestamps (monotonic clock), from the first key until 3 s after the
+    query is completed. **No early stop.**
+  - Settling is computed afterwards. The endpoint is the **final observed rank**; anything beyond
+    the window is unknown.
+  - A checkpoint uses the latest snapshot at or before it. If that snapshot is more than 100 ms
+    old, the checkpoint is "unobserved" and reported as a rate.
+- **Pilot (unscored, before lock):** if more than 2% of samples still change in the last 500 ms,
+  lengthen the window.
+- **Conditions:**
+  - **UI restart:** kill the launcher UI process, then proceed when the readiness check passes.
+    (Not "cold": the index and caches stay warm.)
+  - **Warm:** an immediate repeat, kept as a pair with the UI-restart sample.
+  - Optional, descriptive only: the first query after a fresh clone boots.
+- **Runs:**
+  - At least 5 per tool per query.
+  - **Tool order:** seeded (seed 42) and counterbalanced.
+    - Two tools: AB/BA alternating per query.
+    - Three tools: cycle through all 6 orderings of {Spotlight, Raycast, Floodlight}, assigned per
+      query by a seeded shuffle, so each tool is first, second and third equally often.
+    - Each tool's UI-restart sample is immediately followed by its warm sample (a pair is never
+      split).
+  - A single-tool run is labeled baseline/smoke.
+- **Run-time cap:** decided after the pilot and locked before any scored run.
+
+## 7. Metrics
+- **Primary comparison:**
+  - Floodlight minus Spotlight on Intended@1.
+  - Unambiguous queries only, final observed rank, all-rows view, UI-restart and warm averaged.
+  - Dataset: held-out stratum (b) if the planted-dev gate passes, else stratum (a). This is chosen
+    before the commitment.
+  - Everything else is descriptive. Don't treat whichever secondary interval excludes zero as a
+    confirmed win.
+- **Headline set** (descriptive alongside the primary): Intended@1; wrong-Enter rate at 250 ms.
+- **Safe Enter:**
+  - Read from the selected row if it's readable. Outcomes: intended opens / another item activates
+    / nothing launches.
+  - Validated by real Enter presses on a sample, in throwaway clones only (pressing Enter trains
+    history).
+- **Also reported:**
+  - Acceptable@1 and intended rank on ambiguous queries.
+  - 1-letter queries as their own table.
+  - Wrong-Enter at 500/1000 ms, and at 100 ms only if input overhead is under 25 ms.
+  - MRR@10 of the intended item.
+- **Simulated minimum keystrokes** (from `prefix-all`):
+  - Smallest k with intended at #1, plus 1 for Enter.
+  - Never-#1 rate reported separately.
+  - Prefix stability: the share of longer prefixes where the item stays #1.
+  - Labeled "simulated minimum".
+- **Run stability:** the share of queries with the same #1 in all runs.
+- **Latency:** p50/p95 time-to-intended-at-#1 over hits, with the miss rate separate, plus
+  time-to-first-appear. Labeled VM-relative.
+- **Views:** all rows and local-only. **No composite score.**
+
+## 8. Statistics and reporting
+- **Unit of analysis:** the app.
+- **Weights:** average repeats per query; weight queries equally within an app, and apps equally.
+  Exclusions are recorded. Query-weighted results are printed as a sensitivity check.
+- **Comparisons:** paired percentage-point differences with a 10,000-resample app-cluster
+  bootstrap, keeping tools paired. No sign test/McNemar by default.
+- **Variability:** run-to-run variability is reported separately. A gap within it is "no
+  measurable difference".
+- **Breakdowns:** by rule type, query length (1, 2, 3, 4+), provenance and stratum.
+- **Misses:** every miss is read and typed by stage (with evidence; unknown allowed). The
+  failure-type table is published.
+- **Report:**
+  - Leads with a verdict.
+  - Gives our tool's losses the same prominence as its wins.
+  - Rebuilt from raw data only.
+- **Publish:** the whitelisting export only (query id, rule, ranks, timings, row kind).
+
+## 9. Lock and commitment
+1. **Lock** before launcher work starts:
+   - everything that affects query generation and scoring: generator, rules, inventory,
+     accepted-set code, scoring/stats code and config, this analysis plan
+   - stress and natural queries
+   - Record sha256 in `LOCK.txt`; the runner refuses to run on a mismatch.
+   - Probe, adapter and runner versions are recorded per run. Harness fixes and affected reruns
+     are logged.
+2. **Held-out commitment:**
+   - The user runs one command with a secret seed file.
+   - It writes the held-out file: canonical UTF-8 JSON with sorted keys, containing the typos of
+     stratum (a), the planted names and queries of stratum (b), and the accepted sets.
+   - A **separate** 32-byte random nonce file is written alongside.
+   - It prints `sha256(nonce bytes ‖ held-out file bytes)`.
+   - Held-out strings exclude every dev string.
+   - Claude and Fable never see the seed, nonce or file.
+3. **Publish the commitment:** push `LOCK.txt` + the commitment to the public repo before building
+   the launcher.
+4. **Before the final campaign:** push Floodlight's build hash (git commit + app sha256).
+5. **Final campaign:** one campaign with preset repeats, all three tools, identical conditions.
+   No tuning or reruns afterwards.
+6. **Reveal:** the seed, nonce and file are revealed, and anyone can check the hash.
+   - The report states the claim's limits:
+     - Stratum (a) shows we didn't special-case known strings.
+     - Stratum (b) covers newly installed, never-opened minimal apps (no icon, usage or App Store
+       metadata) and is reported apart from built-ins.
+
+
+## 13. Amendments (override earlier sections where they conflict)
+Synthetic typing is deferred, outside Phase 1.
+
+1. **§2 snapshot lineage:**
+   - Order: `bench-clean` → `bench-tools` (third-party apps installed, never opened; Raycast;
+     Floodlight) → `bench-busy` (plus corpus, index settled, then snapshotted).
+   - Published per app: version, source URL, installer sha256, install method.
+   - Installers are archived privately.
+2. **§2 readiness:**
+   - Index settled = indexed count stable over 3 checks 10 s apart, 10-minute timeout.
+   - Targets still missing are coverage results, not errors.
+3. **§3 Dev:** every built-in **and third-party** app, reported separately.
+   - Third-party list frozen by a stated criterion before any results. Any selection bias is
+     disclosed (e.g. WhatsApp chosen because it is a known Spotlight failure).
+   - Tools under test (Raycast, Floodlight) are never intended targets, but count in acceptable
+     sets.
+4. **§3 new suites:**
+   - **Collisions:** every prefix with two or more acceptable apps, generated mechanically.
+     - Scored by Acceptable@1, plus a descriptive "which app each tool put first".
+     - Any user-preferred answers are labeled "user preference" and never headline.
+   - **Planted files/folders:** neutral name patterns with valid contents. Labeled patterns, not
+     real-file performance. Floodlight v1 returns folders (item 16).
+   - **Settings (item 15):** fixed labels mapped to pane identity; piloted first.
+     - Unsupported is reported as unsupported.
+     - Never in the app headline.
+     - Settings-pane navigation is a Floodlight v1 requirement.
+   - **Busy (item 17):** synthetic populated-Mac condition. Public seed, valid file contents,
+     manifest summary published.
+     - Indexed once and snapshotted, so each session starts settled.
+     - All files share one creation day, which is stated.
+     - Corpus size piloted at 50k/100k/200k small files and locked on resources, not on results.
+     - Kept separate from targeted decoys.
+     - "File count slows Spotlight" is a hypothesis, not a claim.
+5. **§3 publication:**
+   - Committed: generators, inventories, query manifests, corpus summaries.
+   - Never committed: bundles, bulk corpus files, private data, unrevealed held-out output.
+   - Held-out file, seed and nonce are published at reveal.
+6. **§4 secret names:** 40 apps (20 one-word, 20 two-word). Dictionary is the guest's
+   `/usr/share/dict/words`, with its sha256 recorded.
+7. **§6 typing modes:**
+   - **Completed query:** type, stop, measure.
+   - **Continuous:** the full name at 80 ms/key with no pauses; measures early appearance and
+     movement only.
+   - **Stepped prefixes:** 1000 ms per key; simulated minimum keystrokes only; excluded from query
+     weights.
+   - **Deferred (not in Phase 1):** synthetic burst-and-correction typing. If revived: precomputed seeded
+     schedules, seeded subset, run after the baseline.
+   - **Timing origin:** the final key post; the field-shows-text time is also kept.
+8. **§6 pilot:** run on Spotlight and Raycast.
+   - If more than 2% of samples change in the last 500 ms, extend the window 3 → 4 → 5 s
+     (maximum).
+   - The window length is a runner setting.
+9. **§7 primary:**
+   - Sparse environment, completed-query mode.
+   - Contributing rules: full, nospace, typo, unambiguous prefixN and initials.
+   - Dataset: held-out stratum (b), else (a).
+   - **Built-in + third-party combined 50/50 is a pre-declared secondary** (stratified
+     bootstrap), not the primary. Reasons: only 12 clusters, and dev-rule queries are public and
+     tunable.
+   - Third-party typos join held-out stratum (a).
+10. **§8 verdict rule:** difference = Floodlight minus
+    the other tool in percentage points, with its paired 95% app-cluster bootstrap interval.
+    The ±5-point margin is fixed now.
+    - Meaningfully better: the entire interval is above +5.
+    - Meaningfully worse: the entire interval is below −5.
+    - Practically similar: the entire interval is inside −5 to +5.
+    - Inconclusive: anything else. Never reported as "the same".
+    - Run-to-run variability is reported alongside. Intervals do not correct for dev-set tuning.
+11. **§9.2:**
+    - Stratum (a) typos exclude every dev string.
+    - Stratum (b) prefixes may coincide with dev strings; the overlap is reported.
+12. **§9.5 final-campaign errors:**
+    - Harness-error samples are retried up to twice; all attempts are kept.
+    - Denominator: all scheduled samples.
+    - The campaign is inconclusive if any tool keeps more than 5% errors, or error rates differ
+      between tools by more than 2 points.
+    - Both environments are declared in advance, and the build is frozen before either.
+13. **Campaign matrix** (rough estimates at about 5 s/sample, before the pilot):
+
+    | Campaign | Environment | Mode | History | Estimate |
+    |---|---|---|---|---|
+    | Dev, 3 tools × 5 runs | sparse | completed, warm | empty | ~10 h |
+    | Dev, UI-restart pairs | sparse | completed, seeded 20% | empty | ~3 h |
+    | Stepped prefixes | sparse | stepped | empty | ~3 h |
+    | Dev subset 25% + stress + files | busy | completed, warm | empty | ~3 h |
+    | Synthetic typing (optional) | sparse | 10% subset | empty | ~1 h |
+    | Recency | sparse, own clones | completed | scripted | ~1 h |
+    | Final held-out | sparse | completed, pairs | empty | ~11–14 h |
+    | Final held-out | busy | completed, warm | empty | ~5 h |
+
+    If the pilot shows this is too long, cut the held-out UI-restart pairs to a subset and make the
+    primary warm-only. Decide before the commitment.
+14. **Disk:**
+    - Apps are about 6–8 GB (Docker Desktop, about 2 GB, is the first to drop) and the corpus
+      1–3 GB.
+    - Keep at least 5 GB free on both the host and the guest; the guest disk is 40 GB with about
+      23 GB used.
+    - Freeing host disk first is recommended.
+15. **Settings suite:**
+    - Added to §3 as a separate capability suite.
+    - Opening System Settings panes is a **v1 requirement** for our launcher.
+    - Labels and synonyms are declared before lock (e.g. wifi / wi-fi, bluetooth, display /
+      displays, battery).
+    - Success = the named pane opens; nothing is toggled.
+    - Pane identity readability is piloted first. Unsupported is reported as unsupported.
+    - Never in the app headline.
+16. **Folders:**
+    - Our launcher returns folders in v1, and must improve on Spotlight's folder results.
+    - A planted neutral folder suite (e.g. `abc-101/`, nested project folders) with
+      human-written and model-written queries.
+    - Scored with the file rules (name + parent folder shown).
+17. **Decisions:**
+    - **Name:** Floodlight.
+    - **Busy Mac:** yes.
+    - **Third-party apps** (installed from official, signature-verified downloads; never opened):
+      Google Chrome, Firefox, Spotify, Slack, Discord, WhatsApp, Visual Studio Code, Obsidian,
+      iTerm2, Telegram, VLC, Rectangle.
+    - **Selection criterion, as published:** common apps with a small disk footprint and natural
+      name collisions with built-ins. WhatsApp was also chosen because it is a known Spotlight
+      failure, which is disclosed.
+18. **Consistency pass (2026-11-13):**
+    - Frontmost-app check removed everywhere; the readiness check (§2) is the rule.
+    - Three-tool counterbalanced order defined (§6).
+    - The final campaign's run-time budget is set after the pilot of both competitors and fixed
+      before the commitment.
+19. **§5 short-query rule (2026-11-13; replaces the prefix/initials bullets in §5):** every short
+    query (prefixN, initials, and collision prefixes) uses one mechanical rule.
+    - **Acceptable:** any app with a word starting with the query, or whose initials equal it.
+    - The same string therefore always has the same acceptable set, whatever rule produced it.
+    - **Intended:** the source app, kept for descriptive intended-rank reporting.
+    - Full-name, no-space and typo queries keep intended-only.
+    - Collision candidates include every multi-word app's initials.
+    - Ambiguity counts are recomputed now and again after third-party apps are installed.
+      Built-ins only: 429 dev queries, 150 ambiguous, 279 unambiguous; 69 collision strings.
+    - After third-party apps (2026-11-13): 502 dev queries, 171 ambiguous, 331 unambiguous;
+      74 collision strings; 78 stepped sequences.
+20. **Environment and Raycast protocol (2026-11-13; overrides §2 snapshot lineage and §6 where they
+    conflict):**
+    - **VM resize:** the main container was too full for Spotlight to index (lowDiskSpace, read-only
+      index). From recoveryOS the separate Recovery partition was removed and the container grown
+      to 49.5 GB (Tart FAQ procedure). SIP stayed enabled throughout; the paired Recovery volume
+      remains. Disclosed in the environment notes. macOS updates may not work in this VM (pinned).
+    - **Snapshot lineage:** bench-clean-2026-11-12 → bench-tools-2026-11-13 (13 apps) →
+      bench-resized-2026-11-13 (resize only) → **bench-ready-2026-11-13** (Raycast set up). Every
+      sparse and busy environment is cloned from bench-ready.
+    - **Raycast 2.12.1.0 setup:** no sign-in; hotkey Option+Space; Spotlight's Cmd+Space kept; all
+      settings default ("Include Files in Root Search" is on by default); file access granted to
+      Desktop, Documents, Downloads and Music via macOS prompts; starts at login.
+    - **Raycast interaction:** main bar for every suite (same type-then-Enter as Spotlight).
+    - **Raycast highlighted row:** not exposed via Accessibility. Enter is scored as the top row,
+      checked on every snapshot against the Enter-button label; disagreements are counted as
+      `highlight_mismatch`; plus the screen-recording sample audit for every tool.
+    - **Raycast rows:** only the top 10 are read (⌘-number hints delimit rows).
+    - **Raycast coverage:** no index-settled signal; before runs, planted canaries must be found.
+      Busy-corpus reports state each tool's indexed coverage, including folders Raycast ignores
+      by default (caches, temp, node_modules, Application Support).
+    - **Checkpoints:** 100 ms is kept. Harness overhead measured via Raycast ≈19 ms median (<25 ms
+      rule); Spotlight's ~190 ms key-to-field delay is Spotlight's own behavior.
+21. **Floodlight ranking principle:** match strength comes first; apps are
+    preferred only among equally strong matches. A weak app match (e.g. a prefix) never displaces an
+    exact filename match or an explicit settings query. Apps-first applies to the benchmark headline
+    (the app suite), not to cross-kind ranking.
+    - **Cross-kind stress set (Task 6, public, labeled, never headline):** queries where an exact file
+      name or settings label competes with a weaker app match; reported per tool so an
+      "apps always win" ranker shows up as a loss.
+22. **Measurement rules and environment (overrides §6 where they conflict):**
+    - **Timing:** checkpoints anchor to the final key's actual post time; each snapshot is known at
+      its read-finish; a checkpoint with no finished read whose start is within 100 ms is
+      "unobserved" (strict rule: a later read never fills an earlier ranking
+      checkpoint). 100/250 ms are reported with their unobserved rates; 500/1000 ms kept; final
+      Intended@1 stays primary. What Enter opens is tested separately (§7 Safe Enter).
+    - **Keys** are posted on their own real-time thread; a key > 10 ms late makes the sample a
+      harness error (`key_post_late`).
+    - **Field readings that don't match what was typed** are kept as flagged snapshots
+      (`field_mismatch`), never scored.
+    - **Snapshot:** `bench-ready-2026-11-14` = bench-ready-2026-11-13 + display sleep, system sleep
+      and screen lock off (the VM locked after 10 idle minutes, sending keys to the lock screen).
+      The probe refuses to run on a locked screen (`screen_locked`).
+23. **File and folder identity:** a result showing its full parent path is identified by it. One
+    showing only the parent folder's name, or no location, counts as the target only when the
+    environment's filesystem ground truth (a `find` over the declared scope: /Users,
+    /Applications, /System/Applications, /Library, /opt, /usr/local; hidden paths and the user's
+    Library excluded; never launcher results or the index) has no other path it could be.
+    Otherwise it is **unresolved**: not a hit, not a wrong Enter, not a coverage miss.
+    Unresolved samples stay in every denominator; top-1 is reported as hit / miss / unresolved
+    shares, and the unresolved rate is published per tool. Ground truth is captured per
+    environment once its contents are final.
+24. **Settings targets:** the panes System Settings itself shows in the bench VM (read from its
+    sidebar), with reasons for catalog panes it doesn't show (data/settings-panes-macos-26.4.1.json).
+    Never selected by whether a launcher finds them. "battery" is not applicable in the VM (no
+    battery; System Settings shows Energy); "energy" targets the Energy pane.
+25. **Natural queries:** model-written (reviewed) and human-written queries are labelled by
+    provenance and reported separately. Hyphen-free folder queries are labelled `punct_removed`,
+    each next to its exact-name control.
+26. **Busy environment:** 200k files (public seed 1114), chosen on resources only; Downloads and
+    Desktop hold fixed shares (10%, 2%) of document files; one creation day. Every fixture clone
+    is restarted after planting, and every planted app must be listed by both tools before any
+    query (steady-state scope; live-install refresh is not measured, and Raycast's missed live
+    installs are reported as a separate observation).
+27. **Host-load policy:** light host use is allowed. Monitored every 5 s: host and guest load,
+    memory pressure level, swap-in/out *rates* (not swap used), power source, Low Power Mode;
+    each sample block stores its conditions. A crossing never interrupts a sample; the block is
+    kept, flagged and retried by a fixed rule that preserves tool pairing and the restart/warm
+    structure; every attempt is retained. Thresholds, recovery wait and retry limit are set from
+    the pilot's resource and read-reliability measurements (never from which values favour a
+    tool) and locked below. Interleaving reduces, but does not rule out, background effects. The
+    first block starts only after the guest's 1-minute load is below 3.0. Reported as "ran under
+    a monitored host-load policy allowing light use".
+
+## Pilot-derived settings (filled from the pilot, then locked)
+- 100 ms checkpoint kept or dropped (input overhead): TBD
+- Late-change window (3 / 4 / 5 s): TBD
+- Campaign matrix and run-time budget: TBD
+- Host-load thresholds (max load, pressure level, swap pages/s), recovery wait, retry limit: TBD

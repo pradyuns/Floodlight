@@ -50,6 +50,10 @@ def compute_lock(files: Iterable[Path], root: Path) -> str:
 def write_lock(files: Iterable[Path], root: Path, commitment: str) -> Path:
     if not _DIGEST.match(commitment):
         raise ValueError("held-out commitment must be 64 hex characters")
+    files = list(files)
+    for f in files:
+        if f.name == "analysis-plan.md" and "TBD" in f.read_text():
+            raise ValueError("analysis plan still has TBD settings; fill them from the pilot first")
     out = root / LOCK_FILE
     out.write_text(compute_lock(files, root) + f"heldout_commitment {commitment}\n")
     return out
