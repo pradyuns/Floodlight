@@ -78,6 +78,8 @@ def run_campaign(
     block_size: int = 40,
     window_ms: int = 3000,
     require_lock: bool = True,
+    guest_ready_load1: float = 3.0,
+    guest_ready_timeout_s: float = 1200,
 ) -> None:
     if require_lock:
         verify_lock(REPO)
@@ -92,6 +94,12 @@ def run_campaign(
 
     try:
         settle = vm.wait_index_settled(timeout_s=900)
+        t_guest = time.monotonic()
+        while float(sh("sysctl -n vm.loadavg").split()[1]) >= guest_ready_load1:
+            if time.monotonic() - t_guest > guest_ready_timeout_s:
+                raise RuntimeError(f"guest load stayed >= {guest_ready_load1} after boot")
+            time.sleep(15)
+        guest_wait = round(time.monotonic() - t_guest)
         sh(f"curl -sf -o ~/probe {URL}/{probe} && chmod +x ~/probe && echo ok")
         meta = {
             "label": label,
@@ -106,6 +114,8 @@ def run_campaign(
                 "defaults read /Applications/Raycast.app/Contents/Info CFBundleShortVersionString"
             ).strip(),
             "index_settled": settle.settled,
+            "guest_ready_load1": guest_ready_load1,
+            "guest_ready_wait_s": guest_wait,
             "locked": require_lock,
         }
         (out_dir / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
