@@ -30,7 +30,13 @@ def _tool_orders(tools: list[str], n: int, rng: random.Random) -> list[tuple[str
     return cycle[:n]
 
 
-def schedule(query_ids: list[str], tools: list[str], runs: int, seed: int = 42) -> list[Slot]:
+def schedule(
+    query_ids: list[str],
+    tools: list[str],
+    runs: int,
+    seed: int = 42,
+    conditions: tuple[Condition, ...] = ("ui_restart", "warm"),
+) -> list[Slot]:
     rng = random.Random(seed)
     slots: list[Slot] = []
     for run in range(runs):
@@ -38,6 +44,5 @@ def schedule(query_ids: list[str], tools: list[str], runs: int, seed: int = 42) 
         rng.shuffle(order)
         for query_id, tool_order in zip(order, _tool_orders(tools, len(order), rng), strict=True):
             for tool in tool_order:
-                slots.append(Slot(query_id, tool, run, "ui_restart"))
-                slots.append(Slot(query_id, tool, run, "warm"))
+                slots.extend(Slot(query_id, tool, run, c) for c in conditions)
     return slots

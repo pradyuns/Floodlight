@@ -51,3 +51,10 @@ def test_schedule_is_deterministic_for_a_seed() -> None:
     a = schedule(QUERIES, ["spotlight", "raycast"], runs=2, seed=42)
     assert a == schedule(QUERIES, ["spotlight", "raycast"], runs=2, seed=42)
     assert a != schedule(QUERIES, ["spotlight", "raycast"], runs=2, seed=43)
+
+
+def test_warm_only_schedule_has_no_ui_restarts_and_same_tool_order() -> None:
+    both = schedule(["a", "b", "c"], ["spotlight", "raycast"], runs=2, seed=3)
+    warm = schedule(["a", "b", "c"], ["spotlight", "raycast"], runs=2, seed=3, conditions=("warm",))
+    assert {s.condition for s in warm} == {"warm"}
+    assert warm == [s for s in both if s.condition == "warm"]
