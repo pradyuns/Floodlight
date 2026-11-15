@@ -329,8 +329,41 @@ Synthetic typing is deferred, outside Phase 1.
     first block starts only after the guest's 1-minute load is below 3.0. Reported as "ran under
     a monitored host-load policy allowing light use".
 
-## Pilot-derived settings (filled from the pilot, then locked)
-- 100 ms checkpoint kept or dropped (input overhead): TBD
-- Late-change window (3 / 4 / 5 s): TBD
-- Campaign matrix and run-time budget: TBD
-- Host-load thresholds (max load, pressure level, swap pages/s), recovery wait, retry limit: TBD
+## Pilot-derived settings (from the unscored pilot, 2026-11-14)
+Pilot data: 240 samples sparse (restart + warm), 180 busy (warm), 120 sparse during light host use;
+30 dev queries, Spotlight and Raycast, 5 s window. Two invalid pilot runs are kept and labelled (one
+on battery, one stopped when Spotlight stopped opening after UI restarts on the busy snapshot).
+
+- **Checkpoints:** input overhead (final key to the field showing it) was median 27-34 ms
+  (Raycast) and 55-83 ms (Spotlight), p95 up to ~370 ms. Spotlight's 100 ms checkpoint was
+  unobserved in 41-71% of samples and 250 ms in 23-54%. Both checkpoints are kept as descriptive
+  measures, always reported with their unobserved rates, never as headline metrics. Final
+  Intended@1 stays primary.
+- **Late-change window:** 3 s. No sample in the valid pilot runs changed its top result after
+  3 s (0 of 540). The window stays 3 s.
+- **Errors:** Spotlight 0/270, Raycast 3/270 in valid runs (field never showed the typed text, or
+  launcher not ready). Errored or missing samples are run once more right after their block, in
+  their original order; all attempts are kept.
+- **Time per sample:** 7.5 s (sparse, restart + warm), 6.5 s (busy, warm-only); the guest needs
+  about 200-230 s to settle after boot.
+- **Busy environment is warm-only** (campaign matrix item 13); UI-restart pairs run on sparse only.
+- **Baseline order (Spotlight vs Raycast, 5 runs each):** (1) dev, sparse, warm; (2) dev
+  UI-restart pairs on a seeded 20% subset, sparse; (3) natural (apps and settings), sparse, warm;
+  (4) dev 25% subset, busy, warm; (5) fixture suites (stress, folders, cross-kind) in their
+  planted clones once planting runs inside the campaign driver.
+- **Final held-out campaign budget:** primary warm-only; UI-restart pairs on a seeded 25% subset
+  (decided before the commitment, per item 13).
+- **Host-load policy:** every valid run stayed at memory pressure level 1, host 1-min load at most
+  9.1 (the VM itself accounts for about 3-5), swap activity at most 87 pages/s. The run that went
+  bad showed pressure level 2 and a 7,720 pages/s swap burst. Locked values:
+  - sampling interval 5 s
+  - flag when host 1-min load > 10.0
+  - flag when memory pressure level > 1 (warning or critical)
+  - flag when swap-in + swap-out > 500 pages/s between samples
+  - flag when on battery or Low Power Mode is on
+  - before each block, wait up to 120 s for the host to be within policy
+  - a flagged block is retried up to 2 times; the first unflagged attempt is used; if every
+    attempt is flagged, the last attempt is used and labelled flagged; every attempt stays in the
+    raw data and the flagged-block rate is reported per tool
+  - guest 1-min load < 3.0 before the first block
+  - light use measured in the pilot (browsing, a video) stayed within these limits

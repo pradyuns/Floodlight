@@ -70,6 +70,16 @@ def _stuck_tool(block: list[Slot], result_lines: list[str]) -> str | None:
     return None
 
 
+def errored_slots(block: list[Slot], result_lines: list[str]) -> list[Slot]:
+    """Slots whose sample errored (or is missing), in their original order, for one requeue."""
+    ok = set()
+    for ln in result_lines:
+        rec = json.loads(ln)
+        if rec.get("error") is None:
+            ok.add((rec["query_id"], rec["tool"], rec["run"], rec["condition"]))
+    return [s for s in block if (s.query_id, s.tool, s.run, s.condition) not in ok]
+
+
 def _wait_for_host(policy: Policy) -> float:
     """Waits up to the recovery period for the host to be within policy; returns seconds waited."""
     start = time.monotonic()
@@ -140,60 +150,64 @@ def run_campaign(
         (out_dir / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
         raw = (out_dir / "raw.jsonl").open("a")
         log = (out_dir / "blocks.jsonl").open("a")
-        for b, block in enumerate(make_blocks(slots, block_size)):
-            attempt = 0
-            while True:
-                waited = _wait_for_host(policy)
-                name = f"sched-{b}-{attempt}.jsonl"
-                result_name = f"result-{b}-{attempt}.jsonl"
-                write_schedule(io / name, block, queries, window_ms)
-                guest_load_before = sh("sysctl -n vm.loadavg").strip()
-                started = time.monotonic()
-                guest_io = shlex.quote(GUEST_SHARE)
-                with _Monitor(policy.interval_s) as mon:
-                    sh(
-                        f"~/probe run-schedule --schedule {guest_io}/{name} "
-                        f"--out {guest_io}/{result_name} >/dev/null 2>&1; true",
-                        timeout=60 * len(block) + 300,
-                    )
-                result_file = io / result_name
-                text = result_file.read_text() if result_file.exists() else ""
-                lines = [ln for ln in text.splitlines() if ln.startswith("{")]
-                reasons = evaluate(mon.samples, policy)
-                for ln in lines:
-                    rec = json.loads(ln)
-                    rec.update(block=b, attempt=attempt, env=env)
-                    raw.write(json.dumps(rec) + "\n")
-                log.write(
-                    json.dumps(
-                        {
-                            "block": b,
-                            "attempt": attempt,
-                            "slots": len(block),
-                            "results": len(lines),
-                            "secs": round(time.monotonic() - started, 1),
-                            "waited_before_s": round(waited, 1),
-                            "guest_load_before": guest_load_before,
-                            "guest_load_after": sh("sysctl -n vm.loadavg").strip(),
-                            "flagged": bool(reasons),
-                            "reasons": sorted(set(reasons)),
-                            "host": [asdict(s) for s in mon.samples],
-                        }
-                    )
-                    + "\n"
+        queue = [(b, blk, 0, False) for b, blk in enumerate(make_blocks(slots, block_size))]
+        i = 0
+        while i < len(queue):
+            b, block, attempt, requeue = queue[i]
+            i += 1
+            waited = _wait_for_host(policy)
+            name = f"sched-{b}-{attempt}.jsonl"
+            result_name = f"result-{b}-{attempt}.jsonl"
+            write_schedule(io / name, block, queries, window_ms)
+            guest_load_before = sh("sysctl -n vm.loadavg").strip()
+            started = time.monotonic()
+            guest_io = shlex.quote(GUEST_SHARE)
+            with _Monitor(policy.interval_s) as mon:
+                sh(
+                    f"~/probe run-schedule --schedule {guest_io}/{name} "
+                    f"--out {guest_io}/{result_name} >/dev/null 2>&1; true",
+                    timeout=60 * len(block) + 300,
                 )
-                raw.flush()
-                log.flush()
-                stuck = _stuck_tool(block, lines)
-                if stuck is not None:
-                    keep_vm = True
-                    raise StuckToolError(
-                        f"{stuck} failed every sample in block {b}; VM {vm.name} kept for diagnosis"
-                    )
-                if not should_retry(attempt, bool(reasons), policy):
-                    break
-                attempt += 1
+            result_file = io / result_name
+            text = result_file.read_text() if result_file.exists() else ""
+            lines = [ln for ln in text.splitlines() if ln.startswith("{")]
+            reasons = evaluate(mon.samples, policy)
+            for ln in lines:
+                rec = json.loads(ln)
+                rec.update(block=b, attempt=attempt, env=env)
+                raw.write(json.dumps(rec) + "\n")
+            log.write(
+                json.dumps(
+                    {
+                        "block": b,
+                        "attempt": attempt,
+                        "requeue_of_errors": requeue,
+                        "slots": len(block),
+                        "results": len(lines),
+                        "secs": round(time.monotonic() - started, 1),
+                        "waited_before_s": round(waited, 1),
+                        "guest_load_before": guest_load_before,
+                        "guest_load_after": sh("sysctl -n vm.loadavg").strip(),
+                        "flagged": bool(reasons),
+                        "reasons": sorted(set(reasons)),
+                        "host": [asdict(s) for s in mon.samples],
+                    }
+                )
+                + "\n"
+            )
+            raw.flush()
+            log.flush()
+            stuck = _stuck_tool(block, lines)
+            if stuck is not None:
+                keep_vm = True
+                raise StuckToolError(
+                    f"{stuck} failed every sample in block {b}; VM {vm.name} kept for diagnosis"
+                )
+            if should_retry(attempt, bool(reasons), policy):
                 time.sleep(policy.recovery_wait_s)
+                queue.insert(i, (b, block, attempt + 1, requeue))
+            elif not requeue and (errs := errored_slots(block, lines)):
+                queue.insert(i, (b, errs, attempt + 1, True))
         raw.close()
         log.close()
     finally:

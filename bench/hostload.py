@@ -22,6 +22,17 @@ class Policy:
     max_retries: int
 
 
+# Locked values (docs/analysis-plan.md, "Pilot-derived settings").
+LOCKED_POLICY = Policy(
+    interval_s=5,
+    max_load1=10.0,
+    max_pressure_level=1,
+    max_swap_pages_per_s=500,
+    recovery_wait_s=120,
+    max_retries=2,
+)
+
+
 @dataclass(frozen=True)
 class HostSample:
     t: float

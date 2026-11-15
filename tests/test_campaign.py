@@ -19,3 +19,31 @@ def test_scattered_errors_are_not_stuck() -> None:
     lines = _lines([("spotlight", "not_ready"), ("raycast", "field_never_matched")] * 5)
     lines += _lines([("spotlight", None), ("raycast", None)])
     assert _stuck_tool(block, lines) is None
+
+
+def test_errored_slots_are_requeued_with_their_original_order() -> None:
+    from bench.campaign import errored_slots
+
+    block = [Slot(f"q{i}", t, 0, "warm") for i in range(3) for t in ("spotlight", "raycast")]
+    lines = [
+        json.dumps(
+            {
+                "query_id": s.query_id,
+                "tool": s.tool,
+                "run": 0,
+                "condition": "warm",
+                "error": "not_ready" if (s.query_id, s.tool) == ("q1", "raycast") else None,
+            }
+        )
+        for s in block
+    ]
+    assert errored_slots(block, lines) == [Slot("q1", "raycast", 0, "warm")]
+
+
+def test_locked_policy_matches_the_analysis_plan() -> None:
+    from bench.hostload import LOCKED_POLICY
+
+    assert (LOCKED_POLICY.interval_s, LOCKED_POLICY.max_load1) == (5, 10.0)
+    assert LOCKED_POLICY.max_pressure_level == 1
+    assert LOCKED_POLICY.max_swap_pages_per_s == 500
+    assert (LOCKED_POLICY.recovery_wait_s, LOCKED_POLICY.max_retries) == (120, 2)
