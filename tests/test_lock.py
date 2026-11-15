@@ -84,3 +84,14 @@ def test_lock_refuses_an_analysis_plan_with_unfilled_settings(tmp_path: Path) ->
     plan.write_text("- Late-change window: TBD\n")
     with pytest.raises(ValueError, match="TBD"):
         write_lock([*files, plan], root=tmp_path, commitment="ab" * 32)
+
+
+def test_lock_covers_every_module_a_scored_run_depends_on() -> None:
+    from pathlib import Path
+
+    from bench.lock import locked_paths
+
+    root = Path(__file__).resolve().parent.parent
+    rel = {str(p.relative_to(root)) for p in locked_paths(root)}
+    needed = {"bench/delivery.py", "bench/selection.py", "bench/model.py", "bench/export.py"}
+    assert needed <= rel
