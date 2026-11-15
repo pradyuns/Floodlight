@@ -358,14 +358,18 @@ Synthetic typing is deferred, outside Phase 1.
     - **App identity:** an app row matches its target by the target's inventory name or by any
       name from the app's own bundle (Info.plist display and bundle names, English
       localizations), read in the bench VM (guest locale en_US, languages en-US) and stored with
-      its source in `data/app-aliases-macos-26.4.1.json`. A name claimed by two apps is refused.
+      its source in `data/app-aliases-macos-26.4.1.json`. Only rows of kind app can match, and
+      every alias must map to exactly one app in the declared inventory (a shared name is
+      refused).
       Queries and intended apps are unchanged. A tool showing a name from another localization
       than the guest's (e.g. "Print Centre" on en-US) is reported as an observation.
     - **Pause before typing:** the same fixed pause between "ready" and the first key for every
       tool, chosen from 0/150/300/500 ms by an unscored, counterbalanced input-delivery
-      calibration (shortest pause with an observed first-try drop rate ≤ 0.5% for every tool),
-      then checked in a separate ~4 h endurance run (drops ≤ 1% per tool overall, last quarter
-      ≤ 1 point above the first; all four quarters reported). Chosen on delivery only, never on
+      calibration (shortest pause at which, for every tool, observed first-try drops are ≤ 0.5%
+      and unverified first tries — not ready, unreadable, timed out — are ≤ 1%; if none
+      qualifies, none is chosen), then checked in a separate endurance run of about 5 h in the
+      full sampling flow (drops ≤ 1% per tool overall, last quarter ≤ 1 point above the first;
+      all four quarters' counts and rates reported; passing means meeting this operational gate). Chosen on delivery only, never on
       ranking. Timing stays anchored to actual key posts; the pause is recorded separately.
 
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)
