@@ -65,6 +65,8 @@ def test_locked_set_covers_queries_scoring_and_plan() -> None:
         "bench/truth.py",
         "corpus/make_corpus.py",
         "bench/campaign.py",
+        "bench/baseline.py",
+        "bench/__main__.py",
         "probe/Package.swift",
         "probe/Sources/ProbeCore/Spotlight.swift",
         "probe/Sources/ProbeCore/Raycast.swift",

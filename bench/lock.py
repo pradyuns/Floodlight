@@ -21,6 +21,8 @@ LOCKED_GLOBS = (
     "bench/hostload.py",
     "bench/campaign.py",
     "bench/runner.py",
+    "bench/baseline.py",
+    "bench/__main__.py",
     "corpus/*.py",
     "fixtures/plan.py",
     "fixtures/make_files.py",

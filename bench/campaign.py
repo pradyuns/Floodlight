@@ -4,6 +4,7 @@ Each block is one `probe run-schedule` call inside the guest. Host conditions ar
 before and during every block; a flagged block is kept and retried per the policy, never cut
 short. Every attempt is written to raw.jsonl; block conditions to blocks.jsonl."""
 
+import hashlib
 import json
 import os
 import shlex
@@ -52,6 +53,14 @@ class _Monitor:
         self._stop.set()
         self._thread.join()
         self.samples.append(read_host_sample())
+
+
+def probe_digest(name: str, data: bytes) -> str:
+    """Full sha256 of the probe binary; its file name must carry the first 12 hex digits."""
+    full = hashlib.sha256(data).hexdigest()
+    if name != f"probe-{full[:12]}":
+        raise ValueError(f"probe file {name} does not match its contents (sha256 {full})")
+    return full
 
 
 class StuckToolError(RuntimeError):
@@ -105,6 +114,7 @@ def run_campaign(
     require_lock: bool = True,
     guest_ready_load1: float = 3.0,
     guest_ready_timeout_s: float = 1200,
+    extra_meta: dict[str, str] | None = None,
 ) -> None:
     if require_lock:
         verify_lock(REPO)
@@ -129,12 +139,17 @@ def run_campaign(
                 raise RuntimeError(f"guest load stayed >= {guest_ready_load1} after boot")
             time.sleep(15)
         guest_wait = round(time.monotonic() - t_guest)
+        expected = probe_digest(probe, (REPO / "results" / "share" / probe).read_bytes())
         sh(f"curl -sf -o ~/probe {URL}/{probe} && chmod +x ~/probe && echo ok")
+        in_guest = sh("shasum -a 256 ~/probe").split()[0]
+        if in_guest != expected:
+            raise RuntimeError(f"probe in guest has sha256 {in_guest}, expected {expected}")
         meta = {
             "label": label,
             "env": env,
             "snapshot": snapshot,
             "probe": probe,
+            "probe_sha256": expected,
             "window_ms": window_ms,
             "policy": asdict(policy),
             "block_size": block_size,
@@ -146,6 +161,7 @@ def run_campaign(
             "guest_ready_load1": guest_ready_load1,
             "guest_ready_wait_s": guest_wait,
             "locked": require_lock,
+            **(extra_meta or {}),
         }
         (out_dir / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
         raw = (out_dir / "raw.jsonl").open("a")

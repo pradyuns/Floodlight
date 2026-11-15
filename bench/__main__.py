@@ -137,6 +137,53 @@ def cmd_heldout(args: argparse.Namespace) -> int:
     return 0
 
 
+def _git(*args: str) -> str:
+    import subprocess
+
+    return subprocess.run(
+        ["git", *args], cwd=REPO, capture_output=True, text=True, check=True
+    ).stdout.strip()
+
+
+def cmd_baseline(args: argparse.Namespace) -> int:
+    import time
+
+    from bench.baseline import SNAPSHOTS, baseline_plan
+    from bench.campaign import run_campaign
+    from bench.generate import queries_from_json
+    from bench.hostload import LOCKED_POLICY
+    from bench.schedule import schedule
+
+    if _git("status", "--porcelain"):
+        sys.exit("refusing: the working tree has uncommitted changes")
+    head = _git("rev-parse", "HEAD")
+    published = _git("rev-parse", f"origin/{_git('rev-parse', '--abbrev-ref', 'HEAD')}")
+    if head != published:
+        sys.exit(f"refusing: HEAD {head[:7]} is not the pushed commit {published[:7]}")
+    plan = baseline_plan(args.campaign, REPO / "data")
+    queries = {q.id: q for q in queries_from_json((REPO / "data" / plan.query_file).read_text())}
+    slots = schedule(
+        list(plan.query_ids), list(plan.tools), plan.runs, plan.schedule_seed, plan.conditions
+    )
+    out = REPO / "results" / f"baseline-{plan.name}-{time.strftime('%Y%m%d-%H%M')}"
+    print(f"{plan.name}: {len(slots)} samples, env={plan.env}, commit {head[:7]} -> {out.name}")
+    run_campaign(
+        snapshot=SNAPSHOTS[plan.env],
+        env=plan.env,
+        queries=queries,
+        slots=slots,
+        probe=args.probe,
+        out_dir=out,
+        label=plan.name,
+        policy=LOCKED_POLICY,
+        window_ms=plan.window_ms,
+        require_lock=True,
+        extra_meta={"commit": head, "campaign": plan.name},
+    )
+    print("done")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="bench")
     sub = parser.add_subparsers(required=True)
@@ -163,6 +210,10 @@ def main() -> int:
     ho.add_argument("--dictionary", default="/usr/share/dict/words")
     ho.add_argument("--data-dir", default="data")
     ho.set_defaults(func=cmd_heldout)
+    bl = sub.add_parser("baseline", help="run one locked baseline campaign (Spotlight vs Raycast)")
+    bl.add_argument("--campaign", required=True)
+    bl.add_argument("--probe", required=True)
+    bl.set_defaults(func=cmd_baseline)
     args = parser.parse_args()
     result: int = args.func(args)
     return result

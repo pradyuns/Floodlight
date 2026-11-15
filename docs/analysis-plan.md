@@ -377,6 +377,10 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
 
 ## Measurement binary
 - The probe's Swift sources are locked with everything else. Every scored run uses the binary built
-  from them, `probe-6fa42c2a7df2` (first 12 hex digits of its sha256; the runner names staged
-  binaries by hash and records the name in each run's metadata). A harness fix after the lock is
+  from them: sha256 `6fa42c2a7df252dff15033099bb4a4ef0d88131477e8b6fef2e32dcc3624a54e`
+  (staged as `probe-6fa42c2a7df2`). Before any sample, the runner checks the full sha256 of the
+  binary inside the guest and refuses on a mismatch; the hash is stored in each run's metadata.
+- Baselines are launched with `python -m bench baseline --campaign NAME --probe NAME`, which
+  refuses unless the working tree is clean and HEAD is the pushed commit (recorded per run), and
+  always uses the locked host-load policy and lock verification. Seeds: schedule 42, subsets 2026. A harness fix after the lock is
   a logged amendment with a new lock, and every affected run is redone.

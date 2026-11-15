@@ -47,3 +47,17 @@ def test_locked_policy_matches_the_analysis_plan() -> None:
     assert LOCKED_POLICY.max_pressure_level == 1
     assert LOCKED_POLICY.max_swap_pages_per_s == 500
     assert (LOCKED_POLICY.recovery_wait_s, LOCKED_POLICY.max_retries) == (120, 2)
+
+
+def test_probe_name_must_match_its_full_sha256() -> None:
+    import hashlib
+
+    import pytest
+
+    from bench.campaign import probe_digest
+
+    data = b"probe binary bytes"
+    full = hashlib.sha256(data).hexdigest()
+    assert probe_digest(f"probe-{full[:12]}", data) == full
+    with pytest.raises(ValueError, match="does not match"):
+        probe_digest("probe-000000000000", data)
