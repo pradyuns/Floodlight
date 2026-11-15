@@ -17,12 +17,11 @@ from typing import Literal
 from bench.generate import Query
 from bench.hostload import HostSample, Policy, evaluate, make_blocks, read_host_sample, should_retry
 from bench.lock import verify_lock
-from bench.runner import write_schedule
+from bench.runner import GUEST_SHARE, write_schedule
 from bench.schedule import Slot
 from bench.vm import VM
 
 REPO = Path(__file__).resolve().parent.parent
-SHARE = REPO / "results" / "share"
 URL = "http://192.168.64.1:8765"
 RECORD_ONLY = Policy(
     interval_s=5,
@@ -85,9 +84,11 @@ def run_campaign(
         verify_lock(REPO)
     out_dir.mkdir(parents=True, exist_ok=False)
     awake = subprocess.Popen(["caffeinate", "-dimsu", "-w", str(os.getpid())])
+    io = out_dir / "io"
+    io.mkdir()
     vm = VM(f"run-{out_dir.name}", snapshot)
     vm.clone()
-    vm.start()
+    vm.start(shares={"run": (str(io), False)})
 
     def sh(cmd: str, timeout: float = 600) -> str:
         return vm.ssh(cmd, timeout)
@@ -125,18 +126,21 @@ def run_campaign(
             attempt = 0
             while True:
                 waited = _wait_for_host(policy)
-                name = f"sched-{out_dir.name}-{b}-{attempt}.jsonl"
-                write_schedule(SHARE / name, block, queries, window_ms)
+                name = f"sched-{b}-{attempt}.jsonl"
+                result_name = f"result-{b}-{attempt}.jsonl"
+                write_schedule(io / name, block, queries, window_ms)
                 guest_load_before = sh("sysctl -n vm.loadavg").strip()
                 started = time.monotonic()
+                guest_io = shlex.quote(GUEST_SHARE)
                 with _Monitor(policy.interval_s) as mon:
-                    out = sh(
-                        f"curl -sf -o /tmp/s.jsonl {URL}/{shlex.quote(name)} && "
-                        "~/probe run-schedule --schedule /tmp/s.jsonl --out /tmp/r.jsonl "
-                        ">/dev/null 2>&1; cat /tmp/r.jsonl",
+                    sh(
+                        f"~/probe run-schedule --schedule {guest_io}/{name} "
+                        f"--out {guest_io}/{result_name} >/dev/null 2>&1; true",
                         timeout=60 * len(block) + 300,
                     )
-                lines = [ln for ln in out.splitlines() if ln.startswith("{")]
+                result_file = io / result_name
+                text = result_file.read_text() if result_file.exists() else ""
+                lines = [ln for ln in text.splitlines() if ln.startswith("{")]
                 reasons = evaluate(mon.samples, policy)
                 for ln in lines:
                     rec = json.loads(ln)
@@ -162,7 +166,6 @@ def run_campaign(
                 )
                 raw.flush()
                 log.flush()
-                (SHARE / name).unlink(missing_ok=True)
                 if not should_retry(attempt, bool(reasons), policy):
                     break
                 attempt += 1
