@@ -367,3 +367,10 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
     raw data and the flagged-block rate is reported per tool
   - guest 1-min load < 3.0 before the first block
   - light use measured in the pilot (browsing, a video) stayed within these limits
+
+## Held-out commitment
+- Commitment (sha256 of nonce ‖ held-out file): `2775ea5ff6212f3a168e545b4c9c2d2606df819c77f070b02c9bf65b11e8ba12`
+- Counts: stratum (a) 69 typo queries; stratum (b) 280 queries over 40 secret planted apps, of
+  which 22 coincide with public query strings (allowed and reported).
+- Secret-name dictionary: `/usr/share/dict/words`, sha256
+  `be41ad97963bf8dabedd5871d5d691596175269d540956b0f9965a885c2bbab9` (identical in the guest).
