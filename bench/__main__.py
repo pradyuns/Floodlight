@@ -96,6 +96,47 @@ def cmd_fixtures(args: argparse.Namespace) -> int:
     return 0
 
 
+REPO = Path(__file__).resolve().parent.parent
+
+
+def cmd_heldout(args: argparse.Namespace) -> int:
+    import hashlib
+    import os
+
+    from bench.heldout import build_heldout, canonical_bytes, commitment
+
+    out = Path(args.out_dir).expanduser().resolve()
+    if out == REPO or REPO in out.parents:
+        sys.exit("refusing: --out-dir is inside the repo; the held-out file must stay private")
+    files = (out / "heldout.json", out / "nonce.bin")
+    if any(f.exists() for f in files):
+        sys.exit("refusing: held-out output already exists in --out-dir; nothing overwritten")
+    data_dir = Path(args.data_dir)
+    public: set[str] = set()
+    for f in sorted(data_dir.glob("*queries*.json")):
+        public |= {q["text"] for q in json.loads(f.read_text())}
+    layout = json.loads((data_dir / "fixture-layout.json").read_text())
+    names = {a.replace("\u200e", "") for fam in layout.values() for a in fam["apps"]}
+    apps = [App(**a) for a in json.loads(Path(args.inventory).read_text())["apps"]]
+    seed = Path(args.seed_file).expanduser().read_bytes()
+    if len(seed.strip()) < 16:
+        sys.exit("refusing: the seed file should hold at least 16 random characters")
+    heldout = build_heldout(seed, apps, Path(args.dictionary), public, names)
+    data = canonical_bytes(heldout)
+    nonce = os.urandom(32)
+    out.mkdir(parents=True, exist_ok=True, mode=0o700)
+    files[0].write_bytes(data)
+    files[1].write_bytes(nonce)
+    print(f"commitment: {commitment(nonce, data)}")
+    print(
+        f"stratum_a={len(heldout['strata']['a'])} stratum_b={len(heldout['strata']['b'])} "
+        f"secret_apps={len(heldout['planted_names'])} "
+        f"b_overlap_with_public={heldout['overlap_b_with_dev']}"
+    )
+    print(f"dictionary_sha256={hashlib.sha256(Path(args.dictionary).read_bytes()).hexdigest()}")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(prog="bench")
     sub = parser.add_subparsers(required=True)
@@ -115,6 +156,13 @@ def main() -> int:
     fx.add_argument("--data-dir", default="data")
     fx.add_argument("--out-dir", default="fixtures/out")
     fx.set_defaults(func=cmd_fixtures)
+    ho = sub.add_parser("heldout", help="write the secret held-out set; prints digest and counts")
+    ho.add_argument("--seed-file", required=True)
+    ho.add_argument("--out-dir", required=True)
+    ho.add_argument("--inventory", default="data/inventory-macos-26.4.1.json")
+    ho.add_argument("--dictionary", default="/usr/share/dict/words")
+    ho.add_argument("--data-dir", default="data")
+    ho.set_defaults(func=cmd_heldout)
     args = parser.parse_args()
     result: int = args.func(args)
     return result
