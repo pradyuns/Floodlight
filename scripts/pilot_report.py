@@ -10,16 +10,18 @@ import json
 import statistics
 import sys
 from collections import Counter, defaultdict
+from collections.abc import Sequence
 from pathlib import Path
 
 from bench.generate import queries_from_json
+from bench.model import Sample
 from bench.runner import parse_results
 from bench.score import score_sample
 
 QUERY_FILES = ("data/dev-queries.json",)
 
 
-def _pct(values: list[float], p: float) -> float:
+def _pct(values: Sequence[float], p: float) -> float:
     s = sorted(values)
     return s[min(len(s) - 1, int(p * len(s)))] if s else float("nan")
 
@@ -35,7 +37,7 @@ def main() -> int:
         )
         secs = sum(b["secs"] for b in blocks) / max(1, sum(b["results"] for b in blocks))
         print(f"time per sample: {secs:.2f} s; guest ready wait {meta.get('guest_ready_wait_s')} s")
-        by_tool: dict[str, list] = defaultdict(list)
+        by_tool: dict[str, list[Sample]] = defaultdict(list)
         for s in samples:
             by_tool[s.tool].append(s)
         for tool, ss in sorted(by_tool.items()):
@@ -44,7 +46,7 @@ def main() -> int:
             lateness = [s.max_key_lateness_ms for s in ok]
             overhead = [s.field_shows_ms - s.final_key_post_ms for s in ok if s.field_shows_ms]
             late = {3000: 0, 4000: 0}
-            unobs = Counter()
+            unobs: Counter[int] = Counter()
             for s in ok:
                 q = queries[s.query_id]
                 full = score_sample(s, q, window_ms=5000)
