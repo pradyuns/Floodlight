@@ -54,6 +54,22 @@ class _Monitor:
         self.samples.append(read_host_sample())
 
 
+class StuckToolError(RuntimeError):
+    pass
+
+
+def _stuck_tool(block: list[Slot], result_lines: list[str]) -> str | None:
+    """A tool whose every sample in the block errored: the launcher is stuck, not flaky."""
+    errors: dict[str, list[bool]] = {}
+    for ln in result_lines:
+        rec = json.loads(ln)
+        errors.setdefault(rec["tool"], []).append(rec.get("error") is not None)
+    for tool in sorted({s.tool for s in block}):
+        if len(errors.get(tool, [])) >= 4 and all(errors[tool]):
+            return tool
+    return None
+
+
 def _wait_for_host(policy: Policy) -> float:
     """Waits up to the recovery period for the host to be within policy; returns seconds waited."""
     start = time.monotonic()
@@ -92,6 +108,8 @@ def run_campaign(
 
     def sh(cmd: str, timeout: float = 600) -> str:
         return vm.ssh(cmd, timeout)
+
+    keep_vm = False
 
     try:
         settle = vm.wait_index_settled(timeout_s=900)
@@ -166,6 +184,12 @@ def run_campaign(
                 )
                 raw.flush()
                 log.flush()
+                stuck = _stuck_tool(block, lines)
+                if stuck is not None:
+                    keep_vm = True
+                    raise StuckToolError(
+                        f"{stuck} failed every sample in block {b}; VM {vm.name} kept for diagnosis"
+                    )
                 if not should_retry(attempt, bool(reasons), policy):
                     break
                 attempt += 1
@@ -173,5 +197,6 @@ def run_campaign(
         raw.close()
         log.close()
     finally:
-        vm.destroy()
+        if not keep_vm:
+            vm.destroy()
         awake.terminate()
