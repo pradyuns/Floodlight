@@ -68,6 +68,8 @@ public final class Sampler {
     /// A key posted later than this makes the sample a harness error. 10 ms is an eighth of the
     /// 80 ms key interval and a tenth of the earliest checkpoint.
     public static let maxKeyLatenessMs = 10
+    /// One whole read (field, rows, Enter label) must finish within this, or it is unreadable.
+    public static let readBudgetMs = 150
 
     let adapter: LauncherAdapter
     let pacer: KeyPacer
@@ -96,9 +98,29 @@ public final class Sampler {
             clock.sleep(untilMs: start + nextSample)
             let postedBeforeRead = pacer.posted().count
             let readStart = clock.nowMs() - start
+            ReadBudget.shared.begin(ms: Sampler.readBudgetMs, clock: clock)
             let read = adapter.fieldText()
             let fieldRead = clock.nowMs() - start
             let postedAfterRead = pacer.posted().count
+            var rows: Result<([RowDTO], String?), any Error>?
+            if case .text(let field) = read, !field.isEmpty,
+               characters.prefix(postedAfterRead).joined().hasPrefix(field) {
+                rows = Result { (try adapter.readRows(), adapter.primaryAction()) }
+            }
+            let overBudget = ReadBudget.shared.end()
+            let readEnd = clock.nowMs() - start
+            if overBudget {
+                if postedBeforeRead > 0 {
+                    readFailures += 1
+                    sample.snapshots.append(
+                        SnapshotDTO(readStartMs: readStart, readEndMs: readEnd, rows: [],
+                                    fieldText: "", unreadable: "deadline"))
+                }
+                sample.keyPosts = pacer.posted()
+                allPosted = sample.keyPosts.count == characters.count
+                nextSample = max(nextSample + Sampler.sampleIntervalMs, clock.nowMs() - start)
+                continue
+            }
             guard case .text(let field) = read else {
                 if postedBeforeRead > 0, case .unreadable(let reason) = read {
                     readFailures += 1
@@ -120,17 +142,16 @@ public final class Sampler {
                 // Typed but not yet shown: Enter would open nothing from this query.
                 sample.snapshots.append(
                     SnapshotDTO(readStartMs: readStart, readEndMs: fieldRead, rows: [], fieldText: ""))
-            } else if !field.isEmpty && characters.prefix(postedAfterRead).joined().hasPrefix(field) {
-                do {
-                    let rows = try adapter.readRows()
-                    let action = adapter.primaryAction()
+            } else if let rows {
+                switch rows {
+                case .success(let (found, action)):
                     sample.snapshots.append(
-                        SnapshotDTO(readStartMs: readStart, readEndMs: clock.nowMs() - start,
-                                    rows: rows, fieldText: field, primaryAction: action))
-                } catch {
+                        SnapshotDTO(readStartMs: readStart, readEndMs: readEnd,
+                                    rows: found, fieldText: field, primaryAction: action))
+                case .failure(let error):
                     readFailures += 1
                     sample.snapshots.append(
-                        SnapshotDTO(readStartMs: readStart, readEndMs: clock.nowMs() - start,
+                        SnapshotDTO(readStartMs: readStart, readEndMs: readEnd,
                                     rows: [], fieldText: field, unreadable: "rows:\(error)"))
                 }
             } else if !field.isEmpty {

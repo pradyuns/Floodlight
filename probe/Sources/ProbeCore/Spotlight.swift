@@ -56,16 +56,28 @@ public enum AX {
         return .text(text)
     }
 
-    static func fieldRead(_ element: AXUIElement) -> FieldRead {
+    /// Per-call cap when no read budget is active.
+    static let callTimeout: Float = 0.5
+
+    /// Copies one attribute, with the call's timeout taken from the active read budget.
+    static func copy(_ element: AXUIElement, _ name: String) -> (AXError, CFTypeRef?) {
+        guard let timeout = ReadBudget.shared.nextCallTimeout(cap: callTimeout) else {
+            return (.cannotComplete, nil)
+        }
+        AXUIElementSetMessagingTimeout(element, timeout)
         var value: CFTypeRef?
-        let status = AXUIElementCopyAttributeValue(element, kAXValueAttribute as CFString, &value)
+        let status = AXUIElementCopyAttributeValue(element, name as CFString, &value)
+        return (status, value)
+    }
+
+    static func fieldRead(_ element: AXUIElement) -> FieldRead {
+        let (status, value) = copy(element, kAXValueAttribute)
         return fieldRead(status: status, value: value)
     }
 
     static func attribute<T>(_ element: AXUIElement, _ name: String) -> T? {
-        var value: CFTypeRef?
-        guard AXUIElementCopyAttributeValue(element, name as CFString, &value) == .success
-        else { return nil }
+        let (status, value) = copy(element, name)
+        guard status == .success else { return nil }
         return value as? T
     }
 

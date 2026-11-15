@@ -85,6 +85,9 @@ final class FakeLauncher: LauncherAdapter {
     /// From this time on, reading the field fails (e.g. an accessibility error).
     var fieldUnreadableFromMs: Int?
     var rowsFail = false
+    /// Row reads made of this many accessibility calls, each taking readRowsTakesMs / calls and
+    /// each asking the read budget for time first, as the real accessibility layer does.
+    var rowCalls = 1
 
     init(clock: FakeClock, echoDelayMs: Int = 0, rows: [RowDTO]) {
         self.clock = clock
@@ -102,7 +105,10 @@ final class FakeLauncher: LauncherAdapter {
     func readRows() throws -> [RowDTO] {
         if rowsFail { throw ProbeError.noWindow }
         guard case .text(let f) = fieldText() else { throw ProbeError.noWindow }
-        clock.spend(readRowsTakesMs)
+        for _ in 0..<rowCalls {
+            guard ReadBudget.shared.nextCallTimeout(cap: 0.5) != nil else { return [] }
+            clock.spend(readRowsTakesMs / rowCalls)
+        }
         return !f.isEmpty && typed.hasPrefix(f) ? rowsForQuery : stalePreviousRows
     }
     func keyTyped(_ c: String) {
@@ -136,7 +142,7 @@ final class SlowLauncher: LauncherAdapter {
     func isReady() -> Bool { true }
     func fieldText() -> FieldRead { .text(typed.text.withLock { $0 }) }
     func readRows() throws -> [RowDTO] {
-        usleep(150_000)
+        usleep(100_000)
         return [calc]
     }
 }
@@ -364,8 +370,8 @@ do {
                     clock: clock).run(text: "calc", mode: .continuous, windowMs: 300)
     check(typed.text.withLock { $0 } == "calc", "the pacing thread posts every key in order")
     check(s.keyPosts.count == 4 && s.maxKeyLatenessMs <= Sampler.maxKeyLatenessMs && s.error == nil,
-          "150 ms reads on the sampling thread do not delay keys (worst lateness \(s.maxKeyLatenessMs) ms)")
-    check(s.snapshots.contains { $0.readEndMs - $0.readStartMs >= 150 },
+          "100 ms reads on the sampling thread do not delay keys (worst lateness \(s.maxKeyLatenessMs) ms)")
+    check(s.snapshots.contains { $0.readEndMs - $0.readStartMs >= 100 },
           "real snapshots carry the read duration")
 }
 
@@ -473,6 +479,51 @@ check(AX.fieldRead(status: .noValue, value: nil) == .unreadable("ax_error_-25212
       "AX no-value -> unreadable (whether an empty field reports this is checked in the VM)")
 check(AX.fieldRead(status: .success, value: 3 as CFNumber) == .unreadable("not_a_string"),
       "AX non-string value -> unreadable")
+
+// The read budget gives each call only the time left, and nothing once it is spent.
+do {
+    let clock = FakeClock()
+    let budget = ReadBudget()
+    check(budget.nextCallTimeout(cap: 0.5) == 0.5, "no active budget -> the normal per-call cap")
+    budget.begin(ms: 150, clock: clock)
+    clock.spend(100)
+    check(budget.nextCallTimeout(cap: 0.5) == 0.05, "100 ms into a 150 ms budget -> 0.05 s for the next call")
+    clock.spend(50)
+    check(budget.nextCallTimeout(cap: 0.5) == nil, "a spent budget allows no further call")
+    check(budget.end(), "a read that ran out of budget reports it")
+    budget.begin(ms: 150, clock: clock)
+    clock.spend(160)
+    check(budget.end(), "a read that finished after its deadline is over budget even without another call")
+    budget.begin(ms: 150, clock: clock)
+    clock.spend(150)
+    check(!budget.end(), "a read finishing exactly at its deadline is within budget")
+}
+
+// A read that runs past its budget is discarded as unreadable, never kept as a partial result.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    launcher.readRowsTakesMs = 300
+    launcher.rowCalls = 10
+    let (sampler, _) = makeSampler(launcher, clock)
+    let s = sampler.run(text: "calc", mode: .completed, windowMs: 3000)
+    let afterTyping = s.snapshots.filter { $0.readStartMs > 0 }
+    check(!afterTyping.isEmpty && afterTyping.allSatisfy { $0.unreadable == "deadline" && $0.rows.isEmpty },
+          "over-budget reads are unreadable with reason 'deadline' and no rows")
+    check(afterTyping.allSatisfy { $0.readEndMs - $0.readStartMs <= Sampler.readBudgetMs + 30 },
+          "an over-budget read stops within one call of its budget")
+    check(s.fieldShowsMs == nil, "an over-budget read never counts as the field showing the text")
+    check(s.error == "ax_read_failed", "only over-budget reads -> ax_read_failed (got \(s.error ?? "nil"))")
+
+    let clock2 = FakeClock()
+    let quick = FakeLauncher(clock: clock2, rows: [calc])
+    quick.readRowsTakesMs = 100
+    quick.rowCalls = 10
+    let (sampler2, _) = makeSampler(quick, clock2)
+    let s2 = sampler2.run(text: "calc", mode: .completed, windowMs: 3000)
+    check(s2.error == nil && s2.snapshots.contains { $0.unreadable == nil && !$0.rows.isEmpty },
+          "reads within the budget are kept")
+}
 
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)
