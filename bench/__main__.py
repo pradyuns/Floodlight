@@ -263,6 +263,7 @@ def main() -> int:
     dv.add_argument("--per-tool-per-pause", type=int, default=320)
     dv.add_argument("--pause", type=int)
     dv.add_argument("--seed", type=int, default=2811)
+    dv.set_defaults(func=cmd_delivery)
     args = parser.parse_args()
     result: int = args.func(args)
     return result
