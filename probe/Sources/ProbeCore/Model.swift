@@ -4,6 +4,13 @@ public enum TypingMode: String, Codable, Sendable {
     public var keyIntervalMs: Int { self == .stepped ? 1000 : 80 }
 }
 
+/// What one read of the search field found. An empty field is `.text("")`; a read that failed is
+/// `.unreadable`, which says nothing about what the field showed.
+public enum FieldRead: Equatable, Sendable {
+    case text(String)
+    case unreadable(String)
+}
+
 public struct RowDTO: Codable, Equatable, Sendable {
     public let title: String
     public let kind: String
@@ -38,15 +45,20 @@ public struct SnapshotDTO: Codable, Sendable {
     /// The field showed text that isn't what was typed so far (e.g. a lost first key). Kept as
     /// evidence; never scored.
     public let fieldMismatch: Bool
+    /// Why this read saw nothing ("field:…" or "rows:…"); nil when the read succeeded. An
+    /// unreadable snapshot is an observation failure, never an empty result.
+    public let unreadable: String?
 
     public init(readStartMs: Int, readEndMs: Int, rows: [RowDTO], fieldText: String,
-                primaryAction: String? = nil, fieldMismatch: Bool = false) {
+                primaryAction: String? = nil, fieldMismatch: Bool = false,
+                unreadable: String? = nil) {
         self.readStartMs = readStartMs
         self.readEndMs = readEndMs
         self.rows = rows
         self.fieldText = fieldText
         self.primaryAction = primaryAction
         self.fieldMismatch = fieldMismatch
+        self.unreadable = unreadable
     }
 }
 

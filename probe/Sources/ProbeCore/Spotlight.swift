@@ -48,7 +48,20 @@ public enum SpotlightParsing {
     }
 }
 
-enum AX {
+public enum AX {
+    /// A text field's value as read through accessibility; any failure is unreadable.
+    public static func fieldRead(status: AXError, value: CFTypeRef?) -> FieldRead {
+        guard status == .success else { return .unreadable("ax_error_\(status.rawValue)") }
+        guard let text = value as? String else { return .unreadable("not_a_string") }
+        return .text(text)
+    }
+
+    static func fieldRead(_ element: AXUIElement) -> FieldRead {
+        var value: CFTypeRef?
+        let status = AXUIElementCopyAttributeValue(element, kAXValueAttribute as CFString, &value)
+        return fieldRead(status: status, value: value)
+    }
+
     static func attribute<T>(_ element: AXUIElement, _ name: String) -> T? {
         var value: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, name as CFString, &value) == .success
@@ -117,7 +130,7 @@ public final class SpotlightAdapter: ControlledLauncher {
     }
 
     public func isReady() -> Bool {
-        window() != nil && fieldText() == "" && !isBusy()
+        window() != nil && fieldText() == .text("") && !isBusy()
     }
 
     public func isFieldFocused() -> Bool? {
@@ -133,17 +146,17 @@ public final class SpotlightAdapter: ControlledLauncher {
         return focused
     }
 
-    public func fieldText() -> String? {
-        guard let w = window() else { return nil }
-        var text: String?
+    public func fieldText() -> FieldRead {
+        guard let w = window() else { return .unreadable("no_window") }
+        var read: FieldRead?
         walk(w) { e in
-            if text == nil, let id: String = AX.attribute(e, "AXIdentifier"),
+            if read == nil, let id: String = AX.attribute(e, "AXIdentifier"),
                id == "SpotlightSearchField", AX.role(e) == kAXTextFieldRole {
-                text = AX.attribute(e, kAXValueAttribute) ?? ""
+                read = AX.fieldRead(e)
             }
-            return text == nil
+            return read == nil
         }
-        return text
+        return read ?? .unreadable("no_field")
     }
 
     public func readRows() throws -> [RowDTO] {

@@ -95,7 +95,7 @@ let keys = CGEventKeys()
     }
     guard opened else { return false }
     // Launchers can reopen with the previous search text still in the field; clear it.
-    if launcher.fieldText() != "" {
+    if launcher.fieldText() != .text("") {
         keys.press(keyCode: selectAllKey, flags: .maskCommand)
         keys.press(keyCode: deleteKey)
     }
@@ -125,7 +125,7 @@ case "dump":
 case "state":
     let launcher = adapter(for: arg("--tool") ?? "spotlight")
     let rows = (try? launcher.readRows()) ?? []
-    print("open=\(launcher.isOpen()) field=\(launcher.fieldText().map { "'\($0)'" } ?? "nil") "
+    print("open=\(launcher.isOpen()) field=\(launcher.fieldText()) "
         + "focused=\(launcher.isFieldFocused().map(String.init) ?? "nil") "
         + "busy=\(launcher.isBusy()) ready=\(launcher.isReady()) rows=\(rows.count)")
 
@@ -139,7 +139,7 @@ case "overhead":
         guard prepare(launcher, uiRestart: false) else { fail("launcher not ready") }
         let t0 = clock.nowMs()
         keys.type("a")
-        if waitUntil(2000, { launcher.fieldText() == "a" }) { echo.append(clock.nowMs() - t0) }
+        if waitUntil(2000, { launcher.fieldText() == .text("a") }) { echo.append(clock.nowMs() - t0) }
         let r0 = clock.nowMs()
         _ = try? launcher.readRows()
         read.append(clock.nowMs() - r0)

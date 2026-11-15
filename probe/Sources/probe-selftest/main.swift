@@ -82,6 +82,9 @@ final class FakeLauncher: LauncherAdapter {
     var stalePreviousRows: [RowDTO] = []
     var dropFirstKey = false
     var readRowsTakesMs = 0
+    /// From this time on, reading the field fails (e.g. an accessibility error).
+    var fieldUnreadableFromMs: Int?
+    var rowsFail = false
 
     init(clock: FakeClock, echoDelayMs: Int = 0, rows: [RowDTO]) {
         self.clock = clock
@@ -89,14 +92,16 @@ final class FakeLauncher: LauncherAdapter {
         self.rowsForQuery = rows
     }
     func isReady() -> Bool { ready }
-    func fieldText() -> String? {
+    func fieldText() -> FieldRead {
+        if let t = fieldUnreadableFromMs, clock.now >= t { return .unreadable("ax_error_-25204") }
         let visible = echoedAt.filter { $0.key + echoDelayMs <= clock.now }.max { $0.key < $1.key }
-        return visible?.value ?? ""
+        return .text(visible?.value ?? "")
     }
     /// Rows follow whatever the field currently shows; before the field shows any of the new
     /// query, the previous query's rows are still on screen.
     func readRows() throws -> [RowDTO] {
-        let f = fieldText() ?? ""
+        if rowsFail { throw ProbeError.noWindow }
+        guard case .text(let f) = fieldText() else { throw ProbeError.noWindow }
         clock.spend(readRowsTakesMs)
         return !f.isEmpty && typed.hasPrefix(f) ? rowsForQuery : stalePreviousRows
     }
@@ -113,7 +118,7 @@ let calc = RowDTO(title: "Calculator", kind: "app", source: "local", folder: nil
 final class LabelledLauncher: LauncherAdapter {
     var typed = ""
     func isReady() -> Bool { true }
-    func fieldText() -> String? { typed }
+    func fieldText() -> FieldRead { .text(typed) }
     func readRows() throws -> [RowDTO] { [calc] }
     func primaryAction() -> String? { "Open Application" }
 }
@@ -129,7 +134,7 @@ final class SlowLauncher: LauncherAdapter {
     let typed: TypedText
     init(typed: TypedText) { self.typed = typed }
     func isReady() -> Bool { true }
-    func fieldText() -> String? { typed.text.withLock { $0 } }
+    func fieldText() -> FieldRead { .text(typed.text.withLock { $0 }) }
     func readRows() throws -> [RowDTO] {
         usleep(150_000)
         return [calc]
@@ -179,7 +184,7 @@ do {
     let sawChess = s.snapshots.contains { $0.rows.contains { $0.title == "Chess" } }
     check(!sawChess, "rows from the previous query (field not yet showing new text) are discarded")
     let blank = s.snapshots.filter { $0.fieldText.isEmpty }
-    check(!blank.isEmpty && blank.allSatisfy { $0.rows.isEmpty },
+    check(!blank.isEmpty && blank.allSatisfy { $0.rows.isEmpty && $0.unreadable == nil },
           "while the field is still empty after typing began, a 'nothing selectable' snapshot is kept")
     let lagging = s.snapshots.contains { $0.fieldText == "cal" }
     check(lagging, "rows are kept while the field shows a prefix of what was typed (what Enter would open)")
@@ -416,6 +421,58 @@ do {
     check(SettingsSidebar.titles(root: Node(role: "AXWindow"), children: { $0.kids }, role: { $0.role }, value: { $0.value }) == nil,
           "no outline -> nil, not an empty sidebar")
 }
+
+// A failed field read is recorded as unreadable, never as an empty field.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    launcher.fieldUnreadableFromMs = 0
+    let (sampler, _) = makeSampler(launcher, clock)
+    let s = sampler.run(text: "home", mode: .completed, windowMs: 3000)
+    let afterTyping = s.snapshots.filter { $0.readStartMs > 0 }
+    check(!afterTyping.isEmpty && afterTyping.allSatisfy { $0.unreadable == "field:ax_error_-25204" },
+          "failed field reads are kept as unreadable snapshots with their reason")
+    check(afterTyping.allSatisfy { $0.rows.isEmpty }, "unreadable snapshots carry no rows")
+    check(s.error == "ax_read_failed", "only unreadable reads -> ax_read_failed (got \(s.error ?? "nil"))")
+}
+
+// A read that fails partway through a sample leaves the earlier readable snapshots intact.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    launcher.fieldUnreadableFromMs = 1000
+    let (sampler, _) = makeSampler(launcher, clock)
+    let s = sampler.run(text: "calc", mode: .completed, windowMs: 3000)
+    check(s.snapshots.contains { $0.unreadable == nil && $0.fieldText == "calc" && !$0.rows.isEmpty },
+          "readable snapshots before the failure are kept")
+    check(s.snapshots.filter { $0.readStartMs >= 1000 }.allSatisfy { $0.unreadable != nil },
+          "every read after the failure is marked unreadable")
+    check(s.error == nil, "a sample with readable matching snapshots is not an error")
+}
+
+// A failed row read is recorded as unreadable, not silently skipped.
+do {
+    let clock = FakeClock()
+    let launcher = FakeLauncher(clock: clock, rows: [calc])
+    launcher.rowsFail = true
+    let (sampler, _) = makeSampler(launcher, clock)
+    let s = sampler.run(text: "calc", mode: .completed, windowMs: 3000)
+    let failed = s.snapshots.filter { $0.unreadable?.hasPrefix("rows:") ?? false }
+    check(failed.count >= 50, "row-read failures are recorded (got \(failed.count))")
+    check(failed.allSatisfy { $0.rows.isEmpty && $0.fieldText == "calc" || $0.fieldText.count < 4 },
+          "an unreadable-rows snapshot keeps the field text it read")
+    check(s.error == "ax_read_failed", "only unreadable rows -> ax_read_failed")
+}
+
+// The accessibility value of a text field maps to a field reading.
+check(AX.fieldRead(status: .success, value: "calc" as CFString) == .text("calc"), "AX string value -> text")
+check(AX.fieldRead(status: .success, value: "" as CFString) == .text(""), "AX empty string -> empty text")
+check(AX.fieldRead(status: .cannotComplete, value: nil) == .unreadable("ax_error_-25204"),
+      "AX error -> unreadable with its code")
+check(AX.fieldRead(status: .noValue, value: nil) == .unreadable("ax_error_-25212"),
+      "AX no-value -> unreadable (whether an empty field reports this is checked in the VM)")
+check(AX.fieldRead(status: .success, value: 3 as CFNumber) == .unreadable("not_a_string"),
+      "AX non-string value -> unreadable")
 
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

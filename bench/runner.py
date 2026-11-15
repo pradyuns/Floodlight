@@ -75,6 +75,7 @@ def _sample(raw: dict[str, Any], env: Literal["sparse", "busy"]) -> Sample:
                 s["field_text"],
                 s.get("primary_action"),
                 s["field_mismatch"],
+                s.get("unreadable"),
             )
             for s in raw["snapshots"]
         ],

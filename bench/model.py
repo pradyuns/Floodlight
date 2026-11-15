@@ -42,6 +42,7 @@ class Snapshot:
     field_mismatch: bool = (
         False  # field showed text other than what was typed; evidence, not scored
     )
+    unreadable: str | None = None  # why the read saw nothing; an observation failure, not a result
 
 
 @dataclass(frozen=True)

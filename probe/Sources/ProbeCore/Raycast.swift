@@ -140,11 +140,11 @@ public final class RaycastAdapter: ControlledLauncher {
     /// Raycast shows no busy indicator in its accessibility tree.
     public func isBusy() -> Bool { false }
 
-    public func isReady() -> Bool { fieldText() == "" }
+    public func isReady() -> Bool { fieldText() == .text("") }
 
-    public func fieldText() -> String? {
-        guard let f = field() else { return nil }
-        return AX.attribute(f, kAXValueAttribute) ?? ""
+    public func fieldText() -> FieldRead {
+        guard let f = field() else { return .unreadable("no_field") }
+        return AX.fieldRead(f)
     }
 
     public func readRows() throws -> [RowDTO] {

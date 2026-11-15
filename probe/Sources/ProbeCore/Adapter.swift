@@ -7,7 +7,7 @@ public protocol KeyPoster: AnyObject {
 /// What the probe needs from a launcher. Every tool is read through this same channel.
 public protocol LauncherAdapter: AnyObject {
     func isReady() -> Bool
-    func fieldText() -> String?
+    func fieldText() -> FieldRead
     func readRows() throws -> [RowDTO]
     func primaryAction() -> String?
 }

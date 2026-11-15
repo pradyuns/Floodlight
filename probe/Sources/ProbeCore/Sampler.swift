@@ -96,9 +96,21 @@ public final class Sampler {
             clock.sleep(untilMs: start + nextSample)
             let postedBeforeRead = pacer.posted().count
             let readStart = clock.nowMs() - start
-            let field = adapter.fieldText() ?? ""
+            let read = adapter.fieldText()
             let fieldRead = clock.nowMs() - start
             let postedAfterRead = pacer.posted().count
+            guard case .text(let field) = read else {
+                if postedBeforeRead > 0, case .unreadable(let reason) = read {
+                    readFailures += 1
+                    sample.snapshots.append(
+                        SnapshotDTO(readStartMs: readStart, readEndMs: fieldRead, rows: [],
+                                    fieldText: "", unreadable: "field:\(reason)"))
+                }
+                sample.keyPosts = pacer.posted()
+                allPosted = sample.keyPosts.count == characters.count
+                nextSample = max(nextSample + Sampler.sampleIntervalMs, clock.nowMs() - start)
+                continue
+            }
             if field == text && postedAfterRead == characters.count && sample.fieldShowsMs == nil {
                 sample.fieldShowsMs = fieldRead
             }
@@ -117,6 +129,9 @@ public final class Sampler {
                                     rows: rows, fieldText: field, primaryAction: action))
                 } catch {
                     readFailures += 1
+                    sample.snapshots.append(
+                        SnapshotDTO(readStartMs: readStart, readEndMs: clock.nowMs() - start,
+                                    rows: [], fieldText: field, unreadable: "rows:\(error)"))
                 }
             } else if !field.isEmpty {
                 sample.snapshots.append(
@@ -130,7 +145,9 @@ public final class Sampler {
 
         if !allPosted {
             sample.error = "keys_not_posted"
-        } else if !sample.snapshots.contains(where: { !$0.fieldText.isEmpty && !$0.fieldMismatch }) {
+        } else if !sample.snapshots.contains(where: {
+            !$0.fieldText.isEmpty && !$0.fieldMismatch && $0.unreadable == nil
+        }) {
             sample.error = readFailures > 0 ? "ax_read_failed" : "field_never_matched"
         } else if sample.maxKeyLatenessMs > Sampler.maxKeyLatenessMs {
             sample.error = "key_post_late"

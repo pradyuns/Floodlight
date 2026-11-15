@@ -158,3 +158,13 @@ def test_parse_results_keeps_flagged_mismatched_field_readings(tmp_path: Path) -
     path.write_text(json.dumps(line) + "\n")
     (sample,) = parse_results(path, env="sparse")
     assert [s.field_mismatch for s in sample.snapshots] == [False, True]
+
+
+def test_parse_results_keeps_unreadable_reads_apart_from_empty_fields(tmp_path: Path) -> None:
+    line = json.loads(json.dumps(PROBE_LINE))
+    blank = {**line["snapshots"][0], "rows": [], "field_text": ""}
+    line["snapshots"] += [blank, {**blank, "unreadable": "field:ax_error_-25204"}]
+    path = tmp_path / "samples.jsonl"
+    path.write_text(json.dumps(line) + "\n")
+    (sample,) = parse_results(path, env="sparse")
+    assert [s.unreadable for s in sample.snapshots] == [None, None, "field:ax_error_-25204"]
