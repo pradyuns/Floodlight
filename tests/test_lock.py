@@ -27,7 +27,7 @@ def test_verify_raises_and_names_the_changed_file(tmp_path: Path) -> None:
     write_lock(files, root=tmp_path, commitment="ab" * 32)
     verify_lock(root=tmp_path)
     files[0].write_text("edited after lock\n")
-    with pytest.raises(LockMismatch, match="data/q.json"):
+    with pytest.raises(LockMismatch, match=r"data/q\.json"):
         verify_lock(root=tmp_path)
 
 
@@ -35,7 +35,7 @@ def test_verify_raises_when_a_locked_file_is_missing(tmp_path: Path) -> None:
     files = _tree(tmp_path)
     write_lock(files, root=tmp_path, commitment="ab" * 32)
     files[1].unlink()
-    with pytest.raises(LockMismatch, match="bench/score.py"):
+    with pytest.raises(LockMismatch, match=r"bench/score\.py"):
         verify_lock(root=tmp_path)
 
 
