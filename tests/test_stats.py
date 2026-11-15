@@ -66,3 +66,25 @@ def test_error_check_flags_high_or_uneven_error_rates() -> None:
     assert error_check(1000, {"spotlight": 10, "raycast": 20}) == "ok"
     assert error_check(1000, {"spotlight": 60, "raycast": 60}) == "inconclusive"
     assert error_check(1000, {"spotlight": 0, "raycast": 30}) == "inconclusive"
+
+
+def _score(at1: bool | None, unresolved: bool = False):  # type: ignore[no-untyped-def]
+    from bench.score import SampleScore
+
+    return SampleScore(at1, False, {}, "none", 0.0, None, None, None, False, unresolved)
+
+
+def test_unresolved_samples_stay_in_the_denominator_with_their_own_rate() -> None:
+    from bench.stats import top1_rates
+
+    scores = [_score(True), _score(False), _score(None, True), _score(None, True)]
+    rates = top1_rates(scores)
+    assert rates.n == 4
+    assert (rates.hit, rates.miss, rates.unresolved) == (0.25, 0.25, 0.5)
+
+
+def test_top1_rates_reject_samples_without_an_intended_target() -> None:
+    from bench.stats import top1_rates
+
+    with pytest.raises(ValueError, match="no intended target"):
+        top1_rates([_score(None)])

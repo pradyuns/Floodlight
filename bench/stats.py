@@ -3,7 +3,10 @@
 import random
 import statistics
 from collections import defaultdict
+from dataclasses import dataclass
 from typing import Literal
+
+from bench.score import SampleScore
 
 Verdict = Literal["better", "worse", "similar", "inconclusive"]
 MARGIN_POINTS = 5.0
@@ -106,3 +109,22 @@ def error_check(
     if max(rates) > MAX_ERROR_RATE or max(rates) - min(rates) > MAX_ERROR_GAP:
         return "inconclusive"
     return "ok"
+
+
+@dataclass(frozen=True)
+class Top1Rates:
+    n: int
+    hit: float
+    miss: float
+    unresolved: float
+
+
+def top1_rates(scores: list[SampleScore]) -> Top1Rates:
+    """Top-1 outcome shares over all samples. Unresolved identities stay in the denominator and
+    get their own rate, so an observation we can't read never looks like a better search."""
+    if any(s.intended_at1 is None and not s.identity_unresolved for s in scores):
+        raise ValueError("sample with no intended target in a top-1 rate")
+    n = len(scores)
+    unresolved = sum(s.identity_unresolved for s in scores)
+    hits = sum(s.intended_at1 is True for s in scores)
+    return Top1Rates(n, hits / n, (n - hits - unresolved) / n, unresolved / n)

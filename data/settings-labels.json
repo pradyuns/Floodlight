@@ -6,12 +6,14 @@
     "bluetooth": "bluetooth",
     "display": "displays",
     "displays": "displays",
-    "battery": "battery"
+    "battery": "battery",
+    "energy": "energy"
   },
   "panes": {
     "wifi": {"title": "Wi-Fi", "verified_id": "Wi‑Fi"},
     "bluetooth": {"title": "Bluetooth", "verified_id": "Bluetooth"},
     "displays": {"title": "Displays", "verified_id": "Displays"},
-    "battery": {"title": "Battery", "verified_id": null}
+    "battery": {"title": "Battery", "verified_id": null, "note": "not applicable in this VM (no battery); kept for a real-Mac settings check"},
+    "energy": {"title": "Energy", "verified_id": "Energy"}
   }
 }

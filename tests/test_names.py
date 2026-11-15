@@ -77,3 +77,11 @@ def test_settings_label_panes_are_shown_or_marked_not_shown_with_a_reason() -> N
             assert catalog["not_shown"][pane["title"]], key
         else:
             assert pane["verified_id"] in catalog["panes"], key
+
+
+def test_battery_is_not_applicable_here_and_energy_is_its_own_label() -> None:
+    raw = json.loads((REPO / "data" / "settings-labels.json").read_text())
+    labels = load_settings_labels(REPO / "data" / "settings-labels.json")
+    assert raw["panes"]["battery"]["verified_id"] is None
+    assert raw["panes"][labels["energy"]]["verified_id"] == "Energy"
+    assert labels["battery"] != labels["energy"]
