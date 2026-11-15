@@ -211,7 +211,7 @@ def test_ambiguous_query_counts_any_acceptable_app_at_1() -> None:
 
 
 def _labelled(rows: list[Row], action: str | None) -> Sample:
-    s = _sample([(1500, rows)])
+    s = _sample([(3950, rows)])
     snap = s.snapshots[0]
     return Sample(
         **{
@@ -267,8 +267,70 @@ def test_checkpoint_is_unobserved_when_the_latest_finished_read_started_too_long
 def test_mismatched_field_reading_never_counts_at_a_checkpoint() -> None:
     good = Snapshot(990, 995, (_row("Calculator"),), "calculator")
     flagged = Snapshot(1050, 1060, (), "alculator", field_mismatch=True)
+    final = Snapshot(3950, 3955, (_row("Calculator"),), "calculator")
+    flagged_final = Snapshot(3960, 3970, (), "alculator", field_mismatch=True)
     s = _sample([(0, [])])
-    sample = Sample(**{**s.__dict__, "snapshots": [good, flagged]})
+    sample = Sample(**{**s.__dict__, "snapshots": [good, flagged, final, flagged_final]})
     score = score_sample(sample, _query())
     assert score.wrong_enter[100] == "unobserved"
     assert score.intended_at1 is True
+
+
+def _snap(
+    start: int, end: int, rows: list[Row], field: str = "calculator", **kw: object
+) -> Snapshot:
+    return Snapshot(start, end, tuple(rows), field, **kw)  # type: ignore[arg-type]
+
+
+def _with(snaps: list[Snapshot], final_key: int = 1000) -> Sample:
+    base = _sample([], final_key)
+    return Sample(**{**base.__dict__, "snapshots": snaps})
+
+
+def test_final_outcome_is_unobserved_without_a_read_started_in_the_last_100ms() -> None:
+    score = score_sample(_with([_snap(3000, 3010, [_row("Calculator")])]), _query())
+    assert score.final_unobserved is True
+    assert score.intended_at1 is None and score.final_observed_rank is None
+    assert score.safe_enter == "unobserved" and score.coverage_miss is False
+
+
+def test_read_spanning_the_cutoff_never_fills_the_gap() -> None:
+    score = score_sample(_with([_snap(3950, 4010, [_row("Calculator")])]), _query())
+    assert score.final_unobserved is True
+
+
+def test_unreadable_reads_are_ignored_rather_than_scored_as_empty() -> None:
+    snaps = [
+        _snap(3920, 3930, [_row("Calculator")]),
+        _snap(3950, 3990, [], field="", unreadable="field:ax_error_-25204"),
+    ]
+    score = score_sample(_with(snaps), _query())
+    assert score.final_unobserved is False and score.intended_at1 is True
+
+
+def test_only_unreadable_reads_near_the_cutoff_leave_the_outcome_unobserved() -> None:
+    snaps = [
+        _snap(3000, 3010, [_row("Calculator")]),
+        _snap(3950, 3990, [], field="", unreadable="deadline"),
+    ]
+    assert score_sample(_with(snaps), _query()).final_unobserved is True
+
+
+def test_a_readable_empty_field_at_the_cutoff_is_a_real_miss() -> None:
+    score = score_sample(_with([_snap(3950, 3960, [], field="")]), _query())
+    assert score.final_unobserved is False and score.intended_at1 is False
+
+
+def test_unreadable_read_at_a_checkpoint_is_unobserved_not_wrong() -> None:
+    snaps = [
+        _snap(1080, 1090, [_row("Calculator")]),
+        _snap(1095, 1099, [], field="", unreadable="deadline"),
+    ]
+    snaps += [_snap(3950, 3960, [_row("Calculator")])]
+    score = score_sample(_with(snaps), _query())
+    assert score.wrong_enter[100] is False
+    snaps = [
+        _snap(1095, 1099, [], field="", unreadable="deadline"),
+        _snap(3950, 3960, [_row("Calculator")]),
+    ]
+    assert score_sample(_with(snaps), _query()).wrong_enter[100] == "unobserved"

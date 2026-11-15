@@ -88,3 +88,21 @@ def test_top1_rates_reject_samples_without_an_intended_target() -> None:
 
     with pytest.raises(ValueError, match="no intended target"):
         top1_rates([_score(None)])
+
+
+def test_unobserved_samples_stay_in_the_denominator_apart_from_unresolved() -> None:
+    from bench.score import SampleScore
+    from bench.stats import top1_rates
+
+    unobserved = SampleScore(
+        None, False, {}, "unobserved", 0.0, None, None, None, False, False, True
+    )
+    rates = top1_rates([_score(True), _score(False), _score(None, True), unobserved])
+    assert (rates.hit, rates.miss, rates.unresolved, rates.unobserved) == (0.25, 0.25, 0.25, 0.25)
+
+
+def test_unobserved_check_uses_the_error_rule_on_scheduled_slots() -> None:
+    from bench.stats import unobserved_check
+
+    assert unobserved_check(2510, {"spotlight": 120, "raycast": 100}) == "ok"
+    assert unobserved_check(2510, {"spotlight": 214, "raycast": 0}) == "inconclusive"

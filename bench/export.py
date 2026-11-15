@@ -33,6 +33,7 @@ PUBLIC_FIELDS = frozenset(
         "final_observed_rank",
         "coverage_miss",
         "identity_unresolved",
+        "final_unobserved",
     }
 )
 
@@ -62,6 +63,7 @@ def export_public(items: list[tuple[Sample, Query, SampleScore]]) -> list[dict[s
             "final_observed_rank": score.final_observed_rank,
             "coverage_miss": score.coverage_miss,
             "identity_unresolved": score.identity_unresolved,
+            "final_unobserved": score.final_unobserved,
         }
         for cp, value in score.wrong_enter.items():
             row[f"wrong_enter_{cp}"] = value

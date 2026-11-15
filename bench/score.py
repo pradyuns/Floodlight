@@ -15,7 +15,9 @@ WINDOW_MS = 3000
 MAX_SNAPSHOT_AGE_MS = 100
 
 Observed = bool | Literal["unobserved", "unresolved"]
-SafeEnter = Literal["intended", "other", "none", "unreadable", "highlight_mismatch", "unresolved"]
+SafeEnter = Literal[
+    "intended", "other", "none", "unreadable", "highlight_mismatch", "unresolved", "unobserved"
+]
 
 # Launchers that don't expose their highlighted row (Raycast 2.12) are read with the documented
 # rule "Enter opens the top row", checked against the type named by the Enter button's label.
@@ -31,7 +33,7 @@ ENTER_LABEL_KINDS: dict[str, frozenset[Kind]] = {
 @dataclass(frozen=True)
 class SampleScore:
     intended_at1: bool | None
-    acceptable_at1: bool
+    acceptable_at1: bool | None
     wrong_enter: dict[int, Observed]
     safe_enter: SafeEnter
     rr10: float
@@ -40,6 +42,9 @@ class SampleScore:
     final_observed_rank: int | None
     coverage_miss: bool
     identity_unresolved: bool  # the first candidate row's file/folder identity can't be pinned down
+    # No readable read started within MAX_SNAPSHOT_AGE_MS of the window's end and finished by it:
+    # what the screen showed at the cutoff is unknown, so the outcome is neither hit nor miss.
+    final_unobserved: bool = False
 
 
 class Identity(Enum):
@@ -166,26 +171,23 @@ def score_sample(
 ) -> SampleScore:
     end = sample.final_key_post_ms + window_ms
     snaps = sorted(
-        (s for s in sample.snapshots if s.read_end_ms <= end and not s.field_mismatch),
+        (
+            s
+            for s in sample.snapshots
+            if s.read_end_ms <= end and not s.field_mismatch and s.unreadable is None
+        ),
         key=lambda s: s.read_end_ms,
     )
     intended = frozenset({query.intended}) if query.intended else query.acceptable
     views = [(s.read_end_ms - sample.final_key_post_ms, _view(s.rows, local_only)) for s in snaps]
-    final_rows = views[-1][1] if views else []
+    final_snap = _snapshot_at(snaps, end)
+    if final_snap is None:
+        return _unobserved(sample, snaps, intended, local_only, truth)
+    final_rows = _view(final_snap.rows, local_only)
     final_rank = _rank(final_rows, intended, truth)
     unresolved = _first_candidate(final_rows, intended, truth) is Identity.UNRESOLVED
 
-    wrong_enter: dict[int, Observed] = {}
-    for cp in CHECKPOINTS_MS:
-        snap = _snapshot_at(snaps, sample.final_key_post_ms + cp)
-        view = _view(snap.rows, local_only) if snap else []
-        if snap is None:
-            wrong_enter[cp] = "unobserved"
-        elif view and _identity(view[0], intended, truth) is Identity.UNRESOLVED:
-            wrong_enter[cp] = "unresolved"
-        else:
-            wrong_enter[cp] = _rank(view, intended, truth) != 1
-
+    wrong_enter = _wrong_enter(sample, snaps, intended, local_only, truth)
     t_first_appear = next(
         (t for t, rows in views if _rank(rows, intended, truth) is not None), None
     )
@@ -199,7 +201,7 @@ def score_sample(
         intended_at1=None if query.intended is None or unresolved else final_rank == 1,
         acceptable_at1=_rank(final_rows[:1], query.acceptable, truth) == 1,
         wrong_enter=wrong_enter,
-        safe_enter=_safe_enter(final_rows, snaps[-1] if snaps else None, intended, truth),
+        safe_enter=_safe_enter(final_rows, final_snap, intended, truth),
         rr10=1.0 / final_rank if final_rank is not None and final_rank <= 10 else 0.0,
         t_first_appear=t_first_appear,
         t_at1=t_at1,
@@ -207,3 +209,46 @@ def score_sample(
         coverage_miss=not any(_first_candidate(rows, intended, truth) for _, rows in views),
         identity_unresolved=unresolved,
     )
+
+
+def _unobserved(
+    sample: Sample,
+    snaps: list[Snapshot],
+    intended: frozenset[Target],
+    local_only: bool,
+    truth: GroundTruth | None,
+) -> SampleScore:
+    return SampleScore(
+        intended_at1=None,
+        acceptable_at1=None,
+        wrong_enter=_wrong_enter(sample, snaps, intended, local_only, truth),
+        safe_enter="unobserved",
+        rr10=0.0,
+        t_first_appear=None,
+        t_at1=None,
+        final_observed_rank=None,
+        coverage_miss=False,
+        identity_unresolved=False,
+        final_unobserved=True,
+    )
+
+
+def _wrong_enter(
+    sample: Sample,
+    snaps: list[Snapshot],
+    intended: frozenset[Target],
+    local_only: bool,
+    truth: GroundTruth | None,
+) -> dict[int, Observed]:
+    wrong_enter: dict[int, Observed] = {}
+    for cp in CHECKPOINTS_MS:
+        snap = _snapshot_at(snaps, sample.final_key_post_ms + cp)
+        view = _view(snap.rows, local_only) if snap else []
+        if snap is None:
+            wrong_enter[cp] = "unobserved"
+        elif view and _identity(view[0], intended, truth) is Identity.UNRESOLVED:
+            wrong_enter[cp] = "unresolved"
+        else:
+            wrong_enter[cp] = _rank(view, intended, truth) != 1
+
+    return wrong_enter

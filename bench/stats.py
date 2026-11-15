@@ -117,14 +117,30 @@ class Top1Rates:
     hit: float
     miss: float
     unresolved: float
+    unobserved: float
 
 
 def top1_rates(scores: list[SampleScore]) -> Top1Rates:
-    """Top-1 outcome shares over all samples. Unresolved identities stay in the denominator and
-    get their own rate, so an observation we can't read never looks like a better search."""
-    if any(s.intended_at1 is None and not s.identity_unresolved for s in scores):
+    """Top-1 outcome shares over all samples. Unresolved identities and unobserved outcomes stay
+    in the denominator with their own rates, so an observation we can't read or pin down never
+    looks like a better search."""
+    if any(
+        s.intended_at1 is None and not s.identity_unresolved and not s.final_unobserved
+        for s in scores
+    ):
         raise ValueError("sample with no intended target in a top-1 rate")
     n = len(scores)
     unresolved = sum(s.identity_unresolved for s in scores)
+    unobserved = sum(s.final_unobserved for s in scores)
     hits = sum(s.intended_at1 is True for s in scores)
-    return Top1Rates(n, hits / n, (n - hits - unresolved) / n, unresolved / n)
+    return Top1Rates(
+        n, hits / n, (n - hits - unresolved - unobserved) / n, unresolved / n, unobserved / n
+    )
+
+
+def unobserved_check(
+    scheduled_per_tool: int, unobserved_by_tool: dict[str, int]
+) -> Literal["ok", "inconclusive"]:
+    """The final Intended@1 comparison is inconclusive on observability by the same 5% / 2-point
+    rule as errors, over scheduled slots."""
+    return error_check(scheduled_per_tool, unobserved_by_tool)
