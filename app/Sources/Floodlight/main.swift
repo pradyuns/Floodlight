@@ -305,8 +305,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             panel.setFrame(frame, display: true)
             isLayingOut = false
         }
-        searchIcon.frame = NSRect(x: 18, y: height - Self.fieldHeight + 16, width: 24, height: 24)
-        field.frame = NSRect(x: 50, y: height - Self.fieldHeight + 12, width: Self.width - 68, height: 32)
+        // Center the icon and the text line (the field's own height, not a fixed box) on the bar.
+        let barMid = height - Self.fieldHeight / 2
+        let textHeight = (field.cell?.cellSize.height ?? 28).rounded(.up)
+        searchIcon.frame = NSRect(x: 18, y: (barMid - 12).rounded(), width: 24, height: 24)
+        field.frame = NSRect(x: 50, y: (barMid - textHeight / 2).rounded(), width: Self.width - 68, height: textHeight)
         divider.frame = NSRect(x: 0, y: listHeight, width: Self.width, height: 1)
         divider.isHidden = sizedRows == 0
         scroll.frame = NSRect(x: 6, y: 6, width: Self.width - 12, height: max(0, listHeight - 12))
