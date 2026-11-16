@@ -36,6 +36,8 @@ struct Entry: Sendable {
     /// First letters of every title and keyword word; a non-launchable item can only match a
     /// query starting with one of them.
     let wordStarts: Set<Character>
+    /// Files: the whole name with its extension ("digittxt"), so "digit.txt" matches too.
+    let fullName: String?
 
     init(item: Item, title: Normalized, keywords: [Normalized]) {
         self.item = item
@@ -45,6 +47,7 @@ struct Entry: Sendable {
         laterSuffixes = title.words.indices.dropFirst().map { title.words[$0...].joined() }
         initials = title.initials
         wordStarts = Set((title.words + keywords.flatMap(\.words)).compactMap(\.first))
+        fullName = item.kind == .file ? Normalized(item.title).compact : nil
     }
 }
 

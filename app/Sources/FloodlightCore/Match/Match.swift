@@ -32,7 +32,8 @@ func classify(_ q: Normalized, _ entry: Entry) -> (MatchClass, Int)? {
     let t = entry.title
     let qc = q.compact
     if !entry.isLaunchable, let first = qc.first, !entry.wordStarts.contains(first) { return nil }
-    if t.compact == qc { return (.exactFull, 0) }
+    if t.compact == qc || entry.fullName == qc { return (.exactFull, 0) }
+    if let full = entry.fullName, full.hasPrefix(qc) { return (.titlePrefix, 0) }
     if t.compact.hasPrefix(qc) || wordsMatch(q.words, t.words, from: 0) { return (.titlePrefix, 0) }
     for (n, suffix) in entry.laterSuffixes.enumerated()
     where suffix.hasPrefix(qc) || wordsMatch(q.words, t.words, from: n + 1) {

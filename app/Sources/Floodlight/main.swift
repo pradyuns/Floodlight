@@ -85,6 +85,94 @@ final class IconCache {
     }
 }
 
+/// Opt-in timing log (`--trace`): query length, counts and milliseconds only, never query text.
+/// Times are on the monotonic uptime clock that NSEvent timestamps use. "ui" means the UI update
+/// finished in code, not that pixels reached the screen.
+@MainActor
+enum Trace {
+    static let enabled = CommandLine.arguments.contains("--trace")
+    static var lines: [String] = []
+
+    static func now() -> TimeInterval { ProcessInfo.processInfo.systemUptime }
+
+    static func ms(_ from: TimeInterval, _ to: TimeInterval) -> String { String(format: "%.1f", (to - from) * 1000) }
+
+    static func log(_ line: String) {
+        guard enabled else { return }
+        lines.append(line)
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("Floodlight")
+        try? (lines.joined(separator: "\n") + "\n").write(to: dir.appendingPathComponent("trace.log"),
+                                                             atomically: true, encoding: .utf8)
+    }
+}
+
+/// One results row, reused across keystrokes. Accessibility texts stay: title, parent folder
+/// (files and folders only: hidden, not empty, otherwise), kind label. The probe parses that order.
+final class ResultCell: NSTableCellView {
+    static let id = NSUserInterfaceItemIdentifier("result")
+    let icon = NSImageView()
+    let title = NSTextField(labelWithString: "")
+    let parent = NSTextField(labelWithString: "")
+    let kind = NSTextField(labelWithString: "")
+
+    init() {
+        super.init(frame: .zero)
+        identifier = Self.id
+        icon.imageScaling = .scaleProportionallyUpOrDown
+        icon.setAccessibilityElement(false)
+        title.font = .systemFont(ofSize: 15)
+        title.lineBreakMode = .byTruncatingTail
+        parent.font = .systemFont(ofSize: 12)
+        parent.textColor = .tertiaryLabelColor
+        parent.lineBreakMode = .byTruncatingMiddle
+        kind.font = .systemFont(ofSize: 12)
+        kind.textColor = .secondaryLabelColor
+        kind.alignment = .right
+        for view in [icon, title, parent, kind] as [NSView] {
+            view.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(view)
+        }
+        textField = title
+        NSLayoutConstraint.activate([
+            icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
+            icon.centerYAnchor.constraint(equalTo: centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 26),
+            icon.heightAnchor.constraint(equalToConstant: 26),
+            title.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
+            title.centerYAnchor.constraint(equalTo: centerYAnchor),
+            parent.leadingAnchor.constraint(equalTo: title.trailingAnchor, constant: 8),
+            parent.centerYAnchor.constraint(equalTo: centerYAnchor),
+            kind.leadingAnchor.constraint(greaterThanOrEqualTo: parent.trailingAnchor, constant: 8),
+            kind.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
+            kind.centerYAnchor.constraint(equalTo: centerYAnchor),
+        ])
+        title.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        parent.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { nil }
+
+    func configure(_ item: Item, image: NSImage?) {
+        icon.image = image
+        title.stringValue = item.title
+        let folder = parentFolder(of: item)
+        parent.stringValue = folder.map { ($0 as NSString).abbreviatingWithTildeInPath } ?? ""
+        parent.isHidden = folder == nil
+        kind.stringValue = SearchController.kindLabel(item.kind)
+    }
+}
+
+/// A soft, rounded highlight for the selected row, like Spotlight's.
+final class RoundedRowView: NSTableRowView {
+    override func drawSelection(in dirtyRect: NSRect) {
+        guard selectionHighlightStyle != .none else { return }
+        NSColor.labelColor.withAlphaComponent(0.12).setFill()
+        NSBezierPath(roundedRect: bounds.insetBy(dx: 4, dy: 2), xRadius: 9, yRadius: 9).fill()
+    }
+}
+
 @MainActor
 final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate,
     NSWindowDelegate {
@@ -100,6 +188,12 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let table = NSTableView()
     let scroll = NSScrollView()
     let divider = NSBox()
+    let searchIcon = NSImageView()
+    /// Rows the list is sized for; it grows while typing but never shrinks until the text is cleared,
+    /// so the panel doesn't jump.
+    var sizedRows = 0
+    var isLayingOut = false
+    static let positionKey = "panelTopCenter"
     var index = IndexSnapshot([Item]())
     var appItems: [Item] = []
     var fileItems: [Item] = []
@@ -124,6 +218,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         panel.isOpaque = false
         panel.hasShadow = true
         panel.delegate = self
+        panel.animationBehavior = .none
+        panel.isMovableByWindowBackground = true
         panel.setAccessibilityTitle("Floodlight")
 
         let background = NSVisualEffectView()
@@ -131,14 +227,18 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         background.blendingMode = .behindWindow
         background.state = .active
         background.wantsLayer = true
-        background.layer?.cornerRadius = 14
+        background.layer?.cornerRadius = 18
         background.layer?.masksToBounds = true
         panel.contentView = background
 
         field.isBordered = false
         field.drawsBackground = false
         field.focusRingType = .none
-        field.font = .systemFont(ofSize: 24, weight: .light)
+        field.font = .systemFont(ofSize: 22)
+        searchIcon.image = NSImage(systemSymbolName: "magnifyingglass", accessibilityDescription: nil)
+        searchIcon.symbolConfiguration = .init(pointSize: 18, weight: .regular)
+        searchIcon.contentTintColor = .secondaryLabelColor
+        searchIcon.setAccessibilityElement(false)
         field.placeholderString = "Floodlight Search"
         field.delegate = self
         field.cell?.usesSingleLineMode = true
@@ -168,23 +268,38 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         scroll.hasVerticalScroller = true
         scroll.autohidesScrollers = true
 
-        for view in [field, divider, scroll] as [NSView] { background.addSubview(view) }
+        for view in [searchIcon, field, divider, scroll] as [NSView] { background.addSubview(view) }
         layout()
     }
 
     func layout() {
-        let rows = min(results.count, Self.maxVisibleRows)
-        let listHeight = rows == 0 ? 0 : CGFloat(rows) * Self.rowHeight + 12
+        sizedRows = results.isEmpty ? 0 : max(sizedRows, min(results.count, Self.maxVisibleRows))
+        let listHeight = sizedRows == 0 ? 0 : CGFloat(sizedRows) * Self.rowHeight + 12
         let height = Self.fieldHeight + listHeight
         let screen = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
-        let top = screen.maxY - screen.height * 0.22
-        panel.setFrame(NSRect(x: screen.midX - Self.width / 2, y: top - height, width: Self.width, height: height),
-                       display: true)
-        field.frame = NSRect(x: 18, y: height - Self.fieldHeight + 12, width: Self.width - 36, height: 32)
+        var anchor = NSPoint(x: screen.midX, y: screen.maxY - screen.height * 0.22)
+        if let saved = UserDefaults.standard.array(forKey: Self.positionKey) as? [Double], saved.count == 2 {
+            let point = NSPoint(x: saved[0], y: saved[1])
+            if NSScreen.screens.contains(where: { $0.frame.contains(point) }) { anchor = point }
+        }
+        let frame = NSRect(x: anchor.x - Self.width / 2, y: anchor.y - height, width: Self.width, height: height)
+        if panel.frame != frame {
+            isLayingOut = true
+            panel.setFrame(frame, display: true)
+            isLayingOut = false
+        }
+        searchIcon.frame = NSRect(x: 18, y: height - Self.fieldHeight + 16, width: 24, height: 24)
+        field.frame = NSRect(x: 50, y: height - Self.fieldHeight + 12, width: Self.width - 68, height: 32)
         divider.frame = NSRect(x: 0, y: listHeight, width: Self.width, height: 1)
-        divider.isHidden = rows == 0
+        divider.isHidden = sizedRows == 0
         scroll.frame = NSRect(x: 6, y: 6, width: Self.width - 12, height: max(0, listHeight - 12))
-        scroll.isHidden = rows == 0
+        scroll.isHidden = results.isEmpty
+    }
+
+    /// Remember where the user dragged the panel (its top centre), not our own resizes.
+    func windowDidMove(_ notification: Notification) {
+        guard !isLayingOut else { return }
+        UserDefaults.standard.set([Double(panel.frame.midX), Double(panel.frame.maxY)], forKey: Self.positionKey)
     }
 
     /// Apps and panes on every open; the home folder walk at most once a minute.
@@ -199,10 +314,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
         if let last = filesScannedAt, Date().timeIntervalSince(last) < 60 { return }
         filesScannedAt = Date()
+        let previous = fileItems
         Task.detached(priority: .utility) {
             let files = FileSource().items()
+            guard files != previous else { return }
             await MainActor.run {
-                guard files != self.fileItems else { return }
                 self.fileItems = files
                 self.rebuild()
             }
@@ -215,17 +331,23 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             let snapshot = IndexSnapshot(items)
             await MainActor.run {
                 self.index = snapshot
-                if self.panel.isVisible { self.update() }
+                // Never reorder a list the user is looking at; the next keystroke uses the new
+                // index. Only fill an empty list (e.g. the first scan finishing).
+                if self.panel.isVisible, self.results.isEmpty, !self.field.stringValue.isEmpty { self.update() }
             }
         }
     }
 
     func toggle() {
-        panel.isVisible ? hide() : show()
+        let pressed = NSApp.currentEvent?.timestamp ?? Trace.now()
+        if panel.isVisible { hide(); return }
+        show()
+        Trace.log("open hotkey_to_ui=\(Trace.ms(pressed, Trace.now()))")
     }
 
     func show() {
         field.stringValue = ""
+        sizedRows = 0
         update()
         refreshIndex()
         panel.makeKeyAndOrderFront(nil)
@@ -254,8 +376,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     /// Searches off the main thread so typing never waits; a result for text that has since
     /// changed is dropped.
-    func update() {
+    func update(keyAt: TimeInterval? = nil) {
         let query = field.stringValue
+        let keyTime = keyAt ?? Trace.now()
         searchGeneration += 1
         let generation = searchGeneration
         if query.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -263,15 +386,29 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             return
         }
         let index = self.index, scores = frecency.scores, limit = Self.maxResults
+        let dispatched = Trace.now()
         Task.detached(priority: .userInitiated) {
+            let started = ProcessInfo.processInfo.systemUptime
             let found = search(query, in: index, frecency: scores, limit: limit)
+            let searched = ProcessInfo.processInfo.systemUptime
             await MainActor.run {
-                if generation == self.searchGeneration { self.show(results: found, for: query) }
+                guard generation == self.searchGeneration else {
+                    Trace.log("stale len=\(query.count) search=\(Trace.ms(started, searched))")
+                    return
+                }
+                let applied = Trace.now()
+                let (rows, laidOut) = self.show(results: found, for: query)
+                Trace.log("key len=\(query.count) results=\(found.count) start=\(Trace.ms(dispatched, started)) "
+                    + "search=\(Trace.ms(started, searched)) wait=\(Trace.ms(searched, applied)) "
+                    + "rows=\(Trace.ms(applied, rows)) layout=\(Trace.ms(rows, laidOut)) "
+                    + "key_to_ui=\(Trace.ms(keyTime, laidOut))")
             }
         }
     }
 
-    func show(results found: [Item], for query: String) {
+    /// Returns when the rows and the layout finished updating (for the trace).
+    @discardableResult
+    func show(results found: [Item], for query: String) -> (TimeInterval, TimeInterval) {
         results = found
         resultsQuery = query
         table.reloadData()
@@ -279,7 +416,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             table.selectRowIndexes([0], byExtendingSelection: false)
             table.scrollRowToVisible(0)
         }
+        let rows = Trace.now()
         layout()
+        return (rows, Trace.now())
     }
 
     func iconLoaded(_ path: String) {
@@ -315,7 +454,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     // MARK: Field
 
-    func controlTextDidChange(_ obj: Notification) { update() }
+    func controlTextDidChange(_ obj: Notification) {
+        update(keyAt: NSApp.currentEvent?.timestamp)
+    }
 
     func control(_ control: NSControl, textView: NSTextView, doCommandBy selector: Selector) -> Bool {
         switch selector {
@@ -336,47 +477,15 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let item = results[row]
-        let cell = NSTableCellView()
-        let icon = NSImageView()
-        icon.image = item.kind == .settingsPane
+        let cell = tableView.makeView(withIdentifier: ResultCell.id, owner: nil) as? ResultCell ?? ResultCell()
+        let image = item.kind == .settingsPane
             ? NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
             : icons.image(for: item.path) { [weak self] path in self?.iconLoaded(path) }
-        icon.imageScaling = .scaleProportionallyUpOrDown
-        let title = NSTextField(labelWithString: item.title)
-        title.font = .systemFont(ofSize: 15)
-        title.lineBreakMode = .byTruncatingTail
-        let kind = NSTextField(labelWithString: Self.kindLabel(item.kind))
-        kind.font = .systemFont(ofSize: 12)
-        kind.textColor = .secondaryLabelColor
-        kind.alignment = .right
-        let parent = NSTextField(labelWithString: parentFolder(of: item).map { ($0 as NSString).abbreviatingWithTildeInPath } ?? "")
-        parent.font = .systemFont(ofSize: 12)
-        parent.textColor = .tertiaryLabelColor
-        parent.lineBreakMode = .byTruncatingMiddle
-        parent.isHidden = parentFolder(of: item) == nil
-        icon.setAccessibilityElement(false)
-        for view in [icon, title, parent, kind] as [NSView] {
-            view.translatesAutoresizingMaskIntoConstraints = false
-            cell.addSubview(view)
-        }
-        cell.textField = title
-        NSLayoutConstraint.activate([
-            icon.leadingAnchor.constraint(equalTo: cell.leadingAnchor, constant: 10),
-            icon.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-            icon.widthAnchor.constraint(equalToConstant: 26),
-            icon.heightAnchor.constraint(equalToConstant: 26),
-            title.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
-            title.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-            parent.leadingAnchor.constraint(equalTo: title.trailingAnchor, constant: 8),
-            parent.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-            kind.leadingAnchor.constraint(greaterThanOrEqualTo: parent.trailingAnchor, constant: 8),
-            kind.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -12),
-            kind.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-        ])
-        title.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-        parent.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        cell.configure(item, image: image)
         return cell
     }
+
+    func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? { RoundedRowView() }
 
     static func kindLabel(_ kind: ItemKind) -> String {
         switch kind {

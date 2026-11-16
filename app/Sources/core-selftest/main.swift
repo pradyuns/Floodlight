@@ -151,6 +151,8 @@ check(fsTitles.contains("Media") && !fsTitles.contains("Media.localized"), "fold
 check(search("cal", in: IndexSnapshot(fsItems), frecency: [:]).isEmpty, "no mid-word matches for folders and files")
 check(search("abc101", in: fsIndex, frecency: [:]).first?.title == "abc-101", "folder found without its punctuation")
 check(search("digit", in: fsIndex, frecency: [:]).first?.title == "digit.txt", "exact file name beats an app prefix")
+check(search("digit.txt", in: fsIndex, frecency: [:]).first?.title == "digit.txt", "full file name with extension finds the file")
+check(search("digit.t", in: fsIndex, frecency: [:]).first?.title == "digit.txt", "typing into the extension keeps the file")
 check(search("digi", in: fsIndex, frecency: [:]).first?.title == "Digital Color Meter", "app first among equal prefixes")
 check(parentFolder(of: fsItems.first { $0.title == "abc-101" }!) == home.appendingPathComponent("Documents").path, "rows know the parent folder")
 try? FileManager.default.removeItem(at: home)
