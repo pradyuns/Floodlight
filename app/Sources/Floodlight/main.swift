@@ -169,6 +169,22 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         panel.orderOut(nil)
     }
 
+    /// QA aid: show the panel with a query, wait for the index, and save the window as a PNG.
+    func render(query: String, to path: String) {
+        show()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.field.stringValue = query
+            self.update()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                guard let view = self.panel.contentView,
+                      let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { exit(1) }
+                view.cacheDisplay(in: view.bounds, to: rep)
+                let ok = (try? rep.representation(using: .png, properties: [:])?.write(to: URL(fileURLWithPath: path))) != nil
+                exit(ok ? 0 : 1)
+            }
+        }
+    }
+
     func update() {
         let query = field.stringValue
         results = query.trimmingCharacters(in: .whitespaces).isEmpty
@@ -301,5 +317,8 @@ MainActor.assumeIsolated {
         exit(1)
     }
     if CommandLine.arguments.contains("--show") { Hub.controller?.show() }
+    if let i = CommandLine.arguments.firstIndex(of: "--render"), CommandLine.arguments.count > i + 2 {
+        Hub.controller?.render(query: CommandLine.arguments[i + 1], to: CommandLine.arguments[i + 2])
+    }
 }
 app.run()
