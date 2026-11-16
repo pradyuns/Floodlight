@@ -25,9 +25,10 @@ public struct AppSource: Sendable {
     private func bundles(in dir: URL, depth: Int) -> [URL] {
         guard depth <= maxDepth,
               let children = try? FileManager.default.contentsOfDirectory(
-                  at: dir, includingPropertiesForKeys: [.isDirectoryKey], options: [.skipsHiddenFiles])
+                  at: dir, includingPropertiesForKeys: [.isDirectoryKey], options: [])
         else { return [] }
-        return children.sorted { $0.path < $1.path }.flatMap { url -> [URL] in
+        // Not .skipsHiddenFiles: macOS flags the /Applications/Safari.app symlink hidden.
+        return children.filter { !$0.lastPathComponent.hasPrefix(".") }.sorted { $0.path < $1.path }.flatMap { url -> [URL] in
             if url.pathExtension == "app" { return [url] }
             let isDir = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
             return isDir ? bundles(in: url, depth: depth + 1) : []
