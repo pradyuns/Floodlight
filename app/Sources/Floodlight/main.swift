@@ -365,29 +365,22 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         Trace.log("open hotkey_to_ui=\(Trace.ms(pressed, Trace.now()))")
     }
 
-    /// The app the user was in when the panel opened; it gets keyboard focus back when the panel
-    /// closes without opening anything. Without this, keys went nowhere after Escape (user report).
-    var returnFocusTo: NSRunningApplication?
-
     func show() {
-        let front = NSWorkspace.shared.frontmostApplication
-        returnFocusTo = front == NSRunningApplication.current ? nil : front
         field.stringValue = ""
         sizedRows = 0
         update()
         refreshIndex()
+        NSApp.activate()
         panel.makeKeyAndOrderFront(nil)
         panel.makeFirstResponder(field)
     }
 
+    /// Closing without opening anything hands focus back through the standard app hide, which
+    /// makes macOS reactivate the previous app and its key window. (Restoring focus ourselves while
+    /// never being the active app left keys going nowhere after typing + Escape: user report.)
     func hide(restoreFocus: Bool = true) {
         panel.orderOut(nil)
-        guard restoreFocus else { return }
-        if NSApp.isActive { NSApp.hide(nil) }
-        if let app = returnFocusTo, !app.isTerminated {
-            NSApp.yieldActivation(to: app)
-            app.activate()
-        }
+        if restoreFocus, NSApp.isActive { NSApp.hide(nil) }
     }
 
     /// QA aid: show the panel with a query, wait for the index, and save the window as a PNG.
@@ -501,11 +494,10 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         return true
     }
 
-    /// Clicking into another app hands focus to that app; anything else returns it to where it was.
+    /// Clicking into another app gives that app focus; clicking nowhere hands focus back.
     func windowDidResignKey(_ notification: Notification) {
         guard panel.isVisible else { return }
-        let front = NSWorkspace.shared.frontmostApplication
-        hide(restoreFocus: front == returnFocusTo || front == NSRunningApplication.current)
+        hide(restoreFocus: NSWorkspace.shared.frontmostApplication == NSRunningApplication.current)
     }
 
     // MARK: Table
