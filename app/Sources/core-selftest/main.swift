@@ -54,6 +54,16 @@ check(top("calcl") == "Calculator", "typo while still typing a prefix")
 check(search("xq", in: index, frecency: [:]).isEmpty, "two letters with no match give no fuzzy results")
 check(search("zzzzzz", in: index, frecency: [:]).isEmpty, "nonsense finds nothing")
 
+// An app's own other names (bundle names) match like its title; keywords stay weak.
+let chromeIndex = IndexSnapshot([
+    Item(id: "/Applications/Google Chrome.app", title: "Google Chrome", kind: .app, path: "/Applications/Google Chrome.app", aliases: ["Chrome"]),
+    Item(id: "/u/a/chrome", title: "chrome", kind: .folder, path: "/u/a/chrome"),
+    Item(id: "/u/i/chrome.dmg", title: "chrome.dmg", kind: .file, path: "/u/i/chrome.dmg"),
+    Item(id: "/Applications/Chrome Apps", title: "Chrome Apps", kind: .folder, path: "/Applications/Chrome Apps"),
+])
+check(search("chrome", in: chromeIndex, frecency: [:]).first?.title == "Google Chrome", "exact other name ties with exact file names; app first")
+check(search("chro", in: chromeIndex, frecency: [:]).first?.title == "Google Chrome", "other-name prefix ranks with title prefixes; app first")
+
 // Strength order
 check(top("time") == "Time Machine", "word-start beats mid-word (Time Machine over FaceTime)")
 check(top("term") == "Terminal", "word-start beats mid-word (Terminal over iTerm)")

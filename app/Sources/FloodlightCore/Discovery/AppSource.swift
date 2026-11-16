@@ -43,8 +43,8 @@ public struct AppSource: Sendable {
         let base = Bundle(url: url)?.infoDictionary ?? [:]
         let names = [fileName, info["CFBundleDisplayName"], info["CFBundleName"],
                      base["CFBundleDisplayName"], base["CFBundleName"]].compactMap { $0 as? String }
-        var keywords: [String] = []
-        for n in names where n != title && !keywords.contains(n) { keywords.append(n) }
-        return Item(id: url.path, title: title, kind: .app, path: url.path, keywords: keywords)
+        var aliases: [String] = []
+        for n in names where n != title && !aliases.contains(n) { aliases.append(n) }
+        return Item(id: url.path, title: title, kind: .app, path: url.path, aliases: aliases)
     }
 }

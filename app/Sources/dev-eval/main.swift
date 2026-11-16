@@ -22,7 +22,7 @@ let queries: [Query] = load(args[3])
 
 let apps = inventory.apps.map {
     Item(id: $0.path, title: $0.name, kind: .app, path: $0.path,
-         keywords: (aliases.aliases[$0.name] ?? []).compactMap(\.first))
+         aliases: (aliases.aliases[$0.name] ?? []).compactMap(\.first))
 }
 let index = IndexSnapshot(apps + SettingsSource.items())
 

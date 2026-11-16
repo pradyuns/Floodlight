@@ -30,6 +30,7 @@ struct Entry: Sendable {
     let title: Normalized
     let keywords: [Normalized]
     let isLaunchable: Bool
+    let aliasNames: [Normalized]
     /// The title from each later word onward, without spaces: "Time Machine" -> ["machine"].
     let laterSuffixes: [String]
     let initials: String
@@ -44,9 +45,10 @@ struct Entry: Sendable {
         self.title = title
         self.keywords = keywords
         isLaunchable = item.kind == .app || item.kind == .settingsPane
+        aliasNames = item.aliases.map(Normalized.init)
         laterSuffixes = title.words.indices.dropFirst().map { title.words[$0...].joined() }
         initials = title.initials
-        wordStarts = Set((title.words + keywords.flatMap(\.words)).compactMap(\.first))
+        wordStarts = Set((title.words + keywords.flatMap(\.words) + aliasNames.flatMap(\.words)).compactMap(\.first))
         fullName = item.kind == .file ? Normalized(item.title).compact : nil
     }
 }
