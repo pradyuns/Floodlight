@@ -83,3 +83,55 @@ def test_plant_command_reads_names_from_a_file_and_never_contains_them(tmp_path:
     assert "make_planted.sh" in cmd and "< '/Volumes/My Shared Files/run/planted.txt'" in cmd
     assert held.planted_names == ("Zorblat",)
     assert "Zorblat" not in json.dumps(held.summary())
+
+
+class FakeGuest:
+    """Records guest commands; answers mdfind counts and probe dumps."""
+
+    def __init__(self, listed: dict[str, set[str]]) -> None:
+        self.commands: list[str] = []
+        self.listed = listed
+
+    def sh(self, cmd: str, timeout: float = 600) -> str:
+        self.commands.append(cmd)
+        if cmd.startswith("mdfind -count"):
+            return "1\n"
+        if "probe dump" in cmd:
+            tool = cmd.split("--tool ")[1].split()[0]
+            name = cmd.split("--query ")[1].split()[0].strip("'")
+            title = next((n for n in self.listed[tool] if n.lower() == name), None)
+            rows = [{"title": title, "kind": "app"}] if title else []
+            return json.dumps(rows) + "\nexit=0"
+        if "make_planted.sh" in cmd:
+            return "planted=2 failed=0\n"
+        return "up\n"
+
+
+def test_planting_passes_names_only_through_a_file_that_is_deleted(tmp_path: Path) -> None:
+    from bench.final import plant_and_restart
+
+    guest = FakeGuest({})
+    counts = plant_and_restart(
+        guest.sh, guest.sh, tmp_path, ("Zorblat", "Quimble"), sleep=lambda s: None
+    )
+    assert counts == {"planted": 2, "failed": 0}
+    assert not (tmp_path / "planted.txt").exists()
+    planting = [c for c in guest.commands if "./make_planted.sh" in c]
+    assert len(planting) == 1 and "Zorblat" not in planting[0]
+    assert any("shutdown -r" in c for c in guest.commands)
+
+
+def test_ready_check_counts_every_tool_and_never_reports_names() -> None:
+    from bench.final import ready_check
+
+    names = ("Zorblat", "Quimble")
+    every = {t: set(names) for t in FINAL_TOOLS}
+    assert ready_check(FakeGuest(every).sh, names, sleep=lambda s: None) == {
+        "spotlight": 2,
+        "raycast": 2,
+        "floodlight": 2,
+    }
+    missing = {**every, "raycast": {"Zorblat"}}
+    with pytest.raises(RuntimeError) as err:
+        ready_check(FakeGuest(missing).sh, names, sleep=lambda s: None)
+    assert "raycast" in str(err.value) and "Quimble" not in str(err.value)
