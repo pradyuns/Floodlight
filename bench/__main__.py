@@ -4,6 +4,7 @@ import sys
 from collections import Counter
 from dataclasses import asdict
 from pathlib import Path
+from typing import Any
 
 from bench.generate import (
     generate_collisions,
@@ -187,6 +188,81 @@ def cmd_baseline(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_final(args: argparse.Namespace) -> int:
+    """The final held-out campaign (all three tools). Prints counts only, never query text."""
+    import functools
+    import shlex
+    import time
+
+    from bench.campaign import run_campaign
+    from bench.final import (
+        FINAL_SNAPSHOTS,
+        FLOODLIGHT_SHA256,
+        check_floodlight,
+        final_plan,
+        load_heldout,
+        plant_and_restart,
+        published_commitment,
+        ready_check,
+    )
+    from bench.hostload import LOCKED_POLICY, make_blocks
+    from bench.schedule import schedule
+    from bench.vm import _vm_password
+
+    if FLOODLIGHT_SHA256 is None:
+        sys.exit("refusing: no Floodlight build is pinned (FLOODLIGHT_SHA256)")
+    if _git("status", "--porcelain"):
+        sys.exit("refusing: the working tree has uncommitted changes")
+    head = _git("rev-parse", "HEAD")
+    published = _git("rev-parse", f"origin/{_git('rev-parse', '--abbrev-ref', 'HEAD')}")
+    if head != published:
+        sys.exit(f"refusing: HEAD {head[:7]} is not the pushed commit {published[:7]}")
+    digest = published_commitment((REPO / "LOCK.txt").read_text())
+    held = load_heldout(Path(args.heldout), Path(args.nonce), digest)
+    plan = final_plan(args.part, held)
+    slots = schedule(
+        list(plan.query_ids), list(plan.tools), plan.runs, plan.schedule_seed, plan.conditions
+    )
+    out = REPO / "results" / f"{plan.name}-{time.strftime('%Y%m%d-%H%M')}"
+    print(f"{plan.name}: {len(slots)} samples, {held.summary()}, commit {head[:7]} -> {out.name}")
+
+    def sudo(sh: Any, cmd: str, timeout: float = 600) -> str:
+        pw = shlex.quote(_vm_password())
+        return str(
+            sh(f"printf '%s\\n' {pw} | sudo -S -p '' sh -c {shlex.quote(cmd)} 2>&1", timeout)
+        )
+
+    def before_settle(sh: Any, io: Path) -> dict[str, Any]:
+        return plant_and_restart(sh, functools.partial(sudo, sh), io, held.planted_names)
+
+    def after_probe(sh: Any) -> dict[str, Any]:
+        return {
+            **check_floodlight(sh, FLOODLIGHT_SHA256),
+            "listed": ready_check(sh, held.planted_names),
+        }
+
+    run_campaign(
+        snapshot=FINAL_SNAPSHOTS[plan.env],
+        env=plan.env,
+        queries=held.queries,
+        slots=slots,
+        probe=args.probe,
+        out_dir=out,
+        label=plan.name,
+        policy=LOCKED_POLICY,
+        window_ms=plan.window_ms,
+        require_lock=True,
+        extra_meta={"commit": head, "campaign": plan.name, "heldout_commitment": digest},
+        stop_rule=True,
+        block_pause_ms=[plan.pause_ms] * len(make_blocks(slots, BASELINE_BLOCK)),
+        block_size=BASELINE_BLOCK,
+        before_settle=before_settle,
+        after_probe=after_probe,
+    )
+    print("done")
+    return 0
+
+
 def cmd_delivery(args: argparse.Namespace) -> int:
     """Unscored input-delivery check (analysis plan item 28): calibration over four pauses, or
     endurance at one pause. Never a scored run."""
@@ -261,6 +337,12 @@ def main() -> int:
     bl.add_argument("--campaign", required=True)
     bl.add_argument("--probe", required=True)
     bl.set_defaults(func=cmd_baseline)
+    fi = sub.add_parser("final", help="run one part of the final held-out campaign (3 tools)")
+    fi.add_argument("--part", required=True, choices=["final-warm", "final-restart", "final-busy"])
+    fi.add_argument("--heldout", required=True)
+    fi.add_argument("--nonce", required=True)
+    fi.add_argument("--probe", required=True)
+    fi.set_defaults(func=cmd_final)
     dv = sub.add_parser("delivery", help="unscored input-delivery check (calibrate or endurance)")
     dv.add_argument("phase", choices=["calibrate", "endurance"])
     dv.add_argument("--probe", required=True)

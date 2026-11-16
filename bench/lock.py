@@ -27,6 +27,7 @@ LOCKED_GLOBS = (
     "bench/selection.py",
     "bench/model.py",
     "bench/export.py",
+    "bench/final.py",
     "corpus/*.py",
     "fixtures/plan.py",
     "fixtures/make_files.py",

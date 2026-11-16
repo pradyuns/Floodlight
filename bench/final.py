@@ -186,3 +186,28 @@ def ready_check(
     if any(c < len(names) for c in seen.values()):
         raise RuntimeError(f"not every planted app is listed: {seen} of {len(names)}")
     return seen
+
+
+def published_commitment(lock_text: str) -> str:
+    for line in lock_text.splitlines():
+        if line.startswith("heldout_commitment "):
+            return line.split()[1]
+    raise SystemExit("refusing: LOCK.txt has no heldout_commitment line")
+
+
+# The frozen Floodlight build: set (and locked) once the app is final, before the final campaign.
+FLOODLIGHT_SHA256: str | None = None
+FLOODLIGHT_BINARY = "/Applications/Floodlight.app/Contents/MacOS/Floodlight"
+
+
+def check_floodlight(sh: Sh, pinned: str | None) -> dict[str, str]:
+    if pinned is None:
+        raise SystemExit("refusing: no Floodlight build is pinned (FLOODLIGHT_SHA256)")
+    in_guest = sh(f"shasum -a 256 {FLOODLIGHT_BINARY}").split()[0]
+    if in_guest != pinned:
+        raise RuntimeError(f"Floodlight in guest has sha256 {in_guest}, expected {pinned}")
+    return {"floodlight_sha256": in_guest}
+
+
+# Benchmark snapshots with Floodlight installed and started at login (amendment 29).
+FINAL_SNAPSHOTS = {"sparse": "bench-final-sparse-2026-11-16", "busy": "bench-final-busy-2026-11-16"}

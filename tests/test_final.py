@@ -135,3 +135,26 @@ def test_ready_check_counts_every_tool_and_never_reports_names() -> None:
     with pytest.raises(RuntimeError) as err:
         ready_check(FakeGuest(missing).sh, names, sleep=lambda s: None)
     assert "raycast" in str(err.value) and "Quimble" not in str(err.value)
+
+
+def test_reads_the_published_commitment_from_the_lock_file() -> None:
+    from bench.final import published_commitment
+
+    digest = "ab" * 32
+    assert published_commitment(f"x  data/a.json\nheldout_commitment {digest}\n") == digest
+    with pytest.raises(SystemExit):
+        published_commitment("x  data/a.json\n")
+
+
+def test_refuses_a_floodlight_build_that_is_not_the_pinned_one() -> None:
+    from bench.final import check_floodlight
+
+    pinned = "cd" * 32
+    ok = {"sha": pinned}
+    assert check_floodlight(lambda cmd, t=600: f"{ok['sha']}  /Applications/x\n", pinned) == {
+        "floodlight_sha256": pinned
+    }
+    with pytest.raises(RuntimeError, match="Floodlight"):
+        check_floodlight(lambda cmd, t=600: "ee" * 32 + "  x\n", pinned)
+    with pytest.raises(SystemExit, match="pinned"):
+        check_floodlight(lambda cmd, t=600: pinned, None)

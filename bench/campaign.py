@@ -11,6 +11,7 @@ import shlex
 import subprocess
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Literal
@@ -135,7 +136,12 @@ def run_campaign(
     extra_meta: dict[str, str] | None = None,
     block_pause_ms: list[int] | None = None,
     stop_rule: bool = False,
+    before_settle: Callable[[Callable[..., str], Path], dict[str, Any]] | None = None,
+    after_probe: Callable[[Callable[..., str]], dict[str, Any]] | None = None,
 ) -> None:
+    """`before_settle` runs right after boot (e.g. planting, then a reboot); `after_probe` runs
+    once the probe is verified (e.g. checking every tool lists the planted apps). Each returns
+    counts recorded in meta.json."""
     if require_lock:
         verify_lock(REPO)
     out_dir.mkdir(parents=True, exist_ok=False)
@@ -152,6 +158,7 @@ def run_campaign(
     keep_vm = False
 
     try:
+        prepared = before_settle(sh, io) if before_settle else {}
         settle = vm.wait_index_settled(timeout_s=900)
         t_guest = time.monotonic()
         while float(sh("sysctl -n vm.loadavg").split()[1]) >= guest_ready_load1:
@@ -164,6 +171,7 @@ def run_campaign(
         in_guest = sh("shasum -a 256 ~/probe").split()[0]
         if in_guest != expected:
             raise RuntimeError(f"probe in guest has sha256 {in_guest}, expected {expected}")
+        checked = after_probe(sh) if after_probe else {}
         meta = {
             "label": label,
             "env": env,
@@ -181,6 +189,8 @@ def run_campaign(
             "guest_ready_load1": guest_ready_load1,
             "guest_ready_wait_s": guest_wait,
             "locked": require_lock,
+            "prepared": prepared,
+            "ready_check": checked,
             **(extra_meta or {}),
         }
         (out_dir / "meta.json").write_text(json.dumps(meta, indent=1) + "\n")
