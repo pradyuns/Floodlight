@@ -206,6 +206,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let scroll = NSScrollView()
     let divider = NSBox()
     let searchIcon = NSImageView()
+    let statusLabel = NSTextField(labelWithString: "")
+    /// A message in place of results (e.g. a failed open); cleared by the next keystroke.
+    var status: String?
     /// Rows the list is sized for; it grows while typing but never shrinks until the text is cleared,
     /// so the panel doesn't jump.
     var sizedRows = 0
@@ -217,6 +220,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     var filesScannedAt: Date?
     var results: [Item] = []
     var searchGeneration = 0
+    var indexBuilds = LatestOnly()
     /// The text the shown results belong to.
     var resultsQuery = ""
     let frecency = FrecencyStore()
@@ -285,12 +289,23 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         scroll.hasVerticalScroller = true
         scroll.autohidesScrollers = true
 
-        for view in [searchIcon, field, divider, scroll] as [NSView] { background.addSubview(view) }
+        statusLabel.font = .systemFont(ofSize: 14)
+        statusLabel.textColor = .secondaryLabelColor
+        statusLabel.alignment = .center
+        statusLabel.isHidden = true
+        for view in [searchIcon, field, divider, scroll, statusLabel] as [NSView] { background.addSubview(view) }
         layout()
     }
 
     func layout() {
-        sizedRows = results.isEmpty ? 0 : max(sizedRows, min(results.count, Self.maxVisibleRows))
+        // Grows while typing, never shrinks until the text is cleared or the panel reopens; a query
+        // with no matches keeps the area and says so.
+        let current = resultsQuery == field.stringValue
+        let message = status ?? (current && results.isEmpty && !field.stringValue.isEmpty ? "No results" : nil)
+        sizedRows = field.stringValue.isEmpty && status == nil
+            ? 0 : max(sizedRows, min(results.count, Self.maxVisibleRows), message == nil ? 0 : 1)
+        statusLabel.stringValue = message ?? ""
+        statusLabel.isHidden = message == nil
         let listHeight = sizedRows == 0 ? 0 : CGFloat(sizedRows) * Self.rowHeight + 12
         let height = Self.fieldHeight + listHeight
         let screen = NSScreen.main?.visibleFrame ?? NSRect(x: 0, y: 0, width: 1440, height: 900)
@@ -314,6 +329,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         divider.isHidden = sizedRows == 0
         scroll.frame = NSRect(x: 6, y: 6, width: Self.width - 12, height: max(0, listHeight - 12))
         scroll.isHidden = results.isEmpty
+        statusLabel.frame = NSRect(x: 20, y: max(0, listHeight / 2 - 10), width: Self.width - 40, height: 20)
     }
 
     /// Remember where the user dragged the panel (its top centre), not our own resizes.
@@ -347,9 +363,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     func rebuild() {
         let items = appItems + fileItems
+        let build = indexBuilds.begin()
         Task.detached(priority: .userInitiated) {
             let snapshot = IndexSnapshot(items)
             await MainActor.run {
+                guard self.indexBuilds.mayPublish(build) else { return }
                 self.index = snapshot
                 // Never reorder a list the user is looking at; the next keystroke uses the new
                 // index. Only fill an empty list (e.g. the first scan finishing).
@@ -366,6 +384,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     }
 
     func show() {
+        status = nil
         field.stringValue = ""
         sizedRows = 0
         update()
@@ -451,11 +470,26 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         if !rows.isEmpty { table.reloadData(forRowIndexes: rows, columnIndexes: [0]) }
     }
 
+    /// Usage is recorded only once macOS confirms the item opened; a failure brings the panel back
+    /// with a message (the item may have been removed since indexing).
     func open(row: Int) {
         guard results.indices.contains(row) else { return }
         let item = results[row]
         hide(restoreFocus: false)
-        if Launcher.open(item) { frecency.recordLaunch(item.id) }
+        Launcher.open(item) { [weak self] opened in
+            guard let self else { return }
+            if opened {
+                self.frecency.recordLaunch(item.id)
+            } else {
+                NSSound.beep()
+                self.status = "Couldn\u{2019}t open \u{201C}\(item.title)\u{201D}"
+                NSApp.activate()
+                self.panel.makeKeyAndOrderFront(nil)
+                self.panel.makeFirstResponder(self.field)
+                self.refreshIndex()
+                self.layout()
+            }
+        }
     }
 
     /// Enter right after a fast keystroke must not open the previous text's top result.
@@ -480,6 +514,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     // MARK: Field
 
     func controlTextDidChange(_ obj: Notification) {
+        status = nil
         update(keyAt: NSApp.currentEvent?.timestamp)
     }
 

@@ -125,6 +125,12 @@ for q in probes {
 }
 check(fastMismatches == 0, "fast top-20 equals the reference on a 20k synthetic index (\(probes.count * 2) cases)")
 
+// Index publication: only the newest build may replace the index.
+var publisher = LatestOnly()
+let older = publisher.begin(), newer = publisher.begin()
+check(publisher.mayPublish(newer), "the newest build publishes")
+check(!publisher.mayPublish(older), "an older build finishing last is dropped")
+
 // Component boundaries
 let candidates = match("ca", in: index)
 let ranked = rank(candidates, frecency: [:])
@@ -197,6 +203,13 @@ check(search("battery", in: IndexSnapshot(settings), frecency: [:]).first?.title
 check(launchTarget(for: app("Calculator")) == .application(URL(fileURLWithPath: "/Applications/Calculator.app")), "apps open as applications")
 check(launchTarget(for: settings[0]) == .url(URL(string: "x-apple.systempreferences:com.apple.wifi-settings-extension")!), "panes open by URL")
 check(launchTarget(for: Item(id: "bad", title: "Bad", kind: .settingsPane, path: "")) == nil, "a pane with no URL can't be opened")
+
+// Launch results come from macOS, not from starting the request.
+var launchResult: Bool?
+Launcher.open(app("No Such App \(ProcessInfo.processInfo.processIdentifier)")) { launchResult = $0 }
+let launchDeadline = Date().addingTimeInterval(10)
+while launchResult == nil, Date() < launchDeadline { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
+check(launchResult == false, "a missing app reports a failed launch")
 
 if failures > 0 {
     print("\(failures) FAILED")
