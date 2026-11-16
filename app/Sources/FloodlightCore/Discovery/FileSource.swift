@@ -3,6 +3,12 @@ import Foundation
 /// Folders and files under the home folder. Skips dot-files, ~/Library and package contents;
 /// apps are AppSource's job.
 public struct FileSource: Sendable {
+    /// Dependency, environment and cache folders: thousands of files nobody searches for by name.
+    public static let skippedFolders: Set<String> = [
+        "node_modules", "bower_components", "Pods", "Carthage", "venv", "site-packages",
+        "__pycache__", "DerivedData",
+    ]
+
     public let root: URL
     public let maxDepth: Int
     public let maxItems: Int
@@ -23,7 +29,7 @@ public struct FileSource: Sendable {
         var out: [Item] = []
         while let url = walker.nextObject() as? URL, out.count < maxItems {
             let path = url.standardizedFileURL.path
-            if path == library || walker.level > maxDepth {
+            if path == library || walker.level > maxDepth || Self.skippedFolders.contains(url.lastPathComponent) {
                 walker.skipDescendants()
                 continue
             }

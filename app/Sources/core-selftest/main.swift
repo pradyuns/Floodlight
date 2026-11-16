@@ -135,7 +135,7 @@ try? FileManager.default.removeItem(at: root)
 
 // Discovery: folders and files
 let home = FileManager.default.temporaryDirectory.appendingPathComponent("floodlight-home-\(ProcessInfo.processInfo.processIdentifier)")
-for dir in ["Movies/Media.localized", "Documents/Vocals", "Documents/abc-101/inner", "Documents/jms-166", ".hidden/secretdir", "Library/Caches/cachedir"] {
+for dir in ["Code/web/node_modules/calcpkg", "Code/py/venv/lib", "Code/py/__pycache__", "Movies/Media.localized", "Documents/Vocals", "Documents/abc-101/inner", "Documents/jms-166", ".hidden/secretdir", "Library/Caches/cachedir"] {
     try? FileManager.default.createDirectory(at: home.appendingPathComponent(dir), withIntermediateDirectories: true)
 }
 FileManager.default.createFile(atPath: home.appendingPathComponent("Documents/jms-166/digit.txt").path, contents: Data())
@@ -143,6 +143,8 @@ let fsItems = FileSource(root: home).items()
 let fsTitles = Set(fsItems.map(\.title))
 check(fsTitles.isSuperset(of: ["abc-101", "inner", "jms-166", "digit.txt", "Documents"]), "folders and files under home are found")
 check(fsTitles.isDisjoint(with: ["secretdir", "cachedir", ".hidden", "Library"]), "dot-folders and Library are skipped")
+check(fsTitles.isDisjoint(with: ["node_modules", "calcpkg", "venv", "lib", "__pycache__"]) && fsTitles.contains("web"),
+      "dependency and cache folders are skipped, their parents kept")
 check(fsItems.first { $0.title == "abc-101" }?.kind == .folder && fsItems.first { $0.title == "digit.txt" }?.kind == .file, "kinds are folder and file")
 let fsIndex = IndexSnapshot(fsItems + [app("Digital Color Meter")])
 check(fsTitles.contains("Media") && !fsTitles.contains("Media.localized"), "folders show their display name")

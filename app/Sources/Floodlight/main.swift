@@ -6,6 +6,24 @@ import FloodlightCore
 final class SearchPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
+
+    /// The app has no menu bar, which is where Cmd-A/C/V/X/Z normally come from.
+    static let editKeys: [String: Selector] = [
+        "a": #selector(NSText.selectAll(_:)),
+        "c": #selector(NSText.copy(_:)),
+        "v": #selector(NSText.paste(_:)),
+        "x": #selector(NSText.cut(_:)),
+        "z": Selector(("undo:")),
+    ]
+
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        if flags == .command, let key = event.charactersIgnoringModifiers,
+           let action = Self.editKeys[key], NSApp.sendAction(action, to: nil, from: self) {
+            return true
+        }
+        return super.performKeyEquivalent(with: event)
+    }
 }
 
 /// Usage counts with decay, stored in Application Support. Ranking uses it only within a match class.
