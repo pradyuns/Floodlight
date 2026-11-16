@@ -74,6 +74,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     static let fieldHeight: CGFloat = 56
     static let rowHeight: CGFloat = 40
     static let maxVisibleRows = 8
+    /// Accessibility exposes every table row; thousands of rows made a single read take seconds.
+    static let maxResults = 20
 
     let panel: SearchPanel
     let field = NSTextField()
@@ -224,7 +226,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     func update() {
         let query = field.stringValue
         results = query.trimmingCharacters(in: .whitespaces).isEmpty
-            ? [] : search(query, in: index, frecency: frecency.scores)
+            ? [] : Array(search(query, in: index, frecency: frecency.scores).prefix(Self.maxResults))
         table.reloadData()
         if !results.isEmpty {
             table.selectRowIndexes([0], byExtendingSelection: false)
