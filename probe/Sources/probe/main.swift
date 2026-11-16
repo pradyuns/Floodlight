@@ -55,6 +55,7 @@ func fail(_ message: String) -> Never {
     switch tool {
     case "spotlight": return SpotlightAdapter()
     case "raycast": return RaycastAdapter()
+    case "floodlight": return FloodlightAdapter()
     default: fail("unknown tool \(tool)")
     }
 }

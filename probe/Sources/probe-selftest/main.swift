@@ -525,5 +525,14 @@ do {
           "reads within the budget are kept")
 }
 
+// Floodlight rows: title then kind label, as its table exposes them.
+check(FloodlightParsing.row(texts: ["Calculator", "Application"], selected: true)
+      == RowDTO(title: "Calculator", kind: "app", source: "local", folder: nil, paneId: nil, selected: true,
+                category: "floodlight:Application"), "floodlight app row")
+check(FloodlightParsing.row(texts: ["Wi\u{2011}Fi", "System Settings"], selected: false)?.paneId == "Wi\u{2011}Fi"
+      && FloodlightParsing.row(texts: ["Wi\u{2011}Fi", "System Settings"], selected: false)?.kind == "settings_pane",
+      "floodlight settings row")
+check(FloodlightParsing.row(texts: [], selected: false) == nil, "floodlight row with no text is skipped")
+
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

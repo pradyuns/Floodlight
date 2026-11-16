@@ -126,6 +126,11 @@ check(settings.count >= 25 && settings.allSatisfy { $0.kind == .settingsPane && 
 check(search("wifi", in: IndexSnapshot(settings), frecency: [:]).first?.title == "Wi\u{2011}Fi", "real pane list: wifi")
 check(search("battery", in: IndexSnapshot(settings), frecency: [:]).first?.title == "Energy", "battery finds the Energy pane")
 
+// Launch targets
+check(launchTarget(for: app("Calculator")) == .application(URL(fileURLWithPath: "/Applications/Calculator.app")), "apps open as applications")
+check(launchTarget(for: settings[0]) == .url(URL(string: "x-apple.systempreferences:com.apple.wifi-settings-extension")!), "panes open by URL")
+check(launchTarget(for: Item(id: "bad", title: "Bad", kind: .settingsPane, path: "")) == nil, "a pane with no URL can't be opened")
+
 if failures > 0 {
     print("\(failures) FAILED")
     exit(1)
