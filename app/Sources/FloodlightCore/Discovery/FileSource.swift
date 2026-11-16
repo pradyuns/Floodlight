@@ -19,27 +19,51 @@ public struct FileSource: Sendable {
         self.maxItems = maxItems
     }
 
+    static let keys: [URLResourceKey] = [.isDirectoryKey, .isPackageKey]
+
+    /// Everything under the home folder: the union of every branch.
     public func items() -> [Item] {
-        let keys: [URLResourceKey] = [.isDirectoryKey, .isPackageKey]
-        guard let walker = FileManager.default.enumerator(
-            at: root, includingPropertiesForKeys: keys,
-            options: [.skipsHiddenFiles, .skipsPackageDescendants])
-        else { return [] }
-        let library = root.appendingPathComponent("Library").path
+        branches().flatMap(items(in:))
+    }
+
+    /// The home folder's top-level entries (Desktop, Documents, …), minus ~/Library, dot-files and
+    /// skipped folders. Each can be scanned on its own, so one slow or permission-blocked folder
+    /// never holds back the others.
+    public func branches() -> [URL] {
+        let children = (try? FileManager.default.contentsOfDirectory(
+            at: root, includingPropertiesForKeys: Self.keys, options: [.skipsHiddenFiles])) ?? []
+        return children
+            .filter { $0.lastPathComponent != "Library" && !Self.skippedFolders.contains($0.lastPathComponent) }
+            .sorted { $0.path < $1.path }
+    }
+
+    /// One branch: the entry itself and, for a folder, everything below it.
+    public func items(in branch: URL) -> [Item] {
         var out: [Item] = []
+        guard let first = item(branch) else { return [] }
+        out.append(first)
+        guard first.kind == .folder,
+              let walker = FileManager.default.enumerator(
+                  at: branch, includingPropertiesForKeys: Self.keys,
+                  options: [.skipsHiddenFiles, .skipsPackageDescendants])
+        else { return out }
         while let url = walker.nextObject() as? URL, out.count < maxItems {
-            let path = url.standardizedFileURL.path
-            if path == library || walker.level > maxDepth || Self.skippedFolders.contains(url.lastPathComponent) {
+            if walker.level + 1 > maxDepth || Self.skippedFolders.contains(url.lastPathComponent) {
                 walker.skipDescendants()
                 continue
             }
-            if url.pathExtension == "app" { continue }
-            let values = try? url.resourceValues(forKeys: Set(keys))
-            let isFolder = (values?.isDirectory ?? false) && !(values?.isPackage ?? false)
-            let title = isFolder ? FileManager.default.displayName(atPath: path) : url.lastPathComponent
-            out.append(Item(id: path, title: title, kind: isFolder ? .folder : .file, path: path))
+            if let found = item(url) { out.append(found) }
         }
         return out
+    }
+
+    private func item(_ url: URL) -> Item? {
+        if url.pathExtension == "app" { return nil }
+        let path = url.standardizedFileURL.path
+        let values = try? url.resourceValues(forKeys: Set(Self.keys))
+        let isFolder = (values?.isDirectory ?? false) && !(values?.isPackage ?? false)
+        let title = isFolder ? FileManager.default.displayName(atPath: path) : url.lastPathComponent
+        return Item(id: path, title: title, kind: isFolder ? .folder : .file, path: path)
     }
 }
 

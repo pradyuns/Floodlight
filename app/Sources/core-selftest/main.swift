@@ -192,6 +192,13 @@ check(fsTitles.isDisjoint(with: ["secretdir", "cachedir", ".hidden", "Library"])
 check(fsTitles.isDisjoint(with: ["node_modules", "calcpkg", "venv", "lib", "__pycache__"]) && fsTitles.contains("web"),
       "dependency and cache folders are skipped, their parents kept")
 check(fsItems.first { $0.title == "abc-101" }?.kind == .folder && fsItems.first { $0.title == "digit.txt" }?.kind == .file, "kinds are folder and file")
+let branches = FileSource(root: home).branches()
+check(Set(branches.map(\.lastPathComponent)) == ["Documents", "Movies", "Code"], "branches are the top-level folders, without Library or dot-folders")
+let docsOnly = FileSource(root: home).items(in: home.appendingPathComponent("Documents"))
+check(docsOnly.contains { $0.title == "Documents" } && docsOnly.contains { $0.title == "abc-101" }
+      && !docsOnly.contains { $0.title == "Media" }, "one branch is scanned on its own, including itself")
+check(Set(branches.flatMap { FileSource(root: home).items(in: $0) }.map(\.id)) == Set(fsItems.map(\.id)),
+      "the branches together find exactly what the whole scan finds")
 let fsIndex = IndexSnapshot(fsItems + [app("Digital Color Meter")])
 check(fsTitles.contains("Media") && !fsTitles.contains("Media.localized"), "folders show their display name")
 check(search("cal", in: IndexSnapshot(fsItems), frecency: [:]).isEmpty, "no mid-word matches for folders and files")
@@ -220,6 +227,9 @@ Launcher.open(app("No Such App \(ProcessInfo.processInfo.processIdentifier)")) {
 let launchDeadline = Date().addingTimeInterval(10)
 while launchResult == nil, Date() < launchDeadline { RunLoop.main.run(until: Date().addingTimeInterval(0.05)) }
 check(launchResult == false, "a missing app reports a failed launch")
+var fileResult: Bool?
+Launcher.open(Item(id: "gone", title: "gone.txt", kind: .file, path: "/tmp/floodlight-gone-\(ProcessInfo.processInfo.processIdentifier).txt")) { fileResult = $0 }
+check(fileResult == false, "a file that no longer exists reports failure without asking Finder")
 
 if failures > 0 {
     print("\(failures) FAILED")

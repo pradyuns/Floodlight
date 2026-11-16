@@ -216,7 +216,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     static let positionKey = "panelTopCenter"
     var index = IndexSnapshot([Item]())
     var appItems: [Item] = []
-    var fileItems: [Item] = []
+    var filesByBranch: [String: [Item]] = [:]
+    var rebuildScheduled = false
     var filesScannedAt: Date?
     var results: [Item] = []
     var searchGeneration = 0
@@ -350,25 +351,64 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
         if let last = filesScannedAt, Date().timeIntervalSince(last) < 60 { return }
         filesScannedAt = Date()
-        let previous = fileItems
-        Task.detached(priority: .utility) {
-            let files = FileSource().items()
-            guard files != previous else { return }
-            await MainActor.run {
-                self.fileItems = files
+        // One scan per top-level folder, published as each finishes, so a folder blocked on a
+        // permission prompt (or just huge) never holds back the rest. Disk walks run on GCD
+        // threads, not Swift tasks: a blocked walk would otherwise pin one of the few cooperative
+        // threads that searches and index builds also need (seen in the VM: everything stalled).
+        let source = FileSource()
+        DispatchQueue.global(qos: .utility).async {
+            let branches = source.branches()
+            DispatchQueue.main.async {
+                MainActor.assumeIsolated {
+                    Trace.log("scan branches=\(branches.count)")
+                    let live = Set(branches.map(\.path))
+                    if self.filesByBranch.keys.contains(where: { !live.contains($0) }) {
+                        self.filesByBranch = self.filesByBranch.filter { live.contains($0.key) }
+                        self.scheduleRebuild()
+                    }
+                    for (n, branch) in branches.enumerated() {
+                        let previous = self.filesByBranch[branch.path]
+                        DispatchQueue.global(qos: .utility).async {
+                            let t0 = ProcessInfo.processInfo.systemUptime
+                            let files = source.items(in: branch)
+                            let took = ProcessInfo.processInfo.systemUptime
+                            let changed = files != previous
+                            DispatchQueue.main.async {
+                                MainActor.assumeIsolated {
+                                    Trace.log("branch \(n) items=\(files.count) ms=\(Trace.ms(t0, took))")
+                                    guard changed else { return }
+                                    self.filesByBranch[branch.path] = files
+                                    self.scheduleRebuild()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /// Coalesces bursts of finished folders into one index build.
+    func scheduleRebuild() {
+        guard !rebuildScheduled else { return }
+        rebuildScheduled = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            MainActor.assumeIsolated {
+                self.rebuildScheduled = false
                 self.rebuild()
             }
         }
     }
 
     func rebuild() {
-        let items = appItems + fileItems
+        let items = appItems + filesByBranch.keys.sorted().flatMap { filesByBranch[$0] ?? [] }
         let build = indexBuilds.begin()
         Task.detached(priority: .userInitiated) {
             let snapshot = IndexSnapshot(items)
             await MainActor.run {
                 guard self.indexBuilds.mayPublish(build) else { return }
                 self.index = snapshot
+                Trace.log("index published items=\(items.count)")
                 // Never reorder a list the user is looking at; the next keystroke uses the new
                 // index. Only fill an empty list (e.g. the first scan finishing).
                 if self.panel.isVisible, self.results.isEmpty, !self.field.stringValue.isEmpty { self.update() }

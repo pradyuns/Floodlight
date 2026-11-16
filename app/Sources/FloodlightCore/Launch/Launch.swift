@@ -27,6 +27,11 @@ public enum Launcher {
                 let opened = app != nil && error == nil
                 DispatchQueue.main.async { MainActor.assumeIsolated { completion(opened) } }
             }
+        case .url(let url)? where url.isFileURL:
+            // A file moved or deleted since the last scan: report it ourselves rather than letting
+            // Finder show "The file can't be found" (user report).
+            guard FileManager.default.fileExists(atPath: url.path) else { return completion(false) }
+            completion(NSWorkspace.shared.open(url))
         case .url(let url)?:
             completion(NSWorkspace.shared.open(url))
         case nil:
