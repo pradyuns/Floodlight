@@ -31,13 +31,17 @@ public func match(_ query: String, in index: IndexSnapshot) -> [Candidate] {
 func classify(_ q: Normalized, _ entry: Entry) -> (MatchClass, Int)? {
     let t = entry.title
     let qc = q.compact
+    if !entry.isLaunchable, let first = qc.first, !entry.wordStarts.contains(first) { return nil }
     if t.compact == qc { return (.exactFull, 0) }
     if t.compact.hasPrefix(qc) || wordsMatch(q.words, t.words, from: 0) { return (.titlePrefix, 0) }
-    for i in t.words.indices.dropFirst() where t.words[i...].joined().hasPrefix(qc) || wordsMatch(q.words, t.words, from: i) {
-        return (.wordPrefix, i)
+    for (n, suffix) in entry.laterSuffixes.enumerated()
+    where suffix.hasPrefix(qc) || wordsMatch(q.words, t.words, from: n + 1) {
+        return (.wordPrefix, n + 1)
     }
-    if qc.count >= 2, t.words.count > 1, t.initials.hasPrefix(qc) { return (.initials, t.initials.count - qc.count) }
-    let isLaunchable = entry.item.kind == .app || entry.item.kind == .settingsPane
+    if qc.count >= 2, t.words.count > 1, entry.initials.hasPrefix(qc) {
+        return (.initials, entry.initials.count - qc.count)
+    }
+    let isLaunchable = entry.isLaunchable
     if isLaunchable, qc.count >= minMidWordLength, t.compact.contains(qc) { return (.midWord, 0) }
     if entry.keywords.contains(where: { $0.compact.hasPrefix(qc) || $0.words.contains { $0.hasPrefix(qc) } }) {
         return (.keyword, 0)

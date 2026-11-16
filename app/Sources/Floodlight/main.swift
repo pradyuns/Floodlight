@@ -87,6 +87,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     var fileItems: [Item] = []
     var filesScannedAt: Date?
     var results: [Item] = []
+    var searchGeneration = 0
+    /// The text the shown results belong to.
+    var resultsQuery = ""
     let frecency = FrecencyStore()
     let icons = IconCache()
 
@@ -170,13 +173,21 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     func refreshIndex() {
         Task.detached(priority: .userInitiated) {
             let apps = AppSource().items() + SettingsSource.items()
-            await MainActor.run { self.appItems = apps; self.rebuild() }
+            await MainActor.run {
+                guard apps != self.appItems else { return }
+                self.appItems = apps
+                self.rebuild()
+            }
         }
         if let last = filesScannedAt, Date().timeIntervalSince(last) < 60 { return }
         filesScannedAt = Date()
         Task.detached(priority: .utility) {
             let files = FileSource().items()
-            await MainActor.run { self.fileItems = files; self.rebuild() }
+            await MainActor.run {
+                guard files != self.fileItems else { return }
+                self.fileItems = files
+                self.rebuild()
+            }
         }
     }
 
@@ -223,10 +234,28 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
     }
 
+    /// Searches off the main thread so typing never waits; a result for text that has since
+    /// changed is dropped.
     func update() {
         let query = field.stringValue
-        results = query.trimmingCharacters(in: .whitespaces).isEmpty
-            ? [] : Array(search(query, in: index, frecency: frecency.scores).prefix(Self.maxResults))
+        searchGeneration += 1
+        let generation = searchGeneration
+        if query.trimmingCharacters(in: .whitespaces).isEmpty {
+            show(results: [], for: query)
+            return
+        }
+        let index = self.index, scores = frecency.scores, limit = Self.maxResults
+        Task.detached(priority: .userInitiated) {
+            let found = search(query, in: index, frecency: scores, limit: limit)
+            await MainActor.run {
+                if generation == self.searchGeneration { self.show(results: found, for: query) }
+            }
+        }
+    }
+
+    func show(results found: [Item], for query: String) {
+        results = found
+        resultsQuery = query
         table.reloadData()
         if !results.isEmpty {
             table.selectRowIndexes([0], byExtendingSelection: false)
@@ -247,6 +276,16 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         if Launcher.open(item) { frecency.recordLaunch(item.id) }
     }
 
+    /// Enter right after a fast keystroke must not open the previous text's top result.
+    func openSelectedForCurrentText() {
+        let query = field.stringValue
+        if resultsQuery != query {
+            searchGeneration += 1
+            show(results: search(query, in: index, frecency: frecency.scores, limit: Self.maxResults), for: query)
+        }
+        open(row: table.selectedRow)
+    }
+
     @objc func openClicked() { open(row: table.clickedRow) }
 
     func move(_ delta: Int) {
@@ -264,7 +303,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         switch selector {
         case #selector(NSResponder.moveDown(_:)): move(1)
         case #selector(NSResponder.moveUp(_:)): move(-1)
-        case #selector(NSResponder.insertNewline(_:)): open(row: table.selectedRow)
+        case #selector(NSResponder.insertNewline(_:)): openSelectedForCurrentText()
         case #selector(NSResponder.cancelOperation(_:)): hide()
         default: return false
         }

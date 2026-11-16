@@ -87,6 +87,14 @@ check(search("c", in: index, frecency: [:]) == search("c", in: index, frecency: 
 let shuffled = IndexSnapshot((apps + panes).reversed())
 check(search("c", in: index, frecency: [:]) == search("c", in: shuffled, frecency: [:]), "input order doesn't change results")
 
+// A limited search returns exactly the top of the full ranking.
+for q in ["c", "ca", "a", "time", "voic", "s", "doc"] {
+    for k in [1, 3, 20] {
+        check(search(q, in: index, frecency: [:], limit: k) == Array(search(q, in: index, frecency: [:]).prefix(k)),
+              "limit \(k) matches the full ranking for \(q)")
+    }
+}
+
 // Component boundaries
 let candidates = match("ca", in: index)
 let ranked = rank(candidates, frecency: [:])

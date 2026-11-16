@@ -29,6 +29,23 @@ struct Entry: Sendable {
     let item: Item
     let title: Normalized
     let keywords: [Normalized]
+    let isLaunchable: Bool
+    /// The title from each later word onward, without spaces: "Time Machine" -> ["machine"].
+    let laterSuffixes: [String]
+    let initials: String
+    /// First letters of every title and keyword word; a non-launchable item can only match a
+    /// query starting with one of them.
+    let wordStarts: Set<Character>
+
+    init(item: Item, title: Normalized, keywords: [Normalized]) {
+        self.item = item
+        self.title = title
+        self.keywords = keywords
+        isLaunchable = item.kind == .app || item.kind == .settingsPane
+        laterSuffixes = title.words.indices.dropFirst().map { title.words[$0...].joined() }
+        initials = title.initials
+        wordStarts = Set((title.words + keywords.flatMap(\.words)).compactMap(\.first))
+    }
 }
 
 /// Immutable, normalized store of everything discovered. Lookup only; it never ranks.
