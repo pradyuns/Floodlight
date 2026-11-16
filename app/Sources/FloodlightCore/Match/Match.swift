@@ -34,7 +34,7 @@ func classify(_ q: Normalized, _ entry: Entry) -> (MatchClass, Int)? {
     for i in t.words.indices.dropFirst() where t.words[i...].joined().hasPrefix(qc) || wordsMatch(q.words, t.words, from: i) {
         return (.wordPrefix, i)
     }
-    if qc.count >= 2, t.words.count > 1, t.initials.hasPrefix(qc) { return (.initials, 0) }
+    if qc.count >= 2, t.words.count > 1, t.initials.hasPrefix(qc) { return (.initials, t.initials.count - qc.count) }
     if qc.count >= minMidWordLength, t.compact.contains(qc) { return (.midWord, 0) }
     if entry.keywords.contains(where: { $0.compact.hasPrefix(qc) || $0.words.contains { $0.hasPrefix(qc) } }) {
         return (.keyword, 0)

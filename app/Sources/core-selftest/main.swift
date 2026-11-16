@@ -39,6 +39,7 @@ check(top("whatsapp") == "\u{200E}WhatsApp", "invisible marks in a title don't b
 check(top("grokbot") == "Grok Bot", "no-space form finds a two-word name")
 check(top("voicememos") == "Voice Memos", "no-space form of Voice Memos")
 check(top("am") == "Activity Monitor", "initials find Activity Monitor")
+check(search("am", in: IndexSnapshot([app("Audio MIDI Setup"), app("Activity Monitor")]), frecency: [:]).first?.title == "Activity Monitor", "full initials beat partial initials")
 check(top("calculator") == "Calculator", "exact name is first")
 check(top("Calculator") == "Calculator", "case doesn't matter")
 check(top("wifi") == "Wi\u{2011}Fi", "wifi finds the Wi-Fi pane")
@@ -99,6 +100,31 @@ check(explain("zzzz", target: calc.id, in: index, frecency: [:]).firstFailure ==
 check(explain("x", target: "missing", in: index, frecency: [:]).firstFailure == .notIndexed, "explain: not indexed")
 check(explain("ca", target: calc.id, in: index, frecency: [:]).firstFailure == .rankedLow
       || top("ca") == "Calculator", "explain: ranked low")
+
+// Discovery: apps
+let root = FileManager.default.temporaryDirectory.appendingPathComponent("floodlight-selftest-\(ProcessInfo.processInfo.processIdentifier)")
+func makeApp(_ rel: String, bundleName: String? = nil) {
+    let contents = root.appendingPathComponent(rel).appendingPathComponent("Contents")
+    try? FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
+    var info: [String: Any] = ["CFBundleIdentifier": "test.\(rel.count)"]
+    if let bundleName { info["CFBundleName"] = bundleName }
+    (info as NSDictionary).write(to: contents.appendingPathComponent("Info.plist"), atomically: true)
+}
+makeApp("Foo.app", bundleName: "FooAlias")
+makeApp("Vendor/Bar.app")
+makeApp("Foo.app/Contents/Helpers/Inner.app")
+let found = AppSource(roots: [root]).items()
+check(Set(found.map(\.title)) == ["Foo", "Bar"], "apps found in nested folders, not inside other apps")
+check(found.allSatisfy { $0.kind == .app }, "discovered apps are apps")
+check(search("fooalias", in: IndexSnapshot(found), frecency: [:]).first?.title == "Foo", "bundle name works as an alias")
+check(AppSource(roots: [root.appendingPathComponent("missing")]).items().isEmpty, "missing root finds nothing")
+try? FileManager.default.removeItem(at: root)
+
+// Discovery: settings
+let settings = SettingsSource.items()
+check(settings.count >= 25 && settings.allSatisfy { $0.kind == .settingsPane && $0.path.hasPrefix("x-apple.systempreferences:") }, "settings panes have open URLs")
+check(search("wifi", in: IndexSnapshot(settings), frecency: [:]).first?.title == "Wi\u{2011}Fi", "real pane list: wifi")
+check(search("battery", in: IndexSnapshot(settings), frecency: [:]).first?.title == "Energy", "battery finds the Energy pane")
 
 if failures > 0 {
     print("\(failures) FAILED")

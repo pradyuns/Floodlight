@@ -7,6 +7,7 @@ let package = Package(
     targets: [
         .target(name: "FloodlightCore"),
         .executableTarget(name: "core-selftest", dependencies: ["FloodlightCore"]),
+        .executableTarget(name: "discovery-check", dependencies: ["FloodlightCore"]),
         .executableTarget(name: "Floodlight", dependencies: ["FloodlightCore"]),
     ]
 )
