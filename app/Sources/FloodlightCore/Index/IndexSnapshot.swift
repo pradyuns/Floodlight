@@ -40,7 +40,18 @@ public struct IndexSnapshot: Sendable {
         entries = items
             .filter { seen.insert($0.id).inserted }
             .sorted { $0.id < $1.id }
-            .map { Entry(item: $0, title: Normalized($0.title), keywords: $0.keywords.map(Normalized.init)) }
+            .map(Self.entry)
+    }
+
+    /// Files match on their name without the extension; the extension still matches as a keyword.
+    static func entry(_ item: Item) -> Entry {
+        guard item.kind == .file else {
+            return Entry(item: item, title: Normalized(item.title), keywords: item.keywords.map(Normalized.init))
+        }
+        let name = item.title as NSString
+        let ext = name.pathExtension
+        return Entry(item: item, title: Normalized(ext.isEmpty ? item.title : name.deletingPathExtension),
+                     keywords: (item.keywords + (ext.isEmpty ? [] : [ext])).map(Normalized.init))
     }
 
     public var items: [Item] { entries.map(\.item) }

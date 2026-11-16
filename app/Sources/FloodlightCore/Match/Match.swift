@@ -10,6 +10,8 @@ public struct Candidate: Sendable, Hashable {
     public let matchClass: MatchClass
     /// Within a class, lower is a closer match (edit distance for typos, word position for word prefixes).
     public let penalty: Int
+    /// The normalized title, for tie-breaks.
+    let name: String
 }
 
 let minMidWordLength = 3
@@ -22,7 +24,7 @@ public func match(_ query: String, in index: IndexSnapshot) -> [Candidate] {
     let q = Normalized(query)
     guard !q.compact.isEmpty else { return [] }
     return index.entries.compactMap { entry in
-        classify(q, entry).map { Candidate(item: entry.item, matchClass: $0.0, penalty: $0.1) }
+        classify(q, entry).map { Candidate(item: entry.item, matchClass: $0.0, penalty: $0.1, name: entry.title.compact) }
     }
 }
 
@@ -39,7 +41,7 @@ func classify(_ q: Normalized, _ entry: Entry) -> (MatchClass, Int)? {
     if entry.keywords.contains(where: { $0.compact.hasPrefix(qc) || $0.words.contains { $0.hasPrefix(qc) } }) {
         return (.keyword, 0)
     }
-    if let d = typoDistance(qc, t) { return (.typo, d) }
+    if entry.item.kind == .app || entry.item.kind == .settingsPane, let d = typoDistance(qc, t) { return (.typo, d) }
     return nil
 }
 

@@ -7,9 +7,8 @@ public func rank(_ candidates: [Candidate], frecency: Frecency) -> [Item] {
         if a.item.kind != b.item.kind { return a.item.kind < b.item.kind }
         let fa = frecency[a.item.id] ?? 0, fb = frecency[b.item.id] ?? 0
         if fa != fb { return fa > fb }
-        let na = Normalized(a.item.title).compact, nb = Normalized(b.item.title).compact
-        if na.count != nb.count { return na.count < nb.count }
-        if na != nb { return na < nb }
+        if a.name.count != b.name.count { return a.name.count < b.name.count }
+        if a.name != b.name { return a.name < b.name }
         return a.item.id < b.item.id
     }.map(\.item)
 }

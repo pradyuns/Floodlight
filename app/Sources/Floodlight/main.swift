@@ -46,6 +46,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let scroll = NSScrollView()
     let divider = NSBox()
     var index = IndexSnapshot([Item]())
+    var appItems: [Item] = []
+    var fileItems: [Item] = []
+    var filesScannedAt: Date?
     var results: [Item] = []
     let frecency = FrecencyStore()
 
@@ -125,13 +128,27 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         scroll.isHidden = rows == 0
     }
 
+    /// Apps and panes on every open; the home folder walk at most once a minute.
     func refreshIndex() {
         Task.detached(priority: .userInitiated) {
-            let items = AppSource().items() + SettingsSource.items()
+            let apps = AppSource().items() + SettingsSource.items()
+            await MainActor.run { self.appItems = apps; self.rebuild() }
+        }
+        if let last = filesScannedAt, Date().timeIntervalSince(last) < 60 { return }
+        filesScannedAt = Date()
+        Task.detached(priority: .utility) {
+            let files = FileSource().items()
+            await MainActor.run { self.fileItems = files; self.rebuild() }
+        }
+    }
+
+    func rebuild() {
+        let items = appItems + fileItems
+        Task.detached(priority: .userInitiated) {
             let snapshot = IndexSnapshot(items)
             await MainActor.run {
                 self.index = snapshot
-                self.update()
+                if self.panel.isVisible { self.update() }
             }
         }
     }
@@ -216,8 +233,13 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         kind.font = .systemFont(ofSize: 12)
         kind.textColor = .secondaryLabelColor
         kind.alignment = .right
+        let parent = NSTextField(labelWithString: parentFolder(of: item).map { ($0 as NSString).abbreviatingWithTildeInPath } ?? "")
+        parent.font = .systemFont(ofSize: 12)
+        parent.textColor = .tertiaryLabelColor
+        parent.lineBreakMode = .byTruncatingMiddle
+        parent.isHidden = parentFolder(of: item) == nil
         icon.setAccessibilityElement(false)
-        for view in [icon, title, kind] as [NSView] {
+        for view in [icon, title, parent, kind] as [NSView] {
             view.translatesAutoresizingMaskIntoConstraints = false
             cell.addSubview(view)
         }
@@ -229,11 +251,14 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             icon.heightAnchor.constraint(equalToConstant: 26),
             title.leadingAnchor.constraint(equalTo: icon.trailingAnchor, constant: 10),
             title.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
-            kind.leadingAnchor.constraint(greaterThanOrEqualTo: title.trailingAnchor, constant: 8),
+            parent.leadingAnchor.constraint(equalTo: title.trailingAnchor, constant: 8),
+            parent.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
+            kind.leadingAnchor.constraint(greaterThanOrEqualTo: parent.trailingAnchor, constant: 8),
             kind.trailingAnchor.constraint(equalTo: cell.trailingAnchor, constant: -12),
             kind.centerYAnchor.constraint(equalTo: cell.centerYAnchor),
         ])
-        title.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        title.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        parent.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return cell
     }
 

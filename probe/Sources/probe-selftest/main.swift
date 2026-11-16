@@ -532,6 +532,9 @@ check(FloodlightParsing.row(texts: ["Calculator", "Application"], selected: true
 check(FloodlightParsing.row(texts: ["Wi\u{2011}Fi", "System Settings"], selected: false)?.paneId == "Wi\u{2011}Fi"
       && FloodlightParsing.row(texts: ["Wi\u{2011}Fi", "System Settings"], selected: false)?.kind == "settings_pane",
       "floodlight settings row")
+check(FloodlightParsing.row(texts: ["szx-621", "~/Documents", "Folder"], selected: false, home: "/Users/bench")
+      == RowDTO(title: "szx-621", kind: "folder", source: "local", folder: "/Users/bench/Documents", paneId: nil,
+                selected: false, category: "floodlight:Folder"), "floodlight folder row with parent")
 check(FloodlightParsing.row(texts: [], selected: false) == nil, "floodlight row with no text is skipped")
 
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")

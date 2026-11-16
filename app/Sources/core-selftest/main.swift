@@ -125,6 +125,24 @@ check(search("fooalias", in: IndexSnapshot(found), frecency: [:]).first?.title =
 check(AppSource(roots: [root.appendingPathComponent("missing")]).items().isEmpty, "missing root finds nothing")
 try? FileManager.default.removeItem(at: root)
 
+// Discovery: folders and files
+let home = FileManager.default.temporaryDirectory.appendingPathComponent("floodlight-home-\(ProcessInfo.processInfo.processIdentifier)")
+for dir in ["Documents/abc-101/inner", "Documents/jms-166", ".hidden/secretdir", "Library/Caches/cachedir"] {
+    try? FileManager.default.createDirectory(at: home.appendingPathComponent(dir), withIntermediateDirectories: true)
+}
+FileManager.default.createFile(atPath: home.appendingPathComponent("Documents/jms-166/digit.txt").path, contents: Data())
+let fsItems = FileSource(root: home).items()
+let fsTitles = Set(fsItems.map(\.title))
+check(fsTitles.isSuperset(of: ["abc-101", "inner", "jms-166", "digit.txt", "Documents"]), "folders and files under home are found")
+check(fsTitles.isDisjoint(with: ["secretdir", "cachedir", ".hidden", "Library"]), "dot-folders and Library are skipped")
+check(fsItems.first { $0.title == "abc-101" }?.kind == .folder && fsItems.first { $0.title == "digit.txt" }?.kind == .file, "kinds are folder and file")
+let fsIndex = IndexSnapshot(fsItems + [app("Digital Color Meter")])
+check(search("abc101", in: fsIndex, frecency: [:]).first?.title == "abc-101", "folder found without its punctuation")
+check(search("digit", in: fsIndex, frecency: [:]).first?.title == "digit.txt", "exact file name beats an app prefix")
+check(search("digi", in: fsIndex, frecency: [:]).first?.title == "Digital Color Meter", "app first among equal prefixes")
+check(parentFolder(of: fsItems.first { $0.title == "abc-101" }!) == home.appendingPathComponent("Documents").path, "rows know the parent folder")
+try? FileManager.default.removeItem(at: home)
+
 // Discovery: settings
 let settings = SettingsSource.items()
 check(settings.count >= 25 && settings.allSatisfy { $0.kind == .settingsPane && $0.path.hasPrefix("x-apple.systempreferences:") }, "settings panes have open URLs")

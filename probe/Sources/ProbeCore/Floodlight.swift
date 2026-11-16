@@ -3,9 +3,10 @@ import ApplicationServices
 
 /// Pure parsing of a Floodlight results row: its static texts are the title, then the kind label.
 public enum FloodlightParsing {
-    public static func row(texts: [String], selected: Bool?) -> RowDTO? {
+    public static func row(texts: [String], selected: Bool?, home: String = NSHomeDirectory()) -> RowDTO? {
         guard let title = texts.first else { return nil }
         let label = texts.dropFirst().last ?? ""
+        let parent = texts.count >= 3 ? RaycastParsing.expandHome(texts[1], home: home) : nil
         let kind: String
         switch label {
         case "Application": kind = "app"
@@ -14,7 +15,8 @@ public enum FloodlightParsing {
         case "Document": kind = "file"
         default: kind = "other"
         }
-        return RowDTO(title: title, kind: kind, source: "local", folder: nil,
+        return RowDTO(title: title, kind: kind, source: "local",
+                      folder: kind == "folder" || kind == "file" ? parent : nil,
                       paneId: kind == "settings_pane" ? title : nil, selected: selected,
                       category: "floodlight:\(label)")
     }
@@ -29,7 +31,9 @@ public final class FloodlightAdapter: ControlledLauncher {
 
     public let openShortcut = (key: CGKeyCode(49), flags: CGEventFlags.maskControl)
 
-    public init() {}
+    let home: String
+
+    public init(home: String = NSHomeDirectory()) { self.home = home }
 
     func application() -> AXUIElement? {
         guard let pid = NSRunningApplication.runningApplications(
@@ -75,7 +79,7 @@ public final class FloodlightAdapter: ControlledLauncher {
         guard let table = find(FloodlightAdapter.resultsId) else { return [] }
         let rows: [AXUIElement] = AX.attribute(table, kAXRowsAttribute) ?? []
         return rows.compactMap { row in
-            FloodlightParsing.row(texts: AX.staticTexts(in: row), selected: AX.attribute(row, kAXSelectedAttribute))
+            FloodlightParsing.row(texts: AX.staticTexts(in: row), selected: AX.attribute(row, kAXSelectedAttribute), home: home)
         }
     }
 
