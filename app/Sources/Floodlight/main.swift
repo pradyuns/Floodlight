@@ -175,7 +175,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             self.field.stringValue = query
             self.update()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 guard let view = self.panel.contentView,
                       let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { exit(1) }
                 view.cacheDisplay(in: view.bounds, to: rep)

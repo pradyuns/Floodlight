@@ -30,7 +30,8 @@ public struct FileSource: Sendable {
             if url.pathExtension == "app" { continue }
             let values = try? url.resourceValues(forKeys: Set(keys))
             let isFolder = (values?.isDirectory ?? false) && !(values?.isPackage ?? false)
-            out.append(Item(id: path, title: url.lastPathComponent, kind: isFolder ? .folder : .file, path: path))
+            let title = isFolder ? FileManager.default.displayName(atPath: path) : url.lastPathComponent
+            out.append(Item(id: path, title: title, kind: isFolder ? .folder : .file, path: path))
         }
         return out
     }

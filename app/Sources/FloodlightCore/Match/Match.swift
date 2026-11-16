@@ -37,11 +37,12 @@ func classify(_ q: Normalized, _ entry: Entry) -> (MatchClass, Int)? {
         return (.wordPrefix, i)
     }
     if qc.count >= 2, t.words.count > 1, t.initials.hasPrefix(qc) { return (.initials, t.initials.count - qc.count) }
-    if qc.count >= minMidWordLength, t.compact.contains(qc) { return (.midWord, 0) }
+    let isLaunchable = entry.item.kind == .app || entry.item.kind == .settingsPane
+    if isLaunchable, qc.count >= minMidWordLength, t.compact.contains(qc) { return (.midWord, 0) }
     if entry.keywords.contains(where: { $0.compact.hasPrefix(qc) || $0.words.contains { $0.hasPrefix(qc) } }) {
         return (.keyword, 0)
     }
-    if entry.item.kind == .app || entry.item.kind == .settingsPane, let d = typoDistance(qc, t) { return (.typo, d) }
+    if isLaunchable, let d = typoDistance(qc, t) { return (.typo, d) }
     return nil
 }
 

@@ -127,7 +127,7 @@ try? FileManager.default.removeItem(at: root)
 
 // Discovery: folders and files
 let home = FileManager.default.temporaryDirectory.appendingPathComponent("floodlight-home-\(ProcessInfo.processInfo.processIdentifier)")
-for dir in ["Documents/abc-101/inner", "Documents/jms-166", ".hidden/secretdir", "Library/Caches/cachedir"] {
+for dir in ["Movies/Media.localized", "Documents/Vocals", "Documents/abc-101/inner", "Documents/jms-166", ".hidden/secretdir", "Library/Caches/cachedir"] {
     try? FileManager.default.createDirectory(at: home.appendingPathComponent(dir), withIntermediateDirectories: true)
 }
 FileManager.default.createFile(atPath: home.appendingPathComponent("Documents/jms-166/digit.txt").path, contents: Data())
@@ -137,6 +137,8 @@ check(fsTitles.isSuperset(of: ["abc-101", "inner", "jms-166", "digit.txt", "Docu
 check(fsTitles.isDisjoint(with: ["secretdir", "cachedir", ".hidden", "Library"]), "dot-folders and Library are skipped")
 check(fsItems.first { $0.title == "abc-101" }?.kind == .folder && fsItems.first { $0.title == "digit.txt" }?.kind == .file, "kinds are folder and file")
 let fsIndex = IndexSnapshot(fsItems + [app("Digital Color Meter")])
+check(fsTitles.contains("Media") && !fsTitles.contains("Media.localized"), "folders show their display name")
+check(search("cal", in: IndexSnapshot(fsItems), frecency: [:]).isEmpty, "no mid-word matches for folders and files")
 check(search("abc101", in: fsIndex, frecency: [:]).first?.title == "abc-101", "folder found without its punctuation")
 check(search("digit", in: fsIndex, frecency: [:]).first?.title == "digit.txt", "exact file name beats an app prefix")
 check(search("digi", in: fsIndex, frecency: [:]).first?.title == "Digital Color Meter", "app first among equal prefixes")
