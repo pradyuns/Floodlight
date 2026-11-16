@@ -32,6 +32,41 @@ final class FrecencyStore {
     }
 }
 
+/// An image handed from a background queue to the main thread; never touched by both at once.
+struct LoadedImage: @unchecked Sendable { let image: NSImage }
+
+/// Icons load off the main thread: a slow icon must never freeze the panel (it did in the VM).
+@MainActor
+final class IconCache {
+    static let side: CGFloat = 52
+    private var cache: [String: NSImage] = [:]
+    private var pending: Set<String> = []
+    private let placeholder = NSImage(systemSymbolName: "app", accessibilityDescription: nil) ?? NSImage()
+
+    func image(for path: String, loaded: @escaping @MainActor (String) -> Void) -> NSImage {
+        if let hit = cache[path] { return hit }
+        if pending.insert(path).inserted {
+            let side = Self.side
+            DispatchQueue.global(qos: .userInitiated).async {
+                let source = NSWorkspace.shared.icon(forFile: path)
+                let drawn = NSImage(size: NSSize(width: side, height: side))
+                drawn.lockFocus()
+                source.draw(in: NSRect(x: 0, y: 0, width: side, height: side))
+                drawn.unlockFocus()
+                let box = LoadedImage(image: drawn)
+                DispatchQueue.main.async {
+                    MainActor.assumeIsolated {
+                        self.cache[path] = box.image
+                        self.pending.remove(path)
+                        loaded(path)
+                    }
+                }
+            }
+        }
+        return placeholder
+    }
+}
+
 @MainActor
 final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate,
     NSWindowDelegate {
@@ -51,6 +86,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     var filesScannedAt: Date?
     var results: [Item] = []
     let frecency = FrecencyStore()
+    let icons = IconCache()
 
     override init() {
         panel = SearchPanel(contentRect: NSRect(x: 0, y: 0, width: Self.width, height: Self.fieldHeight),
@@ -197,6 +233,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         layout()
     }
 
+    func iconLoaded(_ path: String) {
+        let rows = IndexSet(results.indices.filter { results[$0].path == path })
+        if !rows.isEmpty { table.reloadData(forRowIndexes: rows, columnIndexes: [0]) }
+    }
+
     func open(row: Int) {
         guard results.indices.contains(row) else { return }
         let item = results[row]
@@ -240,7 +281,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         let icon = NSImageView()
         icon.image = item.kind == .settingsPane
             ? NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
-            : NSWorkspace.shared.icon(forFile: item.path)
+            : icons.image(for: item.path) { [weak self] path in self?.iconLoaded(path) }
         icon.imageScaling = .scaleProportionallyUpOrDown
         let title = NSTextField(labelWithString: item.title)
         title.font = .systemFont(ofSize: 15)
@@ -317,6 +358,12 @@ MainActor.assumeIsolated {
         exit(1)
     }
     if CommandLine.arguments.contains("--show") { Hub.controller?.show() }
+    if let i = CommandLine.arguments.firstIndex(of: "--icon"), CommandLine.arguments.count > i + 2 {
+        let image = NSWorkspace.shared.icon(forFile: CommandLine.arguments[i + 1])
+        let ok = image.tiffRepresentation.flatMap { NSBitmapImageRep(data: $0)?.representation(using: .png, properties: [:]) }
+            .map { (try? $0.write(to: URL(fileURLWithPath: CommandLine.arguments[i + 2]))) != nil } ?? false
+        exit(ok ? 0 : 1)
+    }
     if let i = CommandLine.arguments.firstIndex(of: "--render"), CommandLine.arguments.count > i + 2 {
         Hub.controller?.render(query: CommandLine.arguments[i + 1], to: CommandLine.arguments[i + 2])
     }
