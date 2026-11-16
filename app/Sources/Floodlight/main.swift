@@ -16,6 +16,23 @@ final class SearchPanel: NSPanel {
         "z": Selector(("undo:")),
     ]
 
+    /// Drag the panel from anywhere, including the search field (as Spotlight allows): a press
+    /// that moves more than a few points drags the window; a plain click still reaches the field.
+    override func sendEvent(_ event: NSEvent) {
+        guard event.type == .leftMouseDown, event.clickCount == 1 else { return super.sendEvent(event) }
+        let start = event.locationInWindow
+        while let next = nextEvent(matching: [.leftMouseUp, .leftMouseDragged], until: .distantFuture,
+                                   inMode: .eventTracking, dequeue: false) {
+            if next.type == .leftMouseUp { break }
+            if hypot(next.locationInWindow.x - start.x, next.locationInWindow.y - start.y) > 3 {
+                performDrag(with: event)
+                return
+            }
+            _ = nextEvent(matching: .leftMouseDragged)
+        }
+        super.sendEvent(event)
+    }
+
     override func performKeyEquivalent(with event: NSEvent) -> Bool {
         let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
         if flags == .command, let key = event.charactersIgnoringModifiers,
@@ -345,7 +362,13 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         Trace.log("open hotkey_to_ui=\(Trace.ms(pressed, Trace.now()))")
     }
 
+    /// The app the user was in when the panel opened; it gets keyboard focus back when the panel
+    /// closes without opening anything. Without this, keys went nowhere after Escape (user report).
+    var returnFocusTo: NSRunningApplication?
+
     func show() {
+        let front = NSWorkspace.shared.frontmostApplication
+        returnFocusTo = front == NSRunningApplication.current ? nil : front
         field.stringValue = ""
         sizedRows = 0
         update()
@@ -354,8 +377,14 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         panel.makeFirstResponder(field)
     }
 
-    func hide() {
+    func hide(restoreFocus: Bool = true) {
         panel.orderOut(nil)
+        guard restoreFocus else { return }
+        if NSApp.isActive { NSApp.hide(nil) }
+        if let app = returnFocusTo, !app.isTerminated {
+            NSApp.yieldActivation(to: app)
+            app.activate()
+        }
     }
 
     /// QA aid: show the panel with a query, wait for the index, and save the window as a PNG.
@@ -429,7 +458,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     func open(row: Int) {
         guard results.indices.contains(row) else { return }
         let item = results[row]
-        hide()
+        hide(restoreFocus: false)
         if Launcher.open(item) { frecency.recordLaunch(item.id) }
     }
 
@@ -469,7 +498,12 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         return true
     }
 
-    func windowDidResignKey(_ notification: Notification) { hide() }
+    /// Clicking into another app hands focus to that app; anything else returns it to where it was.
+    func windowDidResignKey(_ notification: Notification) {
+        guard panel.isVisible else { return }
+        let front = NSWorkspace.shared.frontmostApplication
+        hide(restoreFocus: front == returnFocusTo || front == NSRunningApplication.current)
+    }
 
     // MARK: Table
 
