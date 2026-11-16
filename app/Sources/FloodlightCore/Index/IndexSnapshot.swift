@@ -54,6 +54,11 @@ struct Entry: Sendable {
 /// Immutable, normalized store of everything discovered. Lookup only; it never ranks.
 public struct IndexSnapshot: Sendable {
     let entries: [Entry]
+    /// Apps and settings panes: always checked (typo and mid-word matches can start anywhere).
+    let launchable: [Int]
+    /// Files and folders by the first letter of each of their words: a file can only match a query
+    /// that starts with one of those letters, so only that bucket needs checking.
+    let byWordStart: [Character: [Int]]
 
     public init<S: Sequence>(_ items: S) where S.Element == Item {
         var seen = Set<String>()
@@ -61,6 +66,17 @@ public struct IndexSnapshot: Sendable {
             .filter { seen.insert($0.id).inserted }
             .sorted { $0.id < $1.id }
             .map(Self.entry)
+        var launchable: [Int] = []
+        var buckets: [Character: [Int]] = [:]
+        for (i, entry) in entries.enumerated() {
+            if entry.isLaunchable {
+                launchable.append(i)
+            } else {
+                for c in entry.wordStarts { buckets[c, default: []].append(i) }
+            }
+        }
+        self.launchable = launchable
+        byWordStart = buckets
     }
 
     /// Files match on their name without the extension; the extension still matches as a keyword.

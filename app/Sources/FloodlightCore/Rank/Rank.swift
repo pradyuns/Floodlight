@@ -20,16 +20,23 @@ public func search(_ query: String, in index: IndexSnapshot, frecency: Frecency)
     rank(match(query, in: index), frecency: frecency)
 }
 
-/// The first `limit` items of the full ranking, without sorting every match (a one-letter query
-/// can match tens of thousands of files).
+/// The first `limit` items of the full ranking. Checks only apps, panes and the files whose words
+/// start with the query's first letter, and keeps just the best `limit` while scanning.
 public func search(_ query: String, in index: IndexSnapshot, frecency: Frecency, limit: Int) -> [Item] {
+    let q = Normalized(query)
+    guard let first = q.compact.first, limit > 0 else { return [] }
     var top: [Candidate] = []
     top.reserveCapacity(limit + 1)
-    for c in match(query, in: index) {
-        if top.count == limit, let last = top.last, !ranksBefore(c, last, frecency) { continue }
+    func consider(_ i: Int) {
+        let entry = index.entries[i]
+        guard let (matchClass, penalty) = classify(q, entry) else { return }
+        let c = Candidate(item: entry.item, matchClass: matchClass, penalty: penalty, name: entry.title.compact)
+        if top.count == limit, let last = top.last, !ranksBefore(c, last, frecency) { return }
         let at = top.firstIndex { ranksBefore(c, $0, frecency) } ?? top.endIndex
         top.insert(c, at: at)
         if top.count > limit { top.removeLast() }
     }
+    index.launchable.forEach(consider)
+    index.byWordStart[first]?.forEach(consider)
     return top.map(\.item)
 }

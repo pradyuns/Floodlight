@@ -95,6 +95,36 @@ for q in ["c", "ca", "a", "time", "voic", "s", "doc"] {
     }
 }
 
+// The fast search equals the reference (full scan + full ranking) on a large synthetic index.
+struct Seeded: RandomNumberGenerator {
+    var state: UInt64
+    mutating func next() -> UInt64 { state &+= 0x9E3779B97F4A7C15; var z = state; z = (z ^ (z >> 30)) &* 0xBF58476D1CE4E5B9; z = (z ^ (z >> 27)) &* 0x94D049BB133111EB; return z ^ (z >> 31) }
+}
+var seeded = Seeded(state: 2026)
+let syllables = ["ca", "lc", "ul", "at", "or", "te", "rm", "in", "al", "do", "cu", "me", "nt", "vo", "ic", "ma", "ps", "re", "ad", "x"]
+let exts = ["txt", "md", "png", "js", "css", "pdf", ""]
+var synthetic: [Item] = apps + panes
+for i in 0..<20_000 {
+    let words = (0..<Int.random(in: 1...3, using: &seeded)).map { _ in
+        (0..<Int.random(in: 1...3, using: &seeded)).map { _ in syllables.randomElement(using: &seeded)! }.joined()
+    }
+    let ext = exts.randomElement(using: &seeded)!
+    let name = words.joined(separator: [" ", "-", "_"].randomElement(using: &seeded)!) + (ext.isEmpty ? "" : ".\(ext)")
+    let isFolder = ext.isEmpty
+    synthetic.append(Item(id: "/s/\(i)/\(name)", title: name, kind: isFolder ? .folder : .file, path: "/s/\(i)/\(name)"))
+}
+let big = IndexSnapshot(synthetic)
+var probes = ["a", "c", "x", "ca", "ma", "te", "cal", "calc", "doc", "am", "voic", "term", "calcualtor", "safri", "termnal",
+              "readme", "png", "calc.js", "do cu", "ca-lc", "image playground", "wifi", "zz", "Calculator", "TV"]
+for item in (apps + panes).prefix(12) { let t = item.title.lowercased(); for n in 1...min(5, t.count) { probes.append(String(t.prefix(n))) } }
+var fastMismatches = 0
+for q in probes {
+    for f in [Frecency(), [apps[3].id: 2.0, synthetic[500].id: 5.0]] {
+        if search(q, in: big, frecency: f, limit: 20) != Array(search(q, in: big, frecency: f).prefix(20)) { fastMismatches += 1; print("  mismatch: \(q)") }
+    }
+}
+check(fastMismatches == 0, "fast top-20 equals the reference on a 20k synthetic index (\(probes.count * 2) cases)")
+
 // Component boundaries
 let candidates = match("ca", in: index)
 let ranked = rank(candidates, frecency: [:])
