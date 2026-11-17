@@ -13,3 +13,4 @@ corpus/out/
 heldout/
 installers/
 .superpowers/
+.DS_Store

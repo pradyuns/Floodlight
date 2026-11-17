@@ -445,7 +445,7 @@ Synthetic typing is deferred, outside Phase 1.
       only counts once it lists the app. After 3 reads without it, the run stops (counts only).
     - **Development evidence (descriptive, tuned, not a result).** Floodlight was developed against
       the public dev queries. An unlocked Floodlight-only rehearsal on the dev set (5 runs, same
-      harness, commit `a8066e6`, this probe and build) had 0 kept errors, 0 dropped or unverified
+      harness, commit `4499881`, this probe and build) had 0 kept errors, 0 dropped or unverified
       keys, 0 flagged blocks, and Intended@1 of 99.7% on unambiguous queries. This is tuned
       development performance from a different session than the Spotlight/Raycast dev baseline
       and supports no comparative claim; only the held-out campaign does.
@@ -512,5 +512,6 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
 - Final campaign (item 29): probe sha256
   `74220bbf4463475b841f6d9f2cc5e76e99d7202928a1e96fc2656e0d0d07b1bb` (staged as
   `probe-74220bbf4463`); Floodlight binary (`Floodlight.app/Contents/MacOS/Floodlight`, built by
-  `scripts/build_floodlight.sh` at commit `a8066e6`) sha256
+  `scripts/build_floodlight.sh` at commit `4499881`; recorded locally as `a8066e6` before a
+  history cleanup that removed only a Finder metadata file) sha256
   `4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661`.
