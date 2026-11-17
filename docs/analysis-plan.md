@@ -443,6 +443,10 @@ Synthetic typing is deferred, outside Phase 1.
       before planting; a mismatch stops the run.
     - **Readiness tries.** Each tool gets up to 3 reads per planted app (10 s apart); a read
       only counts once it lists the app. After 3 reads without it, the run stops (counts only).
+    - **Disk guard (enforces item 14).** Before every block the runner checks free space on the
+      host and in the guest (`df -k /`). Below 5 GB on either, it stops at that block boundary,
+      writes the reason to `stopped.txt`, and keeps all data and the VM. A disk stop is an
+      operational stop, not a result; resuming needs a separately authorized rerun of that part.
     - **Development evidence (descriptive, tuned, not a result).** Floodlight was developed against
       the public dev queries. An unlocked Floodlight-only rehearsal on the dev set (5 runs, same
       harness, commit `4499881`, this probe and build) had 0 kept errors, 0 dropped or unverified

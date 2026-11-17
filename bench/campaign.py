@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import shlex
+import shutil
 import subprocess
 import threading
 import time
@@ -67,6 +68,22 @@ def probe_digest(name: str, data: bytes) -> str:
 
 class StopRuleError(RuntimeError):
     pass
+
+
+class DiskSpaceError(RuntimeError):
+    pass
+
+
+MIN_FREE_GB = 5  # analysis plan item 14, host and guest
+
+
+def disk_guard(host_free_bytes: int, guest_df: str) -> str | None:
+    """`guest_df` is `df -k /` output from the guest."""
+    guest_free = int(guest_df.strip().splitlines()[-1].split()[3]) * 1024
+    for where, free in (("host", host_free_bytes), ("guest", guest_free)):
+        if free < MIN_FREE_GB * 1024**3:
+            return f"{where} {free / 1024**3:.1f} GB free (< {MIN_FREE_GB} GB)"
+    return None
 
 
 class StuckToolError(RuntimeError):
@@ -205,6 +222,11 @@ def run_campaign(
         while i < len(queue):
             b, block, attempt, requeue = queue[i]
             i += 1
+            short = disk_guard(shutil.disk_usage(REPO).free, sh("df -k /"))
+            if short is not None:
+                keep_vm = True
+                (out_dir / "stopped.txt").write_text(f"disk guard before block {b}: {short}\n")
+                raise DiskSpaceError(f"disk guard: {short}; data kept, VM {vm.name} kept")
             waited = _wait_for_host(policy)
             name = f"sched-{b}-{attempt}.jsonl"
             result_name = f"result-{b}-{attempt}.jsonl"

@@ -89,3 +89,14 @@ def test_locked_policy_records_battery_but_does_not_flag_it() -> None:
     low_power = HostSample(0.0, 1.0, 1, 0, 0, on_ac=False, low_power=True)
     assert evaluate([on_battery], LOCKED_POLICY) == []
     assert any("low power" in r for r in evaluate([low_power], LOCKED_POLICY))
+
+
+def test_disk_guard_stops_below_5_gb_free_on_host_or_guest() -> None:
+    from bench.campaign import disk_guard
+
+    gb = 1024**3
+    df = "Filesystem 1024-blocks Used Available Capacity Mounted on\n/dev/disk3s1s1 1 1 {} 1% /\n"
+    plenty = df.format(20 * gb // 1024)
+    assert disk_guard(14 * gb, plenty) is None
+    assert disk_guard(4 * gb, plenty) == "host 4.0 GB free (< 5 GB)"
+    assert disk_guard(14 * gb, df.format(3 * gb // 1024)) == "guest 3.0 GB free (< 5 GB)"
