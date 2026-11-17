@@ -389,6 +389,50 @@ Synthetic typing is deferred, outside Phase 1.
       recorded for every block but no longer flags or retries it; Low Power Mode, load, memory
       pressure and swap still flag. Applies from the dev baseline rerun onward; reports state
       that runs were allowed on battery.
+29. **Amendment 2 (2026-11-16): Floodlight joins, and the final held-out campaign (overrides earlier
+    sections where they conflict).**
+    - **Same observation channel.** Floodlight is read by the same probe, timing, 150 ms read
+      budget, 300 ms pause, 3 s window, freshness rules and gates as Spotlight and Raycast (item 28).
+      Adapter `probe/Sources/ProbeCore/Floodlight.swift`: field = text field with accessibility id
+      `floodlight.search`; rows = table `floodlight.results`, each row's texts are title, parent
+      folder (files and folders only) and kind label; the selected row is exposed directly. Opened
+      with Control-Space; ready = field present and empty. Floodlight shows at most 20 rows; each
+      tool is read as it shows itself.
+    - **Frozen build.** `bench/final.py` pins `FLOODLIGHT_SHA256` and `FINAL_PROBE` (see
+      "Measurement binary"). The runner refuses any other probe, and checks the Floodlight binary's
+      sha256 inside the guest before any sample. Floodlight does not change until the final campaign is finished.
+    - **Snapshots.** `bench-final-sparse-2026-11-16` = `bench-ready-2026-11-14b` and
+      `bench-final-busy-2026-11-16` = `bench-busy-2026-11-14b`, each plus Floodlight in
+      /Applications started at login, with its Desktop/Documents/Downloads access granted once
+      (as for Raycast). Spotlight and Raycast state is unchanged; Floodlight starts with no usage
+      history.
+    - **Planting the secret apps (inside each final run).** Names reach the guest only through a
+      share file deleted right after planting; only counts are printed. Wait until Spotlight has
+      indexed every planted app (10 min limit), then reboot so every launcher starts with them
+      present. Before any query, every tool must list every planted app as an app (3 tries each),
+      or the run stops.
+    - **Campaign parts** (three tools, 5 runs, schedule seed 42, rotation of all 6 tool orders):
+      `final-warm` = all 349 held-out queries, sparse, warm (**primary**); `final-restart` = a
+      seeded 25% subset, sparse, UI-restart + warm pairs (secondary); `final-busy` = a seeded 25%
+      subset with its own seed tag, busy, warm (additional check). Subsets are drawn with
+      `random.Random("2026:<part>")` from the sorted held-out ids. Stop rule, host policy and
+      retries as item 28, applied per part.
+    - **Primary reading.** Floodlight minus Spotlight, Intended@1, unambiguous queries, stratum (b)
+      if the planted-dev gate passes (else (a)), app-weighted, paired app-cluster bootstrap, ±5
+      points. Per the "Final held-out campaign budget" decision, the primary uses the warm
+      condition only; §7's "UI-restart and warm averaged" no longer applies. UI-restart results
+      are secondary.
+    - **Safe Enter gap.** §7's validation of Safe Enter by real Enter presses in throwaway clones
+      was not built. Safe Enter is reported only as read from the selected row, labelled
+      "not validated by real Enter presses". Wrong-Enter at 250 ms stays a headline metric.
+    - **Development evidence (descriptive, tuned, not a result).** Floodlight was developed against
+      the public dev queries. An unlocked Floodlight-only rehearsal on the dev set (5 runs, same
+      harness, commit `a8066e6`, this probe and build) had 0 kept errors, 0 dropped or unverified
+      keys, 0 flagged blocks, and Intended@1 of 99.7% on unambiguous queries. This is tuned
+      development performance from a different session than the Spotlight/Raycast dev baseline
+      and supports no comparative claim; only the held-out campaign does.
+    - **Secrecy.** The final command prints counts and the commitment check only; raw results stay
+      out of the repo until the reveal. No tuning or reruns after any final result.
 
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)
 Pilot data: 240 samples sparse (restart + warm), 180 busy (warm), 120 sparse during light host use;
@@ -447,3 +491,8 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
   refuses unless the working tree is clean and HEAD is the pushed commit (recorded per run), and
   always uses the locked host-load policy and lock verification. Seeds: schedule 42, subsets 2026. A harness fix after the lock is
   a logged amendment with a new lock, and every affected run is redone.
+- Final campaign (item 29): probe sha256
+  `74220bbf4463475b841f6d9f2cc5e76e99d7202928a1e96fc2656e0d0d07b1bb` (staged as
+  `probe-74220bbf4463`); Floodlight binary (`Floodlight.app/Contents/MacOS/Floodlight`, built by
+  `scripts/build_floodlight.sh` at commit `a8066e6`) sha256
+  `4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661`.

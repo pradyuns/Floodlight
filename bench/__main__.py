@@ -204,6 +204,7 @@ def cmd_final(args: argparse.Namespace) -> int:
         plant_and_restart,
         published_commitment,
         ready_check,
+        require_final_probe,
     )
     from bench.hostload import LOCKED_POLICY, make_blocks
     from bench.schedule import schedule
@@ -211,6 +212,7 @@ def cmd_final(args: argparse.Namespace) -> int:
 
     if FLOODLIGHT_SHA256 is None:
         sys.exit("refusing: no Floodlight build is pinned (FLOODLIGHT_SHA256)")
+    require_final_probe(args.probe)
     if _git("status", "--porcelain"):
         sys.exit("refusing: the working tree has uncommitted changes")
     head = _git("rev-parse", "HEAD")

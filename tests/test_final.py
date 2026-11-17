@@ -158,3 +158,13 @@ def test_refuses_a_floodlight_build_that_is_not_the_pinned_one() -> None:
         check_floodlight(lambda cmd, t=600: "ee" * 32 + "  x\n", pinned)
     with pytest.raises(SystemExit, match="pinned"):
         check_floodlight(lambda cmd, t=600: pinned, None)
+
+
+def test_final_runs_only_with_the_pinned_probe_and_floodlight_build() -> None:
+    from bench.final import FINAL_PROBE, FLOODLIGHT_SHA256, require_final_probe
+
+    assert FINAL_PROBE == "probe-74220bbf4463"
+    assert FLOODLIGHT_SHA256 == "4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661"
+    require_final_probe("probe-74220bbf4463")
+    with pytest.raises(SystemExit, match="probe-e3e18537995d"):
+        require_final_probe("probe-e3e18537995d")
