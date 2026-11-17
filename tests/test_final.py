@@ -102,6 +102,10 @@ class FakeGuest:
             title = next((n for n in self.listed[tool] if n.lower() == name), None)
             rows = [{"title": title, "kind": "app"}] if title else []
             return json.dumps(rows) + "\nexit=0"
+        if "shasum -a 256" in cmd:
+            from bench.final import PLANTER_SHA256
+
+            return "".join(f"{d}  {f}\n" for f, d in PLANTER_SHA256.items())
         if "make_planted.sh" in cmd:
             return "planted=2 failed=0\n"
         return "up\n"
@@ -168,3 +172,80 @@ def test_final_runs_only_with_the_pinned_probe_and_floodlight_build() -> None:
     require_final_probe("probe-74220bbf4463")
     with pytest.raises(SystemExit, match="probe-e3e18537995d"):
         require_final_probe("probe-e3e18537995d")
+
+
+class FlakyListing:
+    """Probe dumps answer from a script: one list of titles per call, then the last one forever."""
+
+    def __init__(self, answers: list[list[str]]) -> None:
+        self.answers = answers
+        self.dumps = 0
+
+    def sh(self, cmd: str, timeout: float = 600) -> str:
+        answer = self.answers[min(self.dumps, len(self.answers) - 1)]
+        self.dumps += 1
+        return json.dumps([{"title": t, "kind": "app"} for t in answer]) + "\nexit=0"
+
+
+def test_ready_check_retries_a_valid_read_that_misses_the_app() -> None:
+    from bench.final import ready_check
+
+    guest = FlakyListing([[], ["Zorblat"]])
+    assert ready_check(guest.sh, ("Zorblat",), tools=("raycast",), sleep=lambda s: None) == {
+        "raycast": 1
+    }
+    assert guest.dumps == 2
+
+
+def test_ready_check_gives_up_after_three_reads_without_the_app() -> None:
+    from bench.final import ready_check
+
+    guest = FlakyListing([[]])
+    with pytest.raises(RuntimeError, match="raycast"):
+        ready_check(guest.sh, ("Zorblat",), tools=("raycast",), sleep=lambda s: None)
+    assert guest.dumps == 3
+
+
+class PlanterGuest(FakeGuest):
+    def __init__(self, digests: dict[str, str]) -> None:
+        super().__init__({})
+        self.digests = digests
+
+    def sh(self, cmd: str, timeout: float = 600) -> str:
+        if cmd.startswith("cd ") and "shasum -a 256" in cmd:
+            self.commands.append(cmd)
+            return "".join(f"{d}  {f}\n" for f, d in self.digests.items())
+        return super().sh(cmd, timeout)
+
+
+def test_planting_runs_only_the_pinned_planter_files(tmp_path: Path) -> None:
+    from bench.final import PLANTER_SHA256, plant_and_restart
+
+    guest = PlanterGuest(dict(PLANTER_SHA256))
+    plant_and_restart(guest.sh, guest.sh, tmp_path, ("Zorblat", "Quimble"), sleep=lambda s: None)
+    download = next(c for c in guest.commands if "curl" in c)
+    assert "rm -f planted make_planted.sh" in download.split("curl")[0]
+    assert any("./make_planted.sh" in c for c in guest.commands)
+
+    tampered = PlanterGuest({**PLANTER_SHA256, "make_planted.sh": "ee" * 32})
+    with pytest.raises(RuntimeError, match=r"make_planted\.sh"):
+        plant_and_restart(tampered.sh, tampered.sh, tmp_path, ("Zorblat",), sleep=lambda s: None)
+    assert not any("./make_planted.sh" in c for c in tampered.commands)
+    assert not (tmp_path / "planted.txt").exists()
+
+
+def test_planter_digests_match_the_staged_files_and_sources_are_locked() -> None:
+    import hashlib
+
+    from bench.final import PLANTER_SHA256
+    from bench.lock import locked_paths
+
+    root = Path(__file__).resolve().parents[1]
+    assert PLANTER_SHA256 == {
+        "planted": "4703b46c5103c1063e90caa897a72e165c2e7d0ab9b5d28bfabf6e4680ea1617",
+        "make_planted.sh": "0f77760b88ce375bc03a56d80dbfb47cb53df948c2dee469a83efbf4b2078e9c",
+    }
+    script = (root / "fixtures/make_planted.sh").read_bytes()
+    assert hashlib.sha256(script).hexdigest() == PLANTER_SHA256["make_planted.sh"]
+    locked = {p.relative_to(root).as_posix() for p in locked_paths(root)}
+    assert {"fixtures/make_planted.sh", "fixtures/planted_main.c"} <= locked

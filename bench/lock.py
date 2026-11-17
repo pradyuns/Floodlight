@@ -31,6 +31,8 @@ LOCKED_GLOBS = (
     "corpus/*.py",
     "fixtures/plan.py",
     "fixtures/make_files.py",
+    "fixtures/make_planted.sh",
+    "fixtures/planted_main.c",
     "docs/analysis-plan.md",
     "pyproject.toml",
     "probe/Package.swift",

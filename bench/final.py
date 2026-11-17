@@ -87,6 +87,24 @@ def final_plan(part: str, held: Heldout) -> Plan:
     )
 
 
+# The planter stub (built from fixtures/planted_main.c) and script staged in results/share.
+PLANTER_SHA256 = {
+    "planted": "4703b46c5103c1063e90caa897a72e165c2e7d0ab9b5d28bfabf6e4680ea1617",
+    "make_planted.sh": "0f77760b88ce375bc03a56d80dbfb47cb53df948c2dee469a83efbf4b2078e9c",
+}
+
+
+def verify_planter(shasum_output: str) -> None:
+    found: dict[str, str] = {}
+    for line in shasum_output.splitlines():
+        if line.strip():
+            digest, name = line.split(maxsplit=1)
+            found[name.strip()] = digest
+    for name, want in PLANTER_SHA256.items():
+        if found.get(name) != want:
+            raise RuntimeError(f"planter file {name} has sha256 {found.get(name)}, expected {want}")
+
+
 def plant_command(names_path: str) -> str:
     """Guest command that plants one app per name in the file; the planter prints counts only."""
     return f"cd {GUEST_PLANTER_DIR} && ./make_planted.sh ./planted /Applications < '{names_path}'"
@@ -111,10 +129,12 @@ def plant_and_restart(
     names_file.write_text("".join(n + "\n" for n in names))
     names_file.chmod(0o600)
     try:
+        files = " ".join(PLANTER_SHA256)
         sh(
-            f"mkdir -p {GUEST_PLANTER_DIR} && cd {GUEST_PLANTER_DIR} && for f in planted "
-            f"make_planted.sh; do curl -sf -o $f {URL}/$f; done && chmod +x planted make_planted.sh"
+            f"mkdir -p {GUEST_PLANTER_DIR} && cd {GUEST_PLANTER_DIR} && rm -f {files} && "
+            f"for f in {files}; do curl -sf -o $f {URL}/$f; done && chmod +x {files}"
         )
+        verify_planter(sh(f"cd {GUEST_PLANTER_DIR} && shasum -a 256 {files}"))
         out = sudo(plant_command(GUEST_NAMES))
     finally:
         names_file.unlink(missing_ok=True)
@@ -176,11 +196,11 @@ def ready_check(
                     'echo "exit=$?"'
                 )
                 body, _, status = raw.strip().rpartition("\n")
-                if status == "exit=0":
-                    rows = json.loads(body)
-                    seen[tool] += any(
-                        r.get("kind") == "app" and _plain(r.get("title", "")) == plain for r in rows
-                    )
+                if status == "exit=0" and any(
+                    r.get("kind") == "app" and _plain(r.get("title", "")) == plain
+                    for r in json.loads(body)
+                ):
+                    seen[tool] += 1
                     break
                 sleep(10)
     if any(c < len(names) for c in seen.values()):

@@ -409,8 +409,8 @@ Synthetic typing is deferred, outside Phase 1.
     - **Planting the secret apps (inside each final run).** Names reach the guest only through a
       share file deleted right after planting; only counts are printed. Wait until Spotlight has
       indexed every planted app (10 min limit), then reboot so every launcher starts with them
-      present. Before any query, every tool must list every planted app as an app (3 tries each),
-      or the run stops.
+      present. Before any query, every tool must list every planted app as an app (see
+      "Readiness tries"), or the run stops.
     - **Campaign parts** (three tools, 5 runs, schedule seed 42, rotation of all 6 tool orders):
       `final-warm` = all 349 held-out queries, sparse, warm (**primary**); `final-restart` = a
       seeded 25% subset, sparse, UI-restart + warm pairs (secondary); `final-busy` = a seeded 25%
@@ -423,8 +423,23 @@ Synthetic typing is deferred, outside Phase 1.
       condition only; §7's "UI-restart and warm averaged" no longer applies. UI-restart results
       are secondary.
     - **Safe Enter gap.** §7's validation of Safe Enter by real Enter presses in throwaway clones
-      was not built. Safe Enter is reported only as read from the selected row, labelled
-      "not validated by real Enter presses". Wrong-Enter at 250 ms stays a headline metric.
+      was not built. Safe Enter and wrong-Enter are therefore **proxies**: what Enter would open,
+      read from the selected row (Spotlight, Floodlight) or the top row (Raycast), never an
+      observed launch or an observed "nothing launches". Every table, figure and sentence names
+      them "wrong-Enter (selected-row proxy)" and "Safe Enter (selected-row proxy)", including
+      the `wrong_enter_*` export columns. Wrong-Enter at 250 ms stays in the headline set under
+      that name; Intended@1 stays primary.
+    - **Primary stratum, fixed before the campaign.** The public planted-dev gate passed for
+      Spotlight and Raycast (2026-11-14). Floodlight's planted-dev check runs on the final
+      snapshot before any held-out run. Its outcome and the resulting primary stratum ((b) if it
+      passes, else (a)) are recorded in the freeze checklist and published before the campaign
+      starts; the choice is never made at reporting time.
+    - **Planter frozen.** `fixtures/make_planted.sh` and `fixtures/planted_main.c` are locked;
+      `bench/final.py` pins the sha256 of the staged script and compiled stub (`PLANTER_SHA256`).
+      The guest deletes any old copies, downloads both, and the runner verifies both hashes
+      before planting; a mismatch stops the run.
+    - **Readiness tries.** Each tool gets up to 3 reads per planted app (10 s apart); a read
+      only counts once it lists the app. After 3 reads without it, the run stops (counts only).
     - **Development evidence (descriptive, tuned, not a result).** Floodlight was developed against
       the public dev queries. An unlocked Floodlight-only rehearsal on the dev set (5 runs, same
       harness, commit `a8066e6`, this probe and build) had 0 kept errors, 0 dropped or unverified
