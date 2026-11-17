@@ -434,6 +434,9 @@ Synthetic typing is deferred, outside Phase 1.
       snapshot before any held-out run. Its outcome and the resulting primary stratum ((b) if it
       passes, else (a)) are recorded in the freeze checklist and published before the campaign
       starts; the choice is never made at reporting time.
+      **Recorded 2026-11-16, before any held-out run:** in throwaway clones of both final
+      snapshots, Spotlight, Raycast and Floodlight each listed 10 of 10 public planted-dev apps as
+      apps (unscored, untimed; clones deleted). Gate passed; **primary stratum = (b)**.
     - **Planter frozen.** `fixtures/make_planted.sh` and `fixtures/planted_main.c` are locked;
       `bench/final.py` pins the sha256 of the staged script and compiled stub (`PLANTER_SHA256`).
       The guest deletes any old copies, downloads both, and the runner verifies both hashes
