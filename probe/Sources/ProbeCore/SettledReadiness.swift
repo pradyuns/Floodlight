@@ -20,23 +20,24 @@ public struct SettledReadiness {
         self.isReady = isReady
     }
 
+    /// Acceptance deadline: no read starts after it, and a read that returns after it counts as not
+    /// ready (a blocked accessibility read cannot be interrupted).
     public func wait(timeoutMs: Int, settleMs: Int) -> Outcome {
         let deadline = clock.nowMs() + timeoutMs
         var failed = 0
-        while true {
-            guard waitForReady(until: deadline) else { return Outcome(ready: false, failedRechecks: failed) }
+        while waitForReady(until: deadline), clock.nowMs() + settleMs < deadline {
             clock.sleep(untilMs: clock.nowMs() + settleMs)
-            if isReady() { return Outcome(ready: true, failedRechecks: failed) }
+            if isReady() && clock.nowMs() <= deadline { return Outcome(ready: true, failedRechecks: failed) }
             failed += 1
-            if clock.nowMs() >= deadline { return Outcome(ready: false, failedRechecks: failed) }
         }
+        return Outcome(ready: false, failedRechecks: failed)
     }
 
     private func waitForReady(until deadline: Int) -> Bool {
         while clock.nowMs() < deadline {
-            if isReady() { return true }
+            if isReady() { return clock.nowMs() <= deadline }
             clock.sleep(untilMs: min(clock.nowMs() + pollMs, deadline))
         }
-        return isReady()
+        return false
     }
 }

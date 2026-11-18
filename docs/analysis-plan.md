@@ -479,10 +479,12 @@ Synthetic typing is deferred, outside Phase 1.
     - **Change (identical for all three tools; probe only).** Before: wait up to 10 s for a ready
       read, pause 300 ms, one final read; a failed final read made the sample `not_ready`. Now
       (`probe/Sources/ProbeCore/SettledReadiness.swift`): wait for a ready read, pause 300 ms,
-      read again; if that read fails before the 10 s deadline (counted from the field clear),
-      wait for a ready read again and repeat. When the first re-read succeeds the procedure is
-      the same as before. Deadline expiry is still `not_ready` and counts as unverified under
-      item 28. Polling stays at 50 ms. Each record now carries `prep_ms` (close to ready) and
+      read again; if that read fails, wait for a ready read again and repeat. A 10 s acceptance
+      deadline, counted from the field clear, bounds the whole procedure: no read or pause starts
+      unless the pause can finish before it, and a read that returns after it counts as not ready
+      (a blocked accessibility read cannot be interrupted, so it may return late, but it is never
+      accepted). Within the deadline, when the first re-read succeeds, the procedure is the same as
+      before. Missing the deadline is `not_ready` and counts as unverified under item 28. Polling stays at 50 ms. Each record now carries `prep_ms` (close to ready) and
       `failed_rechecks`. Unchanged: Floodlight build, queries, answers, typing, the 300 ms pause
       before the first key, the sampler's own pre-typing readiness gate, observation window,
       scoring, stop rule, host-load policy and limits.
@@ -493,11 +495,28 @@ Synthetic typing is deferred, outside Phase 1.
       order, seed `validate-settled-ready`, 112 queries x (`ui_restart` + `warm`) per tool, 300 ms
       pause. Pass only if every tool has <= 1 unverified first try of 224 and 0 confirmed drops,
       and Raycast shows >= 1 failed re-read that recovered. Judged on delivery fields only.
-    - **Validation result: pass.** 672 of 672 delivered (each tool 112 + 112), 0 unverified, 0
+    - **Validation result: pass (probe `probe-c09e9205b639`).** 672 of 672 delivered (each tool 112 + 112), 0 unverified, 0
       drops. Failed re-reads that recovered: Raycast 40 of 112 UI restarts (always one per
       sample), Spotlight 0, Floodlight 0; none on warm tries. Preparation time, UI restart,
       median / p90 / max: Spotlight 1676 / 4243 / 4575 ms, Raycast 4616 / 5384 / 5682 ms,
       Floodlight 1055 / 1253 / 1385 ms; warm: 363-400 ms for every tool.
+    - **Deadline correction (2026-11-18, after review, before any held-out use).** Review found
+      that `probe-c09e9205b639` could accept readiness after the 10 s deadline (a read finishing
+      late, or a pause and re-read started just before it). This is a correction so the code
+      enforces the procedure stated above, not a new readiness rule: behaviour differs only past
+      the deadline, which no validation try approached (maximum 5.7 s). Self-tests for late first
+      reads, late re-reads, no room for the pause, and reads after expiry failed before the
+      correction and pass after it. The 672-try validation supports the unchanged normal path; it
+      is not validation of the corrected binary, which is covered by those self-tests and one
+      bounded public check fixed in advance: throwaway clone of `bench-final-sparse-2026-11-16`,
+      public dev queries, seed `validate-deadline-fix`, 28 queries x (`ui_restart` + `warm`) x 3
+      tools (168 tries), run once; pass if every tool has 0 confirmed drops, <= 1 unverified try
+      and no try accepted as ready after 10 s; whether a Raycast stall occurred and recovered is
+      reported either way. Result: pass. 168 of 168 delivered (each tool 28 + 28), 0
+      unverified, 0 drops; longest preparation of any ready try 5.2 s, so none could have been
+      accepted after the deadline; Raycast had a failed re-read that recovered on 8 of 28 UI
+      restarts (none on warm tries, none for Spotlight or Floodlight), so the stall path was
+      exercised.
     - **What the replacement measures.** Search after a successfully prepared UI restart. It does
       not show that the tools become usable equally quickly or reliably. Readiness is reported
       separately per tool and condition: `prep_ms` median, p90 and max; samples with failed
@@ -510,7 +529,7 @@ Synthetic typing is deferred, outside Phase 1.
       `final-warm`.
     - **Replacement campaign.** `final-restart` again under the same part name (so the same seeded
       25% subset, conditions, runs, seed and tool rotation), all three tools, probe
-      `probe-c09e9205b639` (sha256 below), under the new lock, run only after separate explicit
+      `probe-9b7a7674653c` (sha256 below), under the new lock, run only after separate explicit
       authorization. If it stops, it is reported as stopped and not repeated.
 
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)
@@ -577,6 +596,6 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
   history cleanup that removed only a Finder metadata file) sha256
   `4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661`.
 - Replacement `final-restart` (item 30): probe sha256
-  `c09e9205b639610b5538a2736ee9342dadec49f5ba186cf0e3d04e051f7c38d0` (staged as
-  `probe-c09e9205b639`); same Floodlight binary. `final-warm` and `final-busy` keep
+  `9b7a7674653cf81a26bca8fdae454f8400b7424fa0c0d04a22c1324e1b696118` (staged as
+  `probe-9b7a7674653c`); same Floodlight binary. `final-warm` and `final-busy` keep
   `probe-74220bbf4463`.

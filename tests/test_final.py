@@ -177,7 +177,7 @@ def test_final_runs_only_with_the_pinned_probe_and_floodlight_build() -> None:
 def test_restart_runs_only_with_the_fixed_restart_probe() -> None:
     from bench.final import require_final_probe
 
-    require_final_probe("final-restart", "probe-c09e9205b639")
+    require_final_probe("final-restart", "probe-9b7a7674653c")
     with pytest.raises(SystemExit, match="probe-74220bbf4463"):
         require_final_probe("final-restart", "probe-74220bbf4463")
 

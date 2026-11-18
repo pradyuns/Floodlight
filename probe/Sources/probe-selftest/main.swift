@@ -608,5 +608,29 @@ let neverReady = settled([false])
 check(neverReady.0 == .init(ready: false, failedRechecks: 0),
       "settled readiness: never ready is not ready")
 
+/// Readiness that depends on the time a read finishes; returns the outcome and every read's start time.
+func settledAt(timeoutMs: Int = 10_000, readMs: @escaping (Int) -> Int = { _ in 5 },
+               ready: @escaping (Int) -> Bool) -> (SettledReadiness.Outcome, [Int]) {
+    let clock = FakeClock()
+    var starts: [Int] = []
+    let outcome = SettledReadiness(clock: clock) {
+        starts.append(clock.nowMs())
+        clock.spend(readMs(starts.count - 1))
+        return ready(clock.nowMs())
+    }.wait(timeoutMs: timeoutMs, settleMs: 300)
+    return (outcome, starts)
+}
+
+check(!settledAt(readMs: { $0 == 0 ? 10_005 : 5 }, ready: { _ in true }).0.ready,
+      "settled readiness: a ready first read that finishes after the deadline is not ready")
+check(!settledAt(readMs: { $0 == 1 ? 9_700 : 5 }, ready: { _ in true }).0.ready,
+      "settled readiness: a ready re-read that finishes after the deadline is not ready")
+let noRoom = settledAt(readMs: { $0 == 0 ? 9_800 : 5 }, ready: { _ in true })
+check(!noRoom.0.ready && noRoom.1.count == 1,
+      "settled readiness: no pause or re-read when the pause cannot finish before the deadline")
+let expired = settledAt(ready: { $0 >= 10_000 })
+check(!expired.0.ready && expired.1.allSatisfy { $0 < 10_000 },
+      "settled readiness: no read starts after the deadline, and late readiness is not ready")
+
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

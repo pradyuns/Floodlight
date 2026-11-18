@@ -222,7 +222,7 @@ FLOODLIGHT_BINARY = "/Applications/Floodlight.app/Contents/MacOS/Floodlight"
 FINAL_PROBES = {
     "final-warm": "probe-74220bbf4463",
     "final-busy": "probe-74220bbf4463",
-    "final-restart": "probe-c09e9205b639",
+    "final-restart": "probe-9b7a7674653c",
 }
 
 
