@@ -1,3 +1,4 @@
+import AppKit
 import CoreGraphics
 
 public protocol KeyPoster: AnyObject {
@@ -24,5 +25,21 @@ public protocol ControlledLauncher: LauncherAdapter {
     func isBusy() -> Bool
     /// Whether the search field has keyboard focus (nil: the field isn't there to ask).
     func isFieldFocused() -> Bool?
-    func killUI()
+    /// The launcher's UI process ids.
+    func uiPids() -> Set<Int32>
+    func terminateUI()
+    /// nil when the launcher relaunches its UI by itself.
+    var relaunchUI: (() -> Void)? { get }
+}
+
+func runningPids(bundleId: String) -> Set<Int32> {
+    Set(NSRunningApplication.runningApplications(withBundleIdentifier: bundleId).map(\.processIdentifier))
+}
+
+func runTool(_ path: String, _ args: [String]) {
+    let p = Process()
+    p.executableURL = URL(fileURLWithPath: path)
+    p.arguments = args
+    try? p.run()
+    p.waitUntilExit()
 }

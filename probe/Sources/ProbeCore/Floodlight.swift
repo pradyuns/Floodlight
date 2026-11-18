@@ -83,14 +83,7 @@ public final class FloodlightAdapter: ControlledLauncher {
         }
     }
 
-    public func killUI() {
-        for (tool, args) in [("/usr/bin/killall", ["Floodlight"]),
-                             ("/usr/bin/open", ["-b", FloodlightAdapter.bundleId])] {
-            let p = Process()
-            p.executableURL = URL(fileURLWithPath: tool)
-            p.arguments = args
-            try? p.run()
-            p.waitUntilExit()
-        }
-    }
+    public func uiPids() -> Set<Int32> { runningPids(bundleId: FloodlightAdapter.bundleId) }
+    public func terminateUI() { runTool("/usr/bin/killall", ["Floodlight"]) }
+    public let relaunchUI: (() -> Void)? = { runTool("/usr/bin/open", ["-b", FloodlightAdapter.bundleId]) }
 }

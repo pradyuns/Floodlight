@@ -195,13 +195,9 @@ public final class SpotlightAdapter: ControlledLauncher {
         return rows
     }
 
-    public func killUI() {
-        let p = Process()
-        p.executableURL = URL(fileURLWithPath: "/usr/bin/killall")
-        p.arguments = ["Spotlight"]
-        try? p.run()
-        p.waitUntilExit()
-    }
+    public func uiPids() -> Set<Int32> { runningPids(bundleId: SpotlightAdapter.bundleId) }
+    public func terminateUI() { runTool("/usr/bin/killall", ["Spotlight"]) }
+    public let relaunchUI: (() -> Void)? = nil
 }
 
 public enum ProbeError: Error {

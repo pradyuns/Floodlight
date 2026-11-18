@@ -218,12 +218,18 @@ def published_commitment(lock_text: str) -> str:
 # The frozen Floodlight build: set (and locked) once the app is final, before the final campaign.
 FLOODLIGHT_SHA256: str | None = "4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661"
 FLOODLIGHT_BINARY = "/Applications/Floodlight.app/Contents/MacOS/Floodlight"
-FINAL_PROBE = "probe-74220bbf4463"
+# final-restart uses the probe with the UI-restart fix (analysis plan item 30).
+FINAL_PROBES = {
+    "final-warm": "probe-74220bbf4463",
+    "final-busy": "probe-74220bbf4463",
+    "final-restart": "probe-c09e9205b639",
+}
 
 
-def require_final_probe(name: str) -> None:
-    if name != FINAL_PROBE:
-        raise SystemExit(f"refusing: probe {name} is not the pinned final probe {FINAL_PROBE}")
+def require_final_probe(part: str, name: str) -> None:
+    pinned = FINAL_PROBES[part]
+    if name != pinned:
+        raise SystemExit(f"refusing: probe {name} is not the pinned {part} probe {pinned}")
 
 
 def check_floodlight(sh: Sh, pinned: str | None) -> dict[str, str]:

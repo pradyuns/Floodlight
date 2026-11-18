@@ -193,15 +193,8 @@ public final class RaycastAdapter: ControlledLauncher {
         return title.dropLast().trimmingCharacters(in: .whitespaces)
     }
 
-    /// Quits Raycast and launches it again (it does not relaunch itself the way Spotlight does).
-    public func killUI() {
-        for (tool, args) in [("/usr/bin/killall", ["Raycast"]),
-                             ("/usr/bin/open", ["-b", RaycastAdapter.bundleId])] {
-            let p = Process()
-            p.executableURL = URL(fileURLWithPath: tool)
-            p.arguments = args
-            try? p.run()
-            p.waitUntilExit()
-        }
-    }
+    public func uiPids() -> Set<Int32> { runningPids(bundleId: RaycastAdapter.bundleId) }
+    public func terminateUI() { runTool("/usr/bin/killall", ["Raycast"]) }
+    /// Raycast does not relaunch itself the way Spotlight does.
+    public let relaunchUI: (() -> Void)? = { runTool("/usr/bin/open", ["-b", RaycastAdapter.bundleId]) }
 }

@@ -30,6 +30,14 @@ struct ResultLine: Codable {
     let snapshots: [SnapshotDTO]
     let error: String?
     let attempt: Int
+    let prepMs: Int?
+    let failedRechecks: Int?
+}
+
+struct Prepared {
+    let ready: Bool
+    let ms: Int
+    let failedRechecks: Int
 }
 
 let escapeKey: CGKeyCode = 53
@@ -80,13 +88,15 @@ let keys = CGEventKeys()
 }
 
 /// Closes, optionally restarts the UI process, opens, and waits for an empty, idle field.
-@MainActor func prepare(_ launcher: any ControlledLauncher, uiRestart: Bool) -> Bool {
+@MainActor func prepare(_ launcher: any ControlledLauncher, uiRestart: Bool) -> Prepared {
+    let start = clock.nowMs()
+    func failed(_ rechecks: Int = 0) -> Prepared { Prepared(ready: false, ms: clock.nowMs() - start, failedRechecks: rechecks) }
     close(launcher)
-    if launcher.isOpen() { return false }
+    if launcher.isOpen() { return failed() }
     if uiRestart {
-        launcher.killUI()
-        // Wait for the launcher's UI process to be running again before asking it to open.
-        guard waitUntil(readyTimeoutMs, { launcher.isRunning() }) else { return false }
+        let restart = UIRestart(pids: launcher.uiPids, terminate: launcher.terminateUI,
+                                relaunch: launcher.relaunchUI, waitUntil: { waitUntil($0, $1) })
+        guard restart.run(timeoutMs: readyTimeoutMs) else { return failed() }
         usleep(500_000)
     }
     var opened = false
@@ -94,15 +104,15 @@ let keys = CGEventKeys()
         keys.press(keyCode: launcher.openShortcut.key, flags: launcher.openShortcut.flags)
         opened = waitUntil(3000) { launcher.isOpen() }
     }
-    guard opened else { return false }
+    guard opened else { return failed() }
     // Launchers can reopen with the previous search text still in the field; clear it.
     if launcher.fieldText() != .text("") {
         keys.press(keyCode: selectAllKey, flags: .maskCommand)
         keys.press(keyCode: deleteKey)
     }
-    guard waitUntil(readyTimeoutMs, { launcher.isReady() }) else { return false }
-    usleep(useconds_t(settleAfterReadyMs * 1000))
-    return launcher.isReady()
+    let outcome = SettledReadiness(clock: clock) { launcher.isReady() }
+        .wait(timeoutMs: readyTimeoutMs, settleMs: settleAfterReadyMs)
+    return Prepared(ready: outcome.ready, ms: clock.nowMs() - start, failedRechecks: outcome.failedRechecks)
 }
 
 let encoder = JSONEncoder()
@@ -115,7 +125,7 @@ case "dump":
     let launcher = adapter(for: arg("--tool") ?? "spotlight")
     guard let query = arg("--query") else { fail("--query required") }
     guard !Session.isScreenLockedNow() else { fail("screen is locked: keys would go to the lock screen") }
-    guard prepare(launcher, uiRestart: false) else { fail("launcher not ready") }
+    guard prepare(launcher, uiRestart: false).ready else { fail("launcher not ready") }
     let sample = Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock), clock: clock)
         .run(text: query, mode: .completed, windowMs: 2500)
     close(launcher)
@@ -137,7 +147,7 @@ case "overhead":
     var echo: [Int] = []
     var read: [Int] = []
     for _ in 0..<trials {
-        guard prepare(launcher, uiRestart: false) else { fail("launcher not ready") }
+        guard prepare(launcher, uiRestart: false).ready else { fail("launcher not ready") }
         let t0 = clock.nowMs()
         keys.type("a")
         if waitUntil(2000, { launcher.fieldText() == .text("a") }) { echo.append(clock.nowMs() - t0) }
@@ -162,15 +172,17 @@ case "run-schedule":
     guard let out = FileHandle(forWritingAtPath: outPath) else { fail("cannot write \(outPath)") }
     for line in lines {
         let launcher = adapter(for: line.tool)
-        var result: SampleDTO
+        let result: SampleDTO
+        var prepared: Prepared?
         if Session.isScreenLockedNow() {
             result = SampleDTO(keyPosts: [], fieldShowsMs: nil, snapshots: [], error: "screen_locked")
-        } else if prepare(launcher, uiRestart: line.condition == "ui_restart") {
-            result = Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock),
-                             clock: clock)
-                .run(text: line.text, mode: line.mode, windowMs: line.windowMs)
         } else {
-            result = SampleDTO(keyPosts: [], fieldShowsMs: nil, snapshots: [], error: "not_ready")
+            let p = prepare(launcher, uiRestart: line.condition == "ui_restart")
+            prepared = p
+            result = p.ready
+                ? Sampler(adapter: launcher, pacer: ThreadKeyPacer(keys: keys, clock: clock), clock: clock)
+                    .run(text: line.text, mode: line.mode, windowMs: line.windowMs)
+                : SampleDTO(keyPosts: [], fieldShowsMs: nil, snapshots: [], error: "not_ready")
         }
         close(launcher)
         let record = ResultLine(
@@ -178,7 +190,7 @@ case "run-schedule":
             mode: line.mode, finalKeyPostMs: result.finalKeyPostMs,
             maxKeyLatenessMs: result.maxKeyLatenessMs, keyPosts: result.keyPosts,
             fieldShowsMs: result.fieldShowsMs, snapshots: result.snapshots, error: result.error,
-            attempt: 0)
+            attempt: 0, prepMs: prepared?.ms, failedRechecks: prepared?.failedRechecks)
         out.write(try encoder.encode(record))
         out.write(Data("\n".utf8))
     }

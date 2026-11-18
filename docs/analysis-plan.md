@@ -456,6 +456,63 @@ Synthetic typing is deferred, outside Phase 1.
     - **Secrecy.** The final command prints counts and the commitment check only; raw results stay
       out of the repo until the reveal. No tuning or reruns after any final result.
 
+30. **Amendment 3 (2026-11-18): settled readiness check and replacement `final-restart` (overrides
+    item 29's `final-restart` where they conflict; written after `final-warm` and `final-busy`
+    completed and before any reveal; no final query text, rank or title was read).**
+    - **What happened.** `final-restart` (probe `probe-74220bbf4463`) stopped under item 28's stop
+      rule after block 15: Raycast quarter 1 had 4.6% unverified first tries (limit 1%). All 10
+      unverified Raycast first tries were `not_ready` with zero keys posted (9 of 112 UI-restart
+      tries, 1 warm try right after one). Spotlight and Floodlight: 224 of 224 delivered each. No
+      host-load flags. The stopped run, its data, stop reason, lock and probe are kept and
+      reported; its data are not merged into the replacement.
+    - **First fix attempt (failed, not used).** Waiting for the old UI process to exit before
+      relaunching fixed a real but minor race (1 of 20 immediate relaunches failed in a shell
+      reproduction, 0 of 20 with the wait), but unscored validation on public queries still had
+      Raycast `not_ready` on 14 of 60 UI restarts. The exit wait is kept.
+    - **Diagnosis (unscored, public queries, throwaway clones).** Every logged Raycast failure was
+      the single readiness read made after the 300 ms pause: that read took 1.7-2.2 s instead of
+      ~0.3 s and reported not ready, after all earlier steps had succeeded; a read moments later
+      showed the window open with an empty, focused field. Raycast alone: 40 of 40 restarts
+      ready; interleaved with the other tools: 13 of 20. This is an accessibility-read failure
+      observed by the probe; whether a person would notice anything, the cause, and why
+      interleaving matters are not established. No fault is assigned to the tool or the harness.
+    - **Change (identical for all three tools; probe only).** Before: wait up to 10 s for a ready
+      read, pause 300 ms, one final read; a failed final read made the sample `not_ready`. Now
+      (`probe/Sources/ProbeCore/SettledReadiness.swift`): wait for a ready read, pause 300 ms,
+      read again; if that read fails before the 10 s deadline (counted from the field clear),
+      wait for a ready read again and repeat. When the first re-read succeeds the procedure is
+      the same as before. Deadline expiry is still `not_ready` and counts as unverified under
+      item 28. Polling stays at 50 ms. Each record now carries `prep_ms` (close to ready) and
+      `failed_rechecks`. Unchanged: Floodlight build, queries, answers, typing, the 300 ms pause
+      before the first key, the sampler's own pre-typing readiness gate, observation window,
+      scoring, stop rule, host-load policy and limits.
+    - **Pass criteria (written before the change was built; one attempt; failure meant reporting
+      `final-restart` as stopped with no further change).** Self-test that fails without the
+      change; ruff, mypy, pytest, `swift build` and Swift self-tests pass. Throwaway clone of
+      `bench-final-sparse-2026-11-16`, public dev queries, three tools interleaved in rotating
+      order, seed `validate-settled-ready`, 112 queries x (`ui_restart` + `warm`) per tool, 300 ms
+      pause. Pass only if every tool has <= 1 unverified first try of 224 and 0 confirmed drops,
+      and Raycast shows >= 1 failed re-read that recovered. Judged on delivery fields only.
+    - **Validation result: pass.** 672 of 672 delivered (each tool 112 + 112), 0 unverified, 0
+      drops. Failed re-reads that recovered: Raycast 40 of 112 UI restarts (always one per
+      sample), Spotlight 0, Floodlight 0; none on warm tries. Preparation time, UI restart,
+      median / p90 / max: Spotlight 1676 / 4243 / 4575 ms, Raycast 4616 / 5384 / 5682 ms,
+      Floodlight 1055 / 1253 / 1385 ms; warm: 363-400 ms for every tool.
+    - **What the replacement measures.** Search after a successfully prepared UI restart. It does
+      not show that the tools become usable equally quickly or reliably. Readiness is reported
+      separately per tool and condition: `prep_ms` median, p90 and max; samples with failed
+      re-reads; deadline failures; alongside the stopped run's counts.
+    - **Why `final-warm` and `final-busy` stay valid.** Both ran to completion under their frozen
+      probe (`probe-74220bbf4463`), lock and rules, with no stop-rule breach, and are neither
+      re-run nor modified. The new probe is used only by `final-restart`. Parts are reported
+      separately and never pooled; the primary result uses `final-warm` only. UI-restart samples
+      are compared only with their own paired warm samples under the same probe, never with
+      `final-warm`.
+    - **Replacement campaign.** `final-restart` again under the same part name (so the same seeded
+      25% subset, conditions, runs, seed and tool rotation), all three tools, probe
+      `probe-c09e9205b639` (sha256 below), under the new lock, run only after separate explicit
+      authorization. If it stops, it is reported as stopped and not repeated.
+
 ## Pilot-derived settings (from the unscored pilot, 2026-11-14)
 Pilot data: 240 samples sparse (restart + warm), 180 busy (warm), 120 sparse during light host use;
 30 dev queries, Spotlight and Raycast, 5 s window. Two invalid pilot runs are kept and labelled (one
@@ -519,3 +576,7 @@ on battery, one stopped when Spotlight stopped opening after UI restarts on the 
   `scripts/build_floodlight.sh` at commit `4499881`; recorded locally as `a8066e6` before a
   history cleanup that removed only a Finder metadata file) sha256
   `4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661`.
+- Replacement `final-restart` (item 30): probe sha256
+  `c09e9205b639610b5538a2736ee9342dadec49f5ba186cf0e3d04e051f7c38d0` (staged as
+  `probe-c09e9205b639`); same Floodlight binary. `final-warm` and `final-busy` keep
+  `probe-74220bbf4463`.

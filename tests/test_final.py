@@ -165,13 +165,21 @@ def test_refuses_a_floodlight_build_that_is_not_the_pinned_one() -> None:
 
 
 def test_final_runs_only_with_the_pinned_probe_and_floodlight_build() -> None:
-    from bench.final import FINAL_PROBE, FLOODLIGHT_SHA256, require_final_probe
+    from bench.final import FLOODLIGHT_SHA256, require_final_probe
 
-    assert FINAL_PROBE == "probe-74220bbf4463"
     assert FLOODLIGHT_SHA256 == "4c9bb50015a98ea88bd116116309d34a55041fa6df5b7465ed13c8e667826661"
-    require_final_probe("probe-74220bbf4463")
-    with pytest.raises(SystemExit, match="probe-e3e18537995d"):
-        require_final_probe("probe-e3e18537995d")
+    for part in ("final-warm", "final-busy"):
+        require_final_probe(part, "probe-74220bbf4463")
+        with pytest.raises(SystemExit, match="probe-e3e18537995d"):
+            require_final_probe(part, "probe-e3e18537995d")
+
+
+def test_restart_runs_only_with_the_fixed_restart_probe() -> None:
+    from bench.final import require_final_probe
+
+    require_final_probe("final-restart", "probe-c09e9205b639")
+    with pytest.raises(SystemExit, match="probe-74220bbf4463"):
+        require_final_probe("final-restart", "probe-74220bbf4463")
 
 
 class FlakyListing:

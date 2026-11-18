@@ -537,5 +537,76 @@ check(FloodlightParsing.row(texts: ["szx-621", "~/Documents", "Folder"], selecte
                 selected: false, category: "floodlight:Folder"), "floodlight folder row with parent")
 check(FloodlightParsing.row(texts: [], selected: false) == nil, "floodlight row with no text is skipped")
 
+/// A launcher's UI processes: ending one takes `exitAfterPolls` checks; a relaunch adds a new pid.
+final class FakeProcesses {
+    var running: Set<Int32> = [100]
+    var dying: Set<Int32> = []
+    var pollsLeft = 0
+    var relaunchedWhileOldAlive = false
+    var relaunches = 0
+    var respawnsItself = false
+    let exitAfterPolls: Int
+    init(exitAfterPolls: Int) { self.exitAfterPolls = exitAfterPolls }
+    func pids() -> Set<Int32> {
+        if !dying.isEmpty {
+            if pollsLeft == 0 {
+                running.subtract(dying); dying = []
+                if respawnsItself { running.insert(300) }
+            } else { pollsLeft -= 1 }
+        }
+        return running
+    }
+    func terminate() { dying = running; pollsLeft = exitAfterPolls }
+    func relaunch() {
+        relaunches += 1
+        if !dying.isEmpty { relaunchedWhileOldAlive = true; return }  // reaches the exiting app: no-op
+        running.insert(200)
+    }
+    func restart(selfRelaunching: Bool = false, polls: Int = 200) -> Bool {
+        UIRestart(pids: pids, terminate: terminate, relaunch: selfRelaunching ? nil : relaunch,
+                  waitUntil: { _, condition in (0..<polls).contains { _ in condition() } })
+            .run(timeoutMs: 10_000)
+    }
+}
+
+let slowExit = FakeProcesses(exitAfterPolls: 5)
+check(slowExit.restart() && !slowExit.relaunchedWhileOldAlive && slowExit.running == [200],
+      "UI restart relaunches only after the old process has exited")
+let neverExits = FakeProcesses(exitAfterPolls: 1_000)
+check(!neverExits.restart() && neverExits.relaunches == 0,
+      "UI restart fails without relaunching when the old process never exits")
+let noRespawn = FakeProcesses(exitAfterPolls: 3)
+check(!noRespawn.restart(selfRelaunching: true),
+      "UI restart does not count the old process as running again")
+let respawns = FakeProcesses(exitAfterPolls: 3)
+respawns.respawnsItself = true
+check(respawns.restart(selfRelaunching: true) && respawns.running == [300] && respawns.relaunches == 0,
+      "UI restart of a self-relaunching launcher waits for its new process")
+
+/// Readiness reads answered from a script (the last answer repeats); each read costs `readMs`.
+func settled(_ answers: [Bool], readMs: [Int] = [], timeoutMs: Int = 10_000) -> (SettledReadiness.Outcome, Int, Int) {
+    let clock = FakeClock()
+    var reads = 0
+    let outcome = SettledReadiness(clock: clock) {
+        clock.spend(reads < readMs.count ? readMs[reads] : 5)
+        defer { reads += 1 }
+        return answers[min(reads, answers.count - 1)]
+    }.wait(timeoutMs: timeoutMs, settleMs: 300)
+    return (outcome, reads, clock.nowMs())
+}
+
+let steady = settled([true, true])
+check(steady.0 == .init(ready: true, failedRechecks: 0) && steady.1 == 2,
+      "settled readiness: ready, pause, one re-read, as before")
+let stall = settled([true, false, true, true], readMs: [5, 2000])
+check(stall.0 == .init(ready: true, failedRechecks: 1) && stall.1 == 4,
+      "settled readiness: a stalled re-read is retried within the deadline")
+let neverSettles = settled([true, false])
+check(!neverSettles.0.ready && neverSettles.0.failedRechecks >= 1 && neverSettles.2 <= 10_000 + 300 + 5 + 5,
+      "settled readiness: gives up by the deadline when re-reads keep failing")
+let neverReady = settled([false])
+check(neverReady.0 == .init(ready: false, failedRechecks: 0),
+      "settled readiness: never ready is not ready")
+
 print(failures == 0 ? "ALL PASSED" : "\(failures) FAILED")
 exit(failures == 0 ? 0 : 1)
