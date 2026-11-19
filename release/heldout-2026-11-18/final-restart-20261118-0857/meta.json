@@ -1,0 +1,23 @@
+{
+ "block_size": 40,
+ "campaign": "final-restart",
+ "commit": "3c44d3020da438b858f19336437ba3ab83cae3cd",
+ "env": "sparse",
+ "heldout_commitment": "2775ea5ff6212f3a168e545b4c9c2d2606df819c77f070b02c9bf65b11e8ba12",
+ "index_settled": true,
+ "label": "final-restart",
+ "locked": true,
+ "macos": [
+  "26.4.1",
+  "25E253"
+ ],
+ "prepared": {
+  "failed": 0,
+  "planted": 40
+ },
+ "probe": "probe-9b7a7674653c",
+ "probe_sha256": "9b7a7674653cf81a26bca8fdae454f8400b7424fa0c0d04a22c1324e1b696118",
+ "raycast": "2.12.1.0",
+ "snapshot": "bench-final-sparse-2026-11-16",
+ "window_ms": 3000
+}
