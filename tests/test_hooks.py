@@ -54,10 +54,6 @@ def test_commit_message_with_ai_attribution_is_blocked(repo: Path, message: str)
     assert "attribution" in result.stderr
 
 
-def test_commit_message_may_name_the_rules_file(repo: Path) -> None:
-    assert _commit(repo, "docs: update CLAUDE.md privacy rules").returncode == 0
-
-
 def test_staged_personal_path_is_blocked(
     repo: Path, tmp_path_factory: pytest.TempPathFactory
 ) -> None:

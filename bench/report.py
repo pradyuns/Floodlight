@@ -1,4 +1,4 @@
-"""Markdown report: verdict first, and where Floodlight loses always shown (CLAUDE.md)."""
+"""Markdown report: verdict first, and where Floodlight loses always shown (project rules)."""
 
 from dataclasses import dataclass
 
